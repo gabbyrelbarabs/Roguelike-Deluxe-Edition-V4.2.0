@@ -515,7 +515,7 @@ casinoMusic.loop = true;
   },
   "Shield":     p => {
     p.attack = Math.ceil(p.attack * 1.25);
-    p.defense = Math.ceil(p.agility * 1.5);
+    p.defense = Math.ceil(p.defense * 1.5);
 	p.maxArmor += 30;
   },
   "Gun": p => {
@@ -596,13 +596,14 @@ casinoMusic.loop = true;
   },
   "Chainshield":     p => {
     p.attack = Math.ceil(p.attack * 1.25);
-    p.defense = Math.ceil(p.agility * 1.5);
+    p.defense = Math.ceil(p.defense * 1.5);
 	p.maxArmor += 30;
   },
   "BFG9000": p => {
     if (p.equipment.accessory && p.equipment.accessory.name === "Argent Energy Storage") {
 		if (player.magic > player.attack) {
-			p.magic *= 3;
+			p.magic *= 5;
+			p.maxMana = Math.max(player.maxMana, 30);
 		} else {
 			p.attack *= 5;
 		}
@@ -618,13 +619,13 @@ casinoMusic.loop = true;
   },
   "Titan's Fang": p => {
     p.attack = p.attack * 2;
-    p.agility = p.attack * 3;
+    p.agility = p.agility * 3;
     p.perception = Math.ceil(p.perception * 2.5);
   },
   "BFG10000":      p => {
 	p.attack = Math.ceil(p.attack * 1.25);
-    p.magic   = p.magic * 3;
-    p.maxMana = Math.ceil(p.maxMana * 2.5);
+    p.magic   = p.magic * 10;
+    p.maxMana = Math.max(player.maxMana, 30);
   },
 
   // Armors
