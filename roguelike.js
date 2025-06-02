@@ -3728,8 +3728,8 @@ if (gameDifficulty !== "doom") {
     return;
   }
   
-  if (!hasReactorUnlockedUnlocked && Math.random() < mythicalChance) {
-	hasReactorUnlockedUnlocked = true;
+  if (!hasReactorUnlocked && Math.random() < mythicalChance) {
+	hasReactorUnlocked = true;
     const freeIdx = player.inventory.findIndex(slot => slot === null);
     if (freeIdx !== -1) {
       player.inventory[freeIdx] = {
