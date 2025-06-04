@@ -1237,7 +1237,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
 }
 
 .jump-zoom-gojira {
-  animation: zoomBeat 0.51s infinite;
+  animation: zoomBeat 0.495s infinite;
   transform-origin: center center;
 }
 
