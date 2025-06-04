@@ -3209,6 +3209,7 @@ function handleTitleScreenClick() {
   if (src.includes("level.mp3")) titleBox.classList.add("jump-zoom-level");
   if (src.includes("titan.mp3")) titleBox.classList.add("jump-zoom-titan");
   if (src.includes("rumbling.mp3")) titleBox.classList.add("jump-zoom-rumbling");
+  if (src.includes("gojira.mp3")) titleBox.classList.add("jump-zoom-gojira");
   playButton.style.display = "block";
   titleScreen.removeEventListener("click", handleTitleScreenClick);
 }
