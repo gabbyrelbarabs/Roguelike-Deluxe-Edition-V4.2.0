@@ -3186,6 +3186,8 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
 // hide the title screen and show the ability selection menu.
 document.getElementById("playButton").addEventListener("click", showDifficultyMenu);
 
+
+
 document.getElementById("closeShopBtn").addEventListener("click", () => {
   shopMenu.style.display = "none";
   battleTint.style.display = "none";
