@@ -4508,16 +4508,16 @@ function createMercenary() {
 	    let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    currentEnemy.hp = currentEnemy.hp + Math.ceil(15 * floorBonus * (player.level / floorCount) * 0.5);
+    currentEnemy.hp = currentEnemy.hp + Math.ceil(15 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.5),
-        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.5)
+        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    currentEnemy.hp = currentEnemy.hp + Math.ceil(20 * floorBonus * (player.level / floorCount) * 0.75);
+    currentEnemy.hp = currentEnemy.hp + Math.ceil(20 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.75),
-        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.75)
+        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
     currentEnemy.hp = currentEnemy.hp + Math.round(20 * floorBonus * (player.level / floorCount));
@@ -4771,16 +4771,16 @@ finalizeRoom(key);
   let bossData = getBossForFloor(floorCount);
   
   if (gameDifficulty === "normal") {
-    bossData.hp = bossData.hp + Math.ceil(25 * floorBonus * (player.level / floorCount) * 0.5);
+    bossData.hp = bossData.hp + Math.ceil(25 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.5),
-        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.5)
+        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    bossData.hp = bossData.hp + Math.ceil(30 * floorBonus * (player.level / floorCount) * 0.75);
+    bossData.hp = bossData.hp + Math.ceil(30 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.75),
-        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.75)
+        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
     bossData.hp = bossData.hp + Math.round(30 * floorBonus * (player.level / floorCount));
@@ -4879,16 +4879,16 @@ finalizeRoom(key);
 	let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    e.hp = e.hp + Math.ceil(15 * floorBonus * (player.level / floorCount) * 0.5);
+    e.hp = e.hp + Math.ceil(15 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.5),
-        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.5)
+        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    e.hp = e.hp + Math.ceil(20 * floorBonus * (player.level / floorCount) * 0.75);
+    e.hp = e.hp + Math.ceil(20 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount) * 0.75),
-        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount) * 0.75)
+        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
+        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme" && gameDifficulty === "doom") {
     e.hp = e.hp + Math.round(20 * floorBonus * (player.level / floorCount));
