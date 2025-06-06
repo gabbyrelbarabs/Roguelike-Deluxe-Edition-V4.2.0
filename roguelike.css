@@ -1237,11 +1237,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   transform-origin: center center;
 }
 
-.jump-zoom-gojira {
-  animation: zoomBeat 0.49s infinite;
-  transform-origin: center center;
-}
-
 #wishMenu {
   position: fixed;
   top: 0; left: 0;
