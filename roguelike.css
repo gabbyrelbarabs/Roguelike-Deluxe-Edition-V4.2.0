@@ -1104,7 +1104,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   height: 100px;
   background: gray;
   border: 2px solid white;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;

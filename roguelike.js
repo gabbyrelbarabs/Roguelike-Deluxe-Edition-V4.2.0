@@ -3184,9 +3184,10 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
  *********************/
 // When the title screen is clicked, instead of immediately starting the game,
 // hide the title screen and show the ability selection menu.
-document.getElementById("playButton").addEventListener("click", showDifficultyMenu);
-
-
+document.getElementById("playButton").addEventListener("click", () => {
+  showDifficultyMenu;
+  equipmentBtn.style.display = "flex";
+});
 
 document.getElementById("closeShopBtn").addEventListener("click", () => {
   shopMenu.style.display = "none";
