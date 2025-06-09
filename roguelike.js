@@ -887,130 +887,132 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
       const enemies = [{
         name: "Monster Crow",
         hp: 20,
-        damageRange: [3, 7],
+        damageRange: [2, 4],
         expReward: [1, 4],
         moneyReward: [2, 4],
 		reductionAttack: 0.33,
       }, {
         name: "Goblin",
         hp: 25,
-        damageRange: [4, 10],
+        damageRange: [3, 5],
         expReward: [2, 4],
         moneyReward: [5, 6]
       }, {
         name: "Wolf",
         hp: 30,
-        damageRange: [6, 13],
+        damageRange: [5, 8],
         expReward: [3, 5],
         moneyReward: [3, 5]
       }, {
         name: "Bear",
         hp: 40,
-        damageRange: [5, 11],
+        damageRange: [6, 9],
         expReward: [4, 6],
         moneyReward: [4, 6]
       }, {
         name: "Bull",
         hp: 50,
-        damageRange: [6, 12],
+        damageRange: [5, 9],
         expReward: [5, 6],
         moneyReward: [3, 5]
       }, {
         name: "Snake",
         hp: 30,
-        damageRange: [6, 12],
+        damageRange: [4, 5],
         expReward: [3, 6],
         moneyReward: [3, 5]
       }, {
         name: "Hobgoblin",
         hp: 50,
-        damageRange: [8, 12],
+        damageRange: [7, 10],
         expReward: [5, 7],
         moneyReward: [7, 10],
 		reductionMagic: 0.33,
       }, {
         name: "Dire Wolf",
         hp: 60,
-        damageRange: [10, 15],
+        damageRange: [8, 12],
         expReward: [5, 8],
         moneyReward: [5, 8],
       }, {
         name: "Dire Bear",
         hp: 80,
-        damageRange: [11, 17],
+        damageRange: [10, 15],
         expReward: [10, 15],
         moneyReward: [4, 6],
 		reductionAttack: 0.33,
       }, {
         name: "Gorgon",
         hp: 60,
-        damageRange: [11, 14],
+        damageRange: [9, 12],
         expReward: [6, 7],
         moneyReward: [6, 6],
 		reductionAttack: 0.5,
       }, {
         name: "Zombie",
         hp: 35,
-        damageRange: [4, 8],
+        damageRange: [3, 5],
         expReward: [3, 4],
         moneyReward: [3, 5],
         reductionMagic: 0.5,
       }, {
         name: "Skeleton",
         hp: 25,
-        damageRange: [6, 11],
+        damageRange: [4, 7],
         expReward: [3, 4],
         moneyReward: [3, 6],
 		reductionAttack: 0.5,
       }, {
         name: "Ghoul",
         hp: 20,
-        damageRange: [8, 14],
+        damageRange: [5, 8],
         expReward: [1, 3],
         moneyReward: [2, 4],
         reductionAll: 0.33
       }, {
         name: "Giant Spider",
         hp: 25,
-        damageRange: [7, 9],
+        damageRange: [5, 7],
         expReward: [3, 5],
         moneyReward: [3, 5]
       }, {
         name: "Demon Bat",
         hp: 15,
-        damageRange: [5, 8],
+        damageRange: [3, 5],
         expReward: [2, 4],
-        moneyReward: [2, 4]
+        moneyReward: [2, 4],
+		reductionAttack: 0.5,
       }, {
         name: "Shark",
         hp: 40,
-        damageRange: [6, 9],
+        damageRange: [4, 6],
         expReward: [4, 6],
         moneyReward: [3, 6]
       }, {
         name: "Piranha",
         hp: 15,
-        damageRange: [5, 10],
+        damageRange: [3, 5],
         expReward: [3, 4],
-        moneyReward: [3, 5]
+        moneyReward: [3, 5],
+		reductionAttack: 0.33,
       }, {
         name: "Giant Albatross",
         hp: 35,
-        damageRange: [4, 8],
+        damageRange: [4, 7],
         expReward: [3, 5],
         moneyReward: [3, 5],
         reductionAttack: 0.33
       }, {
         name: "Golem",
         hp: 100,
-        damageRange: [9, 12],
+        damageRange: [6, 10],
         expReward: [6, 10],
         moneyReward: [5, 10],
         reductionAttack: 0.5
       }, {
         name: "Ice Golem",
         hp: 80,
-        damageRange: [11, 16],
+        damageRange: [8, 13],
         expReward: [6, 11],
         moneyReward: [6, 10],
         reductionMagic: 0.5
@@ -1022,56 +1024,63 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         moneyReward: [2, 4],
         reductionAll: 0.33
       }, {
+        name: "Snowman",
+        hp: 30,
+        damageRange: [5, 8],
+        expReward: [2, 4],
+        moneyReward: [2, 4],
+        reductionAll: 0.8
+      }, {
         name: "Giant Scorpion",
         hp: 35,
-        damageRange: [6, 10],
+        damageRange: [4, 8],
         expReward: [3, 5],
         moneyReward: [3, 5],
         reductionAll: 0.33
       }, {
         name: "Sandworm",
         hp: 40,
-        damageRange: [8, 13],
+        damageRange: [5, 9],
         expReward: [3, 6],
         moneyReward: [2, 5]
       }, {
         name: "Vulture",
         hp: 35,
-        damageRange: [4, 9],
+        damageRange: [3, 6],
         expReward: [3, 5],
         moneyReward: [3, 5],
         reductionAttack: 0.33
       }, {
         name: "Possessed Armor",
         hp: 80,
-        damageRange: [11, 14],
+        damageRange: [7, 10],
         expReward: [5, 7],
         moneyReward: [5, 6],
         reductionAttack: 0.5
       }, {
         name: "Cursed Spirit",
         hp: 60,
-        damageRange: [11, 15],
+        damageRange: [6, 9],
         expReward: [6, 8],
         moneyReward: [4, 5],
         reductionAll: 0.33,
       }, {
         name: "Cyborg Guard",
         hp: 70,
-        damageRange: [11, 14],
+        damageRange: [4, 8],
         expReward: [6, 8],
         moneyReward: [5, 6],
       }, {
 		name: "Giant Robot",
         hp: 80,
-        damageRange: [16, 17],
+        damageRange: [6, 10],
         expReward: [9, 10],
         moneyReward: [8, 9],
 		reductionAttack: 0.33,
       }, {
 		name: "Jeager",
         hp: 250,
-        damageRange: [20, 25],
+        damageRange: [10, 15],
         expReward: [12, 15],
         moneyReward: [10, 12],
 		reductionAttack: 0.5,
@@ -1079,20 +1088,20 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
       }, {
 		name: "Drone",
         hp: 50,
-        damageRange: [13, 17],
+        damageRange: [8, 12],
         expReward: [8, 10],
         moneyReward: [8, 9]
       }, {
 		name: "Sorcerer",
         hp: 70,
-        damageRange: [17, 18],
+        damageRange: [9, 13],
         expReward: [9, 10],
         moneyReward: [9, 10],
 		reductionAttack: 0.33,
       }, {
 		name: "Shikigami",
         hp: 90,
-        damageRange: [13, 17],
+        damageRange: [10, 15],
         expReward: [8, 9],
         moneyReward: [6, 8],
 		reductionAttack: 0.33,
@@ -1166,14 +1175,14 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
       }, {
     name: "Goblin King",
     hp: 100,
-    damageRange: [20, 30],
+    damageRange: [10, 15],
     expReward: [30, 30],
     moneyReward: [30, 30]
   },
   {
     name: "Zombie Mutant",
     hp: 120,
-    damageRange: [25, 55],
+    damageRange: [12, 20],
     expReward: [60, 60],
     moneyReward: [60, 60],
 	reductionMagic: 0.5,
@@ -1181,7 +1190,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Giant Lord",
     hp: 250,
-    damageRange: [30, 65],
+    damageRange: [15, 32],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAttack: 0.5,
@@ -1189,7 +1198,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Skeleton King",
     hp: 110,
-    damageRange: [40, 80],
+    damageRange: [15, 30],
     expReward: [50, 50],
     moneyReward: [50, 50],
 	reductionAttack: 0.5,
@@ -1197,14 +1206,14 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Spider Queen",
     hp: 140,
-    damageRange: [45, 75],
+    damageRange: [12, 25],
     expReward: [40, 40],
     moneyReward: [40, 40]
   },
   {
     name: "The Witch",
     hp: 120,
-    damageRange: [50, 100],
+    damageRange: [20, 35],
     expReward: [50, 50],
     moneyReward: [50, 50],
     reductionMagic: 0.5,
@@ -1212,7 +1221,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Titan Golem",
     hp: 350,
-    damageRange: [50, 80],
+    damageRange: [20, 35],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAll: 0.33,
@@ -1220,7 +1229,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Wyvern",
     hp: 200,
-    damageRange: [50, 90],
+    damageRange: [25, 40],
     expReward: [70, 70],
     moneyReward: [90, 90],
     reductionAttack: 0.5,
@@ -1228,28 +1237,28 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Giant Sandworm",
     hp: 150,
-    damageRange: [60, 100],
+    damageRange: [20, 30],
     expReward: [50, 50],
     moneyReward: [50, 50]
   },
   {
     name: "Titanoboa Lord",
     hp: 170,
-    damageRange: [60, 100],
+    damageRange: [25, 35],
     expReward: [60, 60],
     moneyReward: [60, 60]
   },
   {
     name: "Abominable Snowman",
     hp: 190,
-    damageRange: [70, 120],
+    damageRange: [25, 40],
     expReward: [60, 60],
     moneyReward: [60, 60]
   },
   {
     name: "Omegalodon",
     hp: 200,
-    damageRange: [50, 120],
+    damageRange: [20, 35],
     expReward: [50, 50],
     moneyReward: [50, 50],
     reductionAttack: 0.5,
@@ -1257,7 +1266,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Leviathan",
     hp: 300,
-    damageRange: [60, 140],
+    damageRange: [30, 40],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAttack: 0.33,
@@ -1265,7 +1274,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Angel",
     hp: 320,
-    damageRange: [60, 150],
+    damageRange: [30, 45],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionMagic: 0.5,
@@ -1273,7 +1282,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Mega Meta Mecha Annihilator - Model: Ultima",
     hp: 600,
-    damageRange: [80, 160],
+    damageRange: [25, 36],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAttack: 0.5,
@@ -1281,7 +1290,15 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Grand Knight",
     hp: 800,
-    damageRange: [60, 150],
+    damageRange: [30, 40],
+    expReward: [70, 70],
+    moneyReward: [70, 70],
+    reductionAll: 0.33
+  },
+  {
+    name: "Frost Knight",
+    hp: 200,
+    damageRange: [6, 10],
     expReward: [70, 70],
     moneyReward: [70, 70],
     reductionAll: 0.33
@@ -1289,7 +1306,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Six-Eyed Calamity",
     hp: 500,
-    damageRange: [90, 180],
+    damageRange: [35, 50],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAll: 0.33,
@@ -1297,21 +1314,21 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
   name: "Goblin Emperor",
   hp: 200,
-  damageRange: [60, 90],
+  damageRange: [30, 40],
   expReward: [60, 60],
   moneyReward: [80, 80]
 },
 {
   name: "Giant Cyclops, Eater of Men",
   hp: 300,
-  damageRange: [80, 150],
+  damageRange: [25, 40],
   expReward: [60, 60],
   moneyReward: [60, 60]
 },
 {
   name: "Medusa, Lady of Stone",
   hp: 250,
-  damageRange: [90, 150],
+  damageRange: [30, 40],
   expReward: [70, 70],
   moneyReward: [70, 70],
   reductionAttack: 0.5
@@ -1319,7 +1336,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "The Minotaur",
   hp: 400,
-  damageRange: [80, 160],
+  damageRange: [25, 35],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionMagic: 0.5
@@ -1327,7 +1344,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Arachni Empress",
   hp: 300,
-  damageRange: [90, 140],
+  damageRange: [30, 40],
   expReward: [70, 70],
   moneyReward: [70, 70],
   reductionAttack: 0.5
@@ -1335,7 +1352,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Grand Sorceress",
   hp: 250,
-  damageRange: [100, 160],
+  damageRange: [35, 50],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionMagic: 1
@@ -1343,7 +1360,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Primordial Automaton",
   hp: 500,
-  damageRange: [80, 120],
+  damageRange: [30, 40],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionAll: 0.5
@@ -1351,7 +1368,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Devourer of Worlds",
   hp: 500,
-  damageRange: [100, 150],
+  damageRange: [30, 40],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionAll: 0.33
@@ -1359,7 +1376,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "The World Serpent, Jörmungandr",
   hp: 800,
-  damageRange: [90, 130],
+  damageRange: [35, 45],
   expReward: [90, 90],
   moneyReward: [90, 90],
   reductionAll: 0.5
@@ -1367,7 +1384,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Frost Queen, Borealis",
   hp: 400,
-  damageRange: [130, 200],
+  damageRange: [30, 45],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionMagic: 0.5
@@ -1375,7 +1392,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Charybdis",
   hp: 350,
-  damageRange: [90, 140],
+  damageRange: [25, 45],
   expReward: [70, 70],
   moneyReward: [70, 70],
   reductionAttack: 0.5
@@ -1383,7 +1400,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Seraphim",
   hp: 420,
-  damageRange: [120, 160],
+  damageRange: [40, 45],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionMagic: 1
@@ -1391,7 +1408,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Mega Meta Mecha Annihilator - Model: Grande",
   hp: 800,
-  damageRange: [100, 180],
+  damageRange: [30, 45],
   expReward: [90, 90],
   moneyReward: [90, 90],
   reductionAttack: 1
@@ -1399,7 +1416,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "Grand Knight II",
   hp: 500,
-  damageRange: [120, 190],
+  damageRange: [30, 50],
   expReward: [80, 80],
   moneyReward: [80, 80],
   reductionAll: 0.4
@@ -1407,7 +1424,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 {
   name: "The Brazen Bull, Khalkotauri",
   hp: 450,
-  damageRange: [40, 80],
+  damageRange: [25, 35],
   expReward: [70, 70],
   moneyReward: [70, 70],
   reductionAll: 0.33
@@ -1415,7 +1432,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "The King of Curses",
     hp: 600,
-    damageRange: [100, 170],
+    damageRange: [35, 55],
     expReward: [80, 80],
     moneyReward: [80, 80],
     reductionAll: 0.25,
@@ -1423,7 +1440,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Dragon King",
     hp: 800,
-    damageRange: [80, 160],
+    damageRange: [35, 50],
     expReward: [90, 90],
     moneyReward: [90, 90],
     reductionAttack: 0.5,
@@ -1431,7 +1448,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Guardian of Hell, Cerberus",
     hp: 700,
-    damageRange: [60, 100],
+    damageRange: [25, 35],
     expReward: [70, 70],
     moneyReward: [70, 70],
 	reductionMagic: 0.33,
@@ -1439,7 +1456,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Demon King",
     hp: 850,
-    damageRange: [80, 140],
+    damageRange: [40, 60],
     expReward: [80, 80],
     moneyReward: [85, 85],
     reductionMagic: 0.5,
@@ -1447,7 +1464,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "The Black King",
     hp: 900,
-    damageRange: [90, 170],
+    damageRange: [50, 60],
     expReward: [95, 95],
     moneyReward: [90, 90],
     reductionMagic: 0.5,
@@ -1455,7 +1472,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "Omni",
     hp: 1000,
-    damageRange: [75, 150],
+    damageRange: [50, 60],
     expReward: [100, 100],
     moneyReward: [100, 100],
     reductionAttack: 0.5,
@@ -2301,10 +2318,10 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Giant Sandworm", "Titanoboa Lord", "Hobgoblin", "Titan Golem", "Golem", "Skeleton", "Giant Spider"];
             break;
           case "Abominable Snowman":
-            allowed = ["Ice Golem", "Ice Spirit", "Possessed Armor", "Skeleton"];
+            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Possessed Armor", "Skeleton"];
             break;
 		  case "Frost Queen, Borealis":
-            allowed = ["Ice Golem", "Ice Spirit", "Grand Knight"];
+            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Grand Knight"];
             break;
           case "Omegalodon":
             allowed = ["Piranha", "Shark"];
@@ -2379,7 +2396,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
             break;
           default:
-            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit"];
+            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Frost Knight"];
         }
         return enemies.filter(e => allowed.includes(e.name));
 	  }
@@ -4509,37 +4526,37 @@ function createMercenary() {
 	    let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    currentEnemy.hp = currentEnemy.hp + Math.ceil(15 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    currentEnemy.hp = currentEnemy.hp + Math.ceil(20 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(20 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
-    currentEnemy.hp = currentEnemy.hp + Math.round(20 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         currentEnemy.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane" && gameDifficulty === "doom") {
-	currentEnemy.hp = currentEnemy.hp + Math.round(25 * floorBonus * (player.level / floorCount));
+	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         currentEnemy.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	currentEnemy.hp = currentEnemy.hp + Math.round(50 * floorBonus * (player.level / floorCount));
+	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(50 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         currentEnemy.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
         currentEnemy.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
     ];
 } else {
-	currentEnemy.hp = currentEnemy.hp + Math.round(30 * floorBonus * (player.level / floorCount));
+	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         currentEnemy.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         currentEnemy.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
@@ -4772,37 +4789,37 @@ finalizeRoom(key);
   let bossData = getBossForFloor(floorCount);
   
   if (gameDifficulty === "normal") {
-    bossData.hp = bossData.hp + Math.ceil(25 * floorBonus * (player.level / floorCount));
+    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.ceil(25 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    bossData.hp = bossData.hp + Math.ceil(30 * floorBonus * (player.level / floorCount));
+    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.ceil(30 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
-    bossData.hp = bossData.hp + Math.round(30 * floorBonus * (player.level / floorCount));
+    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         bossData.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         bossData.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane") {
-	bossData.hp = bossData.hp + Math.round(35 * floorBonus * (player.level / floorCount));
+	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(35 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         bossData.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         bossData.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	bossData.hp = bossData.hp + Math.round(60 * floorBonus * (player.level / floorCount));
+	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(60 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         bossData.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
         bossData.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
     ];
 } else {
-	bossData.hp = bossData.hp + Math.round(40 * floorBonus * (player.level / floorCount));
+	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(40 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         bossData.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         bossData.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
@@ -4880,37 +4897,37 @@ finalizeRoom(key);
 	let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    e.hp = e.hp + Math.ceil(15 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    e.hp = e.hp + Math.ceil(20 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(20 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
         Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme" && gameDifficulty === "doom") {
-    e.hp = e.hp + Math.round(20 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         e.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         e.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane") {
-	e.hp = e.hp + Math.round(25 * floorBonus * (player.level / floorCount));
+	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         e.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
         e.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	e.hp = e.hp + Math.round(50 * floorBonus * (player.level / floorCount));
+	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(50 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         e.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
         e.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
     ];
 } else {
-	e.hp = e.hp + Math.round(30 * floorBonus * (player.level / floorCount));
+	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         e.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         e.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
