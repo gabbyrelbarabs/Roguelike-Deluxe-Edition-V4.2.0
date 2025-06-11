@@ -935,6 +935,12 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         expReward: [5, 8],
         moneyReward: [5, 8],
       }, {
+        name: "Werewolf",
+        hp: 70,
+        damageRange: [5, 9],
+        expReward: [5, 8],
+        moneyReward: [5, 8],
+      }, {
         name: "Dire Bear",
         hp: 80,
         damageRange: [10, 15],
@@ -2267,7 +2273,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Monster Crow", "Bull", "Dire Wolf", "Dire Bear", "Goblin", "Hobgoblin"];
             break;
           case "Zombie Mutant":
-            allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider"];
+            allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Werewolf"];
             break;
 		  case "Giant Cyclops, Eater of Men":
             allowed = ["Zombie", "Skeleton", "Bull", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Hobgoblin"];
@@ -2279,7 +2285,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Skeleton", "Dire Wolf", "Snake", "Gorgon", "Hobgoblin", "Dire Bear", "Monster Crow"];
             break;
           case "Skeleton King":
-            allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor"];
+            allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor", "Werewolf"];
             break;
 		  case "The Minotaur":
             allowed = ["Zombie", "Bull", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor"];
@@ -2321,7 +2327,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Possessed Armor", "Skeleton"];
             break;
 		  case "Frost Queen, Borealis":
-            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Grand Knight"];
+            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Frost Knight", "Skeleton King"];
             break;
           case "Omegalodon":
             allowed = ["Piranha", "Shark"];
@@ -2381,7 +2387,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Hobgoblin", "Gorgon", "Mutant Zombie", "Skeleton", "Titan Golem", "Monster Crow", "Dire Wolf", "Ghoul", "Possessed Armor", "Giant Spider", "Demon Bat"];
             break;
           case "Omni":
-            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon"];
+            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight"];
             break;
 		  case "The Black King":
             allowed = ["Ghoul"];
@@ -2396,7 +2402,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
             break;
           default:
-            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Frost Knight"];
+            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight"];
         }
         return enemies.filter(e => allowed.includes(e.name));
 	  }
