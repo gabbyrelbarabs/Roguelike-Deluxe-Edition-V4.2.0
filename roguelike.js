@@ -64,8 +64,8 @@ window.addEventListener("DOMContentLoaded", () => {
     insane:    "Too much difficulty, not fun. Not for the faint of heart.",
     calamity:  "Think you're so badass? Go for it.",
     bossRush:  "Slay Legend after Legend, Titan after Titan, God after God in this legendary game mode for the strong.",
-    ultimate:  "Peak.",
-    doom:      "Play DOOM in the form of Roguelike! Infinity.",
+    ultimate:  "Absolute Cinema.",
+    doom:      "Play DOOM in the form of Roguelike!",
   };
 
   Object.entries(diffTips).forEach(([key, tip]) => {
@@ -795,9 +795,11 @@ const activeAbilities = [
   { name: "Strike", chance: 8 },
   { name: "Blast", chance: 8 },
   { name: "Heal", chance: 7.5 },
+  { name: "Mesmerizing Voice", chance: 7.5 },
   { name: "Fireball", chance: 5 },
   { name: "Freeze", chance: 5 },
   { name: "Acid Spit", chance: 5 },
+  { name: "Thunderbolt", chance: 5 },
   { name: "Sacrifice", chance: 3 },
   { name: "Counter", chance: 2.5 },
   { name: "Maxima", chance: 1.5 },
@@ -898,6 +900,38 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         expReward: [2, 4],
         moneyReward: [5, 6]
       }, {
+        name: "Ogre",
+        hp: 40,
+        damageRange: [10, 12],
+        expReward: [2, 4],
+        moneyReward: [5, 6]
+      }, {
+        name: "Ogre Mage",
+        hp: 35,
+        damageRange: [12, 15],
+        expReward: [2, 4],
+        moneyReward: [5, 6], 
+		reductionMagic: 0.33,
+      }, {
+        name: "Orc",
+        hp: 30,
+        damageRange: [8, 10],
+        expReward: [2, 4],
+        moneyReward: [5, 6]
+      }, {
+        name: "Orc Berserker",
+        hp: 40,
+        damageRange: [10, 12],
+        expReward: [2, 4],
+        moneyReward: [5, 6]
+      }, {
+        name: "High Orc",
+        hp: 50,
+        damageRange: [12, 16],
+        expReward: [2, 4],
+        moneyReward: [5, 6], 
+		reductionMagic: 0.33,
+      }, {
         name: "Wolf",
         hp: 30,
         damageRange: [5, 8],
@@ -982,6 +1016,38 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         expReward: [3, 5],
         moneyReward: [3, 5]
       }, {
+        name: "Ant Swarm",
+        hp: 1,
+        damageRange: [50, 100],
+        expReward: [3, 6],
+        moneyReward: [4, 6]
+      }, {
+        name: "Giant Worker Ant",
+        hp: 35,
+        damageRange: [8, 9],
+        expReward: [4, 6],
+        moneyReward: [5, 7]
+      }, {
+        name: "Giant Warrior Ant",
+        hp: 50,
+        damageRange: [10, 12],
+        expReward: [5, 7],
+        moneyReward: [6, 7]
+      }, {
+        name: "Giant Drone Ant",
+        hp: 70,
+        damageRange: [6, 8],
+        expReward: [5, 6],
+        moneyReward: [5, 10], 
+		reductionAll: 0.25,
+      }, {
+        name: "Giant Black Ant",
+        hp: 80,
+        damageRange: [10, 15],
+        expReward: [6, 9],
+        moneyReward: [6, 9],
+		reductionAll: 0.33,
+      }, {
         name: "Demon Bat",
         hp: 15,
         damageRange: [3, 5],
@@ -993,7 +1059,39 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         hp: 40,
         damageRange: [4, 6],
         expReward: [4, 6],
-        moneyReward: [3, 6]
+        moneyReward: [3, 6],
+		reductionAttack: 0.33,
+      }, {
+        name: "Crab",
+        hp: 20,
+        damageRange: [3, 5],
+        expReward: [3, 5],
+        moneyReward: [3, 5]
+      }, {
+        name: "Iron Crab",
+        hp: 40,
+        damageRange: [4, 5],
+        expReward: [3, 5],
+        moneyReward: [4, 5],
+		reductionAll: 0.33,
+      }, {
+        name: "Giant Crab",
+        hp: 60,
+        damageRange: [3, 5],
+        expReward: [3, 5],
+        moneyReward: [3, 5]
+      }, {
+        name: "King Crab",
+        hp: 50,
+        damageRange: [4, 6],
+        expReward: [3, 5],
+        moneyReward: [4, 6]
+      }, {
+        name: "Spider Crab",
+        hp: 15,
+        damageRange: [4, 8],
+        expReward: [3, 5],
+        moneyReward: [3, 5]
       }, {
         name: "Piranha",
         hp: 15,
@@ -1323,7 +1421,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   damageRange: [30, 40],
   expReward: [60, 60],
   moneyReward: [80, 80]
-},
+  },
 {
   name: "Giant Cyclops, Eater of Men",
   hp: 300,
@@ -1332,12 +1430,28 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   moneyReward: [60, 60]
 },
 {
+  name: "Orc Lord",
+  hp: 350,
+  damageRange: [35, 40],
+  expReward: [65, 65],
+  moneyReward: [65, 65],
+  reductionAttack: 0.33,
+},
+{
   name: "Medusa, Lady of Stone",
   hp: 250,
   damageRange: [30, 40],
   expReward: [70, 70],
   moneyReward: [70, 70],
   reductionAttack: 0.5
+},
+{
+  name: "Ogre King",
+  hp: 420,
+  damageRange: [40, 45],
+  expReward: [70, 70],
+  moneyReward: [70, 70],
+  reductionMagic: 0.33,
 },
 {
   name: "The Minotaur",
@@ -1404,6 +1518,21 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   reductionAttack: 0.5
 },
 {
+  name: "Queen Ant",
+  hp: 500,
+  damageRange: [30, 40],
+  expReward: [60, 60],
+  moneyReward: [60, 60]
+},
+{
+  name: "Ant King, Beru",
+  hp: 800,
+  damageRange: [40, 50],
+  expReward: [60, 60],
+  moneyReward: [60, 60],
+  reductionAll: 0.33,
+},
+{
   name: "Seraphim",
   hp: 420,
   damageRange: [40, 45],
@@ -1435,6 +1564,37 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   moneyReward: [70, 70],
   reductionAll: 0.33
 },
+{
+  name: "Kraken",
+  hp: 450,
+  damageRange: [25, 35],
+  expReward: [60, 60],
+  moneyReward: [60, 60],
+  reductionAttack: 0.33,
+},
+{
+  name: "Crab God, Khaos",
+  hp: 400,
+  damageRange: [30, 40],
+  expReward: [60, 60],
+  moneyReward: [60, 60]
+},
+{
+  name: "Ghost Leviathan",
+  hp: 600,
+  damageRange: [30, 35],
+  expReward: [60, 60],
+  moneyReward: [60, 60],
+  reductionAll: 0.33,
+},
+{
+  name: "Island Turtle",
+  hp: 850,
+  damageRange: [25, 30],
+  expReward: [60, 60],
+  moneyReward: [60, 60],
+  reductionAll: 0.25,
+},
   {
     name: "The King of Curses",
     hp: 600,
@@ -1449,7 +1609,8 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
     damageRange: [35, 50],
     expReward: [90, 90],
     moneyReward: [90, 90],
-    reductionAttack: 0.5,
+    reductionAttack: 0.33,
+	reductionMagic: 0.67,
   },
   {
     name: "Guardian of Hell, Cerberus",
@@ -1525,7 +1686,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           6: {
             name: "Zombie Mutant",
             hp: 1000,
-            damageRange: [12, 27],
+            damageRange: [10, 20],
             expReward: [70, 70],
             moneyReward: [70, 70],
 			reductionMagic: 0.5,
@@ -1533,15 +1694,15 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           9: {
             name: "Giant Lord",
             hp: 3600,
-            damageRange: [15, 32],
+            damageRange: [10, 15],
             expReward: [100, 100],
             moneyReward: [100, 100],
             reductionAttack: 0.5,
           },
           12: {
             name: "Skeleton King",
-            hp: 1600,
-            damageRange: [20, 40],
+            hp: 1500,
+            damageRange: [15, 20],
             expReward: [120, 120],
             moneyReward: [120, 120],
 			reductionAttack: 0.5,
@@ -1549,22 +1710,22 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           15: {
             name: "Spider Queen",
             hp: 2100,
-            damageRange: [23, 47],
+            damageRange: [15, 25],
             expReward: [150, 150],
             moneyReward: [150, 150]
           },
           18: {
             name: "The Witch",
             hp: 2000,
-            damageRange: [37, 75],
+            damageRange: [20, 35],
             expReward: [180, 180],
             moneyReward: [180, 180],
             reductionMagic: 0.5,
           },
           21: {
             name: "Titan Golem",
-            hp: 8000,
-            damageRange: [37, 60],
+            hp: 7500,
+            damageRange: [20, 30],
             expReward: [210, 210],
             moneyReward: [210, 210],
             reductionAll: 0.33,
@@ -1572,7 +1733,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           24: {
             name: "Wyvern",
             hp: 9000,
-            damageRange: [37, 70],
+            damageRange: [25, 40],
             expReward: [240, 240],
             moneyReward: [240, 240],
 			reductionAttack: 0.5,
@@ -1580,28 +1741,28 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           27: {
             name: "Giant Sandworm",
             hp: 6500,
-            damageRange: [45, 75],
+            damageRange: [20, 30],
             expReward: [250, 250],
             moneyReward: [250, 250]
           },
           30: {
             name: "Titanoboa Lord",
             hp: 7000,
-            damageRange: [45, 75],
+            damageRange: [25, 35],
             expReward: [280, 280],
             moneyReward: [280, 280]
           },
           33: {
             name: "Abominable Snowman",
             hp: 7500,
-            damageRange: [53, 90],
+            damageRange: [30, 40],
             expReward: [300, 300],
             moneyReward: [300, 300]
           },
           36: {
             name: "Omegalodon",
             hp: 8500,
-            damageRange: [37, 90],
+            damageRange: [30, 35],
             expReward: [320, 320],
             moneyReward: [320, 320],
             reductionAttack: 0.5,
@@ -1609,7 +1770,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           39: {
             name: "Leviathan",
             hp: 11000,
-            damageRange: [45, 105],
+            damageRange: [35, 45],
             expReward: [360, 360],
             moneyReward: [360, 360],
             reductionAttack: 0.33,
@@ -1617,7 +1778,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           42: {
             name: "Angel",
             hp: 8900,
-            damageRange: [45, 113],
+            damageRange: [50, 60],
             expReward: [400, 400],
             moneyReward: [400, 400],
             reductionMagic: 0.5,
@@ -1625,7 +1786,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           45: {
             name: "Mega Meta Mecha Annihilator - Model: Ultima",
             hp: 12000,
-            damageRange: [60, 120],
+            damageRange: [45, 55],
             expReward: [420, 420],
             moneyReward: [500, 500],
 			reductionAttack: 0.5,
@@ -1633,7 +1794,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           48: {
             name: "Grand Knight",
             hp: 11500,
-            damageRange: [45, 113],
+            damageRange: [50, 65],
             expReward: [480, 480],
             moneyReward: [480, 480],
             reductionAll: 0.33,
@@ -1641,7 +1802,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           51: {
             name: "Six-Eyed Calamity",
             hp: 10000,
-            damageRange: [68, 135],
+            damageRange: [60, 75],
             expReward: [600, 600],
             moneyReward: [560, 560],
             reductionAll: 0.33,
@@ -1649,7 +1810,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           54: {
             name: "Hydra",
             hp: 12000,
-            damageRange: [80, 135],
+            damageRange: [55, 75],
             expReward: [900, 900],
             moneyReward: [800, 800],
 			reductionAttack: 0.5,
@@ -1657,7 +1818,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           57: {
             name: "Guardian of Hell, Cerberus",
             hp: 12500,
-            damageRange: [45, 75],
+            damageRange: [40, 65],
             expReward: [500, 500],
             moneyReward: [800, 800],
 			reductionMagic: 0.33,
@@ -1665,7 +1826,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           60: {
             name: "Demon King",
             hp: 16000,
-            damageRange: [60, 105],
+            damageRange: [60, 80],
             expReward: [800, 800],
             moneyReward: [850, 850],
 			reductionMagic: 0.5,
@@ -1673,7 +1834,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 		  63: {
             name: "Omni",
             hp: 20000,
-            damageRange: [56, 113],
+            damageRange: [69, 96],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionAttack: 0.5,
@@ -1682,131 +1843,155 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 		  66: {
             name: "Goblin Emperor",
             hp: 15000,
-            damageRange: [45, 70],
-            expReward: [60, 60],
-            moneyReward: [60, 60]
+            damageRange: [45, 60],
+            expReward: [100, 100],
+            moneyReward: [100, 100]
           },
           69: {
             name: "Giant Cyclops, Eater of Men",
             hp: 16500,
-            damageRange: [60, 113],
+            damageRange: [50, 65],
             expReward: [150, 150],
             moneyReward: [150, 150],
           },
-          72: {
-            name: "Medusa, Lady of Stone",
-            hp: 16000,
-            damageRange: [90, 113],
+		  72: {
+            name: "Orc Lord",
+            hp: 20000,
+            damageRange: [55, 70],
             expReward: [200, 200],
             moneyReward: [200, 200],
-            reductionAttack: 0.5,
+			reductionAttack: 0.33,
           },
           75: {
-            name: "The Minotaur",
-            hp: 18000,
-            damageRange: [60, 120],
+            name: "Medusa, Lady of Stone",
+            hp: 17500,
+            damageRange: [70, 90],
             expReward: [250, 250],
             moneyReward: [250, 250],
-			reductionMagic: 0.5,
+            reductionAttack: 0.5,
           },
-          78: {
-            name: "Arachni Empress",
-            hp: 19500,
-            damageRange: [70, 105],
+		  78: {
+            name: "Ogre King",
+            hp: 25000,
+            damageRange: [60, 70],
             expReward: [300, 300],
             moneyReward: [300, 300],
-			reductionAttack: 0.5,
+			reductioMagic: 0.33,
           },
           81: {
-            name: "Grand Sorceress",
-            hp: 18000,
-            damageRange: [75, 120],
-            expReward: [360, 360],
-            moneyReward: [360, 360],
-            reductionMagic: 1,
+            name: "The Minotaur",
+            hp: 26000,
+            damageRange: [60, 75],
+            expReward: [350, 350],
+            moneyReward: [350, 350],
+			reductionMagic: 0.5,
           },
           84: {
-            name: "Primordial Automaton",
-            hp: 32000,
-            damageRange: [60, 105],
-            expReward: [400, 400],
-            moneyReward: [400, 400],
-            reductionAll: 0.5,
+            name: "Arachni Empress",
+            hp: 19500,
+            damageRange: [70, 90],
+            expReward: [360, 360],
+            moneyReward: [360, 360],
+			reductionAttack: 0.5,
           },
           87: {
+            name: "Grand Sorceress",
+            hp: 18000,
+            damageRange: [80, 105],
+            expReward: [400, 400],
+            moneyReward: [400, 400],
+            reductionMagic: 1,
+          },
+          90: {
+            name: "Primordial Automaton",
+            hp: 32000,
+            damageRange: [60, 75],
+            expReward: [420, 420],
+            moneyReward: [420, 420],
+            reductionAll: 0.5,
+          },
+          93: {
             name: "Dragon King",
             hp: 36000,
-            damageRange: [80, 160],
+            damageRange: [75, 110],
             expReward: [450, 450],
             moneyReward: [420, 420],
 			reductionAttack: 0.67,
 			reductionMagic: 0.33,
           },
-          90: {
+          96: {
             name: "Devourer of Worlds",
             hp: 34000,
-            damageRange: [75, 113],
+            damageRange: [60, 70],
             expReward: [480, 480],
             moneyReward: [450, 450],
 			reductionAll: 0.33,
           },
-          93: {
-            name: "The World Serpent, Jörmungandr",
-            hp: 37000,
-            damageRange: [70, 100],
-            expReward: [500, 500],
-            moneyReward: [500, 500],
-			reductionAll: 0.5,
-          },
-          96: {
+          99: {
             name: "Frost Queen, Borealis",
-            hp: 35500,
-            damageRange: [100, 150],
+            hp: 30000,
+            damageRange: [80, 120],
             expReward: [600, 600],
             moneyReward: [600, 600],
 			reductionMagic: 0.5,
           },
-          99: {
+          102: {
             name: "Charybdis",
             hp: 38000,
-            damageRange: [70, 105],
+            damageRange: [60, 75],
             expReward: [640, 640],
             moneyReward: [640, 640],
             reductionAttack: 0.5,
           },
-          102: {
+		  105: {
+            name: "Queen Ant",
+            hp: 40000,
+            damageRange: [50, 65],
+            expReward: [600, 600],
+            moneyReward: [600, 600],
+            reductionMagic: 0.5,
+          },
+		  108: {
+            name: "Ant King, Beru",
+            hp: 50000,
+            damageRange: [90, 120],
+            expReward: [640, 640],
+            moneyReward: [640, 640],
+            reductionAll: 0.33,
+          },
+          111: {
             name: "Seraphim",
             hp: 38500,
-            damageRange: [90, 120],
+            damageRange: [95, 130],
             expReward: [690, 690],
             moneyReward: [650, 650],
-            reductionMagic: 1,
+            reductionMagic: 0.67,
+			reductionAttack: 0.25,
           },
-          105: {
+          114: {
             name: "Mega Meta Mecha Annihilator - Model: Grande",
             hp: 45000,
-            damageRange: [75, 135],
+            damageRange: [70, 95],
             expReward: [700, 700],
             moneyReward: [700, 700],
-			reductionAttack: 1,
+			reductionAttack: 0.67,
           },
-          108: {
+          117: {
             name: "Grand Knight II",
             hp: 52000,
-            damageRange: [90, 143],
+            damageRange: [75, 100],
             expReward: [720, 720],
             moneyReward: [720, 720],
             reductionAll: 0.4,
           },
-          111: {
+          120: {
             name: "The King of Curses",
             hp: 50000,
-            damageRange: [90, 160],
+            damageRange: [90, 140],
             expReward: [690, 690],
-            moneyReward: [420, 420],
-            reductionAll: 0.25,
+            moneyReward: [420, 420]
 		  },
-          114: {
+          123: {
             name: "The Restricted One, Kyojiro Allista",
             hp: 75000,
             damageRange: [75, 150],
@@ -1814,57 +1999,96 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             moneyReward: [0, 0],
 			reductionAll: 0.2,
           },
-		  117: {
+		  126: {
             name: "The Brazen Bull, Khalkotauri",
             hp: 60000,
-            damageRange: [60, 90],
+            damageRange: [60, 85],
             expReward: [500, 500],
             moneyReward: [500, 500],
 			reductionAll: 0.33,
           },
-          120: {
+		  129: {
+            name: "Kraken",
+            hp: 65000,
+            damageRange: [65, 100],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAttack: 0.33,
+          },
+		  132: {
+            name: "Crab God, Khaos",
+            hp: 65500,
+            damageRange: [70, 90],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+          },
+		  135: {
+            name: "Ghost Leviathan",
+            hp: 75000,
+            damageRange: [65, 80],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.33,
+          },
+		  138: {
+            name: "Island Turtle",
+            hp: 85500,
+            damageRange: [60, 90],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.25,
+          },
+		  141: {
+            name: "The World Serpent, Jörmungandr",
+            hp: 100000,
+            damageRange: [60, 80],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.33,
+          },
+          144: {
             name: "The Behemoth",
             hp: 65500,
-            damageRange: [45, 75],
+            damageRange: [70, 95],
             expReward: [500, 500],
             moneyReward: [800, 800],
 			reductionMagic: 0.33,
           },
-          123: {
+          147: {
             name: "Demon God",
-            hp: 80000,
-            damageRange: [70, 110],
+            hp: 90000,
+            damageRange: [75, 115],
             expReward: [800, 800],
             moneyReward: [850, 850],
 			reductionAttack: 0.33,
 			reductionMagic: 0.5,
           },
-		  126: {
+		  150: {
             name: "The Black King",
-            hp: 90000,
+            hp: 100000,
             damageRange: [70, 130],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionAttack: 0.25,
 			reductionMagic: 1,
           },
-		  129: {
+		  153: {
             name: "Supreme Witch, Calamitas",
-            hp: 85000,
+            hp: 95000,
             damageRange: [120, 180],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionMagic: 1,
           },
-		  132: {
+		  156: {
             name: "Warden Of Judgement, Will, And Balance",
-            hp: 120000,
+            hp: 125000,
             damageRange: [75, 150],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionAll: 0.5,
           },
-		  135: {
+		  159: {
             name: "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel",
             hp: 200000,
             damageRange: [80, 160],
@@ -1896,7 +2120,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           40: {
             name: "Zombie Mutant",
             hp: 1000,
-            damageRange: [12, 27],
+            damageRange: [15, 25],
             expReward: [70, 70],
             moneyReward: [70, 70],
 			reductionMagic: 0.5,
@@ -1904,30 +2128,30 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           60: {
             name: "Giant Lord",
             hp: 3600,
-            damageRange: [15, 32],
+            damageRange: [10, 20],
             expReward: [100, 100],
             moneyReward: [100, 100],
             reductionAttack: 0.5,
           },
           80: {
             name: "Skeleton King",
-            hp: 1800,
-            damageRange: [20, 40],
+            hp: 1500,
+            damageRange: [20, 30],
             expReward: [120, 120],
             moneyReward: [120, 120],
 			reductionAttack: 0.5,
           },
           100: {
             name: "Spider Queen",
-            hp: 2300,
-            damageRange: [23, 47],
+            hp: 2100,
+            damageRange: [20, 35],
             expReward: [150, 150],
             moneyReward: [150, 150]
           },
           120: {
             name: "The Witch",
             hp: 2000,
-            damageRange: [37, 75],
+            damageRange: [40, 60],
             expReward: [180, 180],
             moneyReward: [180, 180],
             reductionMagic: 0.5,
@@ -1935,44 +2159,44 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           140: {
             name: "Titan Golem",
             hp: 8000,
-            damageRange: [37, 60],
+            damageRange: [20, 30],
             expReward: [210, 210],
             moneyReward: [210, 210],
             reductionAll: 0.33,
           },
           160: {
             name: "Wyvern",
-            hp: 9000,
-            damageRange: [37, 70],
+            hp: 9500,
+            damageRange: [35, 70],
             expReward: [240, 240],
             moneyReward: [240, 240],
 			reductionAttack: 0.5,
           },
           180: {
             name: "Giant Sandworm",
-            hp: 6900,
-            damageRange: [45, 75],
+            hp: 7000,
+            damageRange: [35, 60],
             expReward: [250, 250],
             moneyReward: [250, 250]
           },
           200: {
             name: "Titanoboa Lord",
-            hp: 7500,
-            damageRange: [45, 75],
+            hp: 8000,
+            damageRange: [40, 65],
             expReward: [280, 280],
             moneyReward: [280, 280]
           },
           220: {
             name: "Abominable Snowman",
-            hp: 8200,
-            damageRange: [53, 90],
+            hp: 7500,
+            damageRange: [50, 75],
             expReward: [300, 300],
             moneyReward: [300, 300]
           },
           240: {
             name: "Omegalodon",
-            hp: 8900,
-            damageRange: [37, 90],
+            hp: 9000,
+            damageRange: [45, 60],
             expReward: [320, 320],
             moneyReward: [320, 320],
             reductionAttack: 0.5,
@@ -1980,15 +2204,15 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           260: {
             name: "Leviathan",
             hp: 12000,
-            damageRange: [45, 105],
+            damageRange: [50, 65],
             expReward: [360, 360],
             moneyReward: [360, 360],
             reductionAttack: 0.33,
           },
           280: {
             name: "Angel",
-            hp: 9200,
-            damageRange: [45, 113],
+            hp: 9000,
+            damageRange: [60, 90],
             expReward: [400, 400],
             moneyReward: [400, 400],
             reductionMagic: 0.5,
@@ -1996,55 +2220,55 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           300: {
             name: "Mega Meta Mecha Annihilator - Model: Ultima",
             hp: 12500,
-            damageRange: [60, 120],
+            damageRange: [50, 75],
             expReward: [420, 420],
             moneyReward: [500, 500],
 			reductionAttack: 0.5,
           },
           320: {
             name: "Grand Knight",
-            hp: 13000,
-            damageRange: [45, 113],
+            hp: 12000,
+            damageRange: [60, 90],
             expReward: [480, 480],
             moneyReward: [480, 480],
             reductionAll: 0.33,
           },
           340: {
             name: "Six-Eyed Calamity",
-            hp: 11500,
-            damageRange: [68, 135],
+            hp: 10000,
+            damageRange: [90, 125],
             expReward: [600, 600],
             moneyReward: [560, 560],
             reductionAll: 0.33,
 		  },
           360: {
             name: "Hydra",
-            hp: 14500,
-            damageRange: [80, 135],
+            hp: 12000,
+            damageRange: [80, 120],
             expReward: [900, 900],
             moneyReward: [800, 800],
 			reductionAttack: 0.5,
           },
           380: {
             name: "Guardian of Hell, Cerberus",
-            hp: 13300,
-            damageRange: [45, 75],
+            hp: 12500,
+            damageRange: [60, 95],
             expReward: [500, 500],
             moneyReward: [800, 800],
 			reductionMagic: 0.33,
           },
           400: {
             name: "Demon King",
-            hp: 18000,
-            damageRange: [60, 105],
+            hp: 16000,
+            damageRange: [85, 120],
             expReward: [800, 800],
             moneyReward: [850, 850],
 			reductionMagic: 0.5,
           },
 		  420: {
             name: "Omni",
-            hp: 25000,
-            damageRange: [56, 113],
+            hp: 20000,
+            damageRange: [90, 130],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionAttack: 0.5,
@@ -2052,132 +2276,156 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
           },
 		  440: {
             name: "Goblin Emperor",
-            hp: 18000,
-            damageRange: [45, 70],
-            expReward: [60, 60],
-            moneyReward: [60, 60]
+            hp: 15000,
+            damageRange: [60, 80],
+            expReward: [100, 100],
+            moneyReward: [100, 100]
           },
           460: {
             name: "Giant Cyclops, Eater of Men",
-            hp: 20000,
-            damageRange: [60, 113],
+            hp: 16500,
+            damageRange: [65, 90],
             expReward: [150, 150],
             moneyReward: [150, 150],
           },
-          480: {
-            name: "Medusa, Lady of Stone",
-            hp: 19000,
-            damageRange: [90, 113],
+		  480: {
+            name: "Orc Lord",
+            hp: 20000,
+            damageRange: [60, 85],
             expReward: [200, 200],
             moneyReward: [200, 200],
-            reductionAttack: 0.5,
+			reductionAttack: 0.33,
           },
           500: {
-            name: "The Minotaur",
-            hp: 20500,
-            damageRange: [60, 120],
+            name: "Medusa, Lady of Stone",
+            hp: 17500,
+            damageRange: [90, 115],
             expReward: [250, 250],
             moneyReward: [250, 250],
-			reductionMagic: 0.5,
+            reductionAttack: 0.5,
           },
-          520: {
-            name: "Arachni Empress",
-            hp: 21000,
-            damageRange: [70, 105],
+		  520: {
+            name: "Ogre King",
+            hp: 25000,
+            damageRange: [70, 90],
             expReward: [300, 300],
             moneyReward: [300, 300],
-			reductionAttack: 0.5,
+			reductionMagic: 0.33,
           },
           540: {
-            name: "Grand Sorceress",
-            hp: 19500,
-            damageRange: [75, 120],
-            expReward: [360, 360],
-            moneyReward: [360, 360],
-            reductionMagic: 1,
+            name: "The Minotaur",
+            hp: 26000,
+            damageRange: [70, 100],
+            expReward: [350, 350],
+            moneyReward: [350, 350],
+			reductionMagic: 0.5,
           },
           560: {
-            name: "Primordial Automaton",
-            hp: 35000,
-            damageRange: [60, 105],
-            expReward: [400, 400],
-            moneyReward: [400, 400],
-            reductionAll: 0.5,
+            name: "Arachni Empress",
+            hp: 19500,
+            damageRange: [75, 110],
+            expReward: [360, 360],
+            moneyReward: [360, 360],
+			reductionAttack: 0.5,
           },
           580: {
+            name: "Grand Sorceress",
+            hp: 18000,
+            damageRange: [100, 125],
+            expReward: [400, 400],
+            moneyReward: [400, 400],
+            reductionMagic: 1,
+          },
+          600: {
+            name: "Primordial Automaton",
+            hp: 32000,
+            damageRange: [90, 110],
+            expReward: [420, 420],
+            moneyReward: [420, 420],
+            reductionAll: 0.5,
+          },
+          620: {
             name: "Dragon King",
             hp: 36000,
-            damageRange: [80, 160],
+            damageRange: [100, 120],
             expReward: [450, 450],
             moneyReward: [420, 420],
 			reductionAttack: 0.67,
 			reductionMagic: 0.33,
           },
-          600: {
+          640: {
             name: "Devourer of Worlds",
             hp: 34000,
-            damageRange: [75, 113],
+            damageRange: [80, 90],
             expReward: [480, 480],
             moneyReward: [450, 450],
 			reductionAll: 0.33,
           },
-          620: {
-            name: "The World Serpent, Jörmungandr",
-            hp: 38000,
-            damageRange: [70, 100],
-            expReward: [500, 500],
-            moneyReward: [500, 500],
-			reductionAll: 0.5,
-          },
-          640: {
+          660: {
             name: "Frost Queen, Borealis",
-            hp: 36000,
-            damageRange: [100, 150],
+            hp: 30000,
+            damageRange: [100, 140],
             expReward: [600, 600],
             moneyReward: [600, 600],
 			reductionMagic: 0.5,
           },
-          660: {
+          680: {
             name: "Charybdis",
-            hp: 40000,
-            damageRange: [70, 105],
+            hp: 38000,
+            damageRange: [70, 95],
             expReward: [640, 640],
             moneyReward: [640, 640],
             reductionAttack: 0.5,
           },
-          680: {
+		  700: {
+            name: "Queen Ant",
+            hp: 40000,
+            damageRange: [60, 90],
+            expReward: [600, 600],
+            moneyReward: [600, 600],
+            reductionMagic: 0.5,
+          },
+		  720: {
+            name: "Ant King, Beru",
+            hp: 50000,
+            damageRange: [95, 130],
+            expReward: [640, 640],
+            moneyReward: [640, 640],
+            reductionAll: 0.33,
+          },
+          740: {
             name: "Seraphim",
-            hp: 39000,
-            damageRange: [90, 120],
+            hp: 38500,
+            damageRange: [100, 150],
             expReward: [690, 690],
             moneyReward: [650, 650],
-            reductionMagic: 1,
+            reductionMagic: 0.67,
+			reductionAttack: 0.25,
           },
-          700: {
+          760: {
             name: "Mega Meta Mecha Annihilator - Model: Grande",
             hp: 45000,
-            damageRange: [75, 135],
+            damageRange: [90, 120],
             expReward: [700, 700],
             moneyReward: [700, 700],
-			reductionAttack: 1,
+			reductionAttack: 0.67,
           },
-          720: {
+          780: {
             name: "Grand Knight II",
             hp: 52000,
-            damageRange: [90, 143],
+            damageRange: [90, 125],
             expReward: [720, 720],
             moneyReward: [720, 720],
             reductionAll: 0.4,
           },
-          740: {
+          800: {
             name: "The King of Curses",
             hp: 50000,
-            damageRange: [90, 160],
+            damageRange: [120, 160],
             expReward: [690, 690],
-            moneyReward: [420, 420],
-            reductionAll: 0.25,
+            moneyReward: [420, 420]
 		  },
-          760: {
+          820: {
             name: "The Restricted One, Kyojiro Allista",
             hp: 75000,
             damageRange: [75, 150],
@@ -2185,49 +2433,88 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             moneyReward: [0, 0],
 			reductionAll: 0.2,
           },
-		  780: {
+		  840: {
             name: "The Brazen Bull, Khalkotauri",
-            hp: 64000,
-            damageRange: [60, 90],
+            hp: 60000,
+            damageRange: [75, 100],
             expReward: [500, 500],
             moneyReward: [500, 500],
 			reductionAll: 0.33,
           },
-          800: {
+		  860: {
+            name: "Kraken",
+            hp: 65000,
+            damageRange: [80, 115],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAttack: 0.33,
+          },
+		  880: {
+            name: "Crab God, Khaos",
+            hp: 65500,
+            damageRange: [75, 100],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+          },
+		  900: {
+            name: "Ghost Leviathan",
+            hp: 75000,
+            damageRange: [80, 110],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.33,
+          },
+		  920: {
+            name: "Island Turtle",
+            hp: 85500,
+            damageRange: [75, 100],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.25,
+          },
+		  940: {
+            name: "The World Serpent, Jörmungandr",
+            hp: 100000,
+            damageRange: [80, 105],
+            expReward: [500, 500],
+            moneyReward: [500, 500],
+			reductionAll: 0.33,
+          },
+          960: {
             name: "The Behemoth",
-            hp: 69000,
-            damageRange: [45, 75],
+            hp: 65500,
+            damageRange: [90, 120],
             expReward: [500, 500],
             moneyReward: [800, 800],
 			reductionMagic: 0.33,
           },
-          820: {
+          980: {
             name: "Demon God",
-            hp: 84000,
-            damageRange: [70, 110],
+            hp: 90000,
+            damageRange: [120, 150],
             expReward: [800, 800],
             moneyReward: [850, 850],
 			reductionAttack: 0.33,
 			reductionMagic: 0.5,
           },
-		  840: {
+		  1000: {
             name: "The Black King",
-            hp: 96000,
-            damageRange: [70, 130],
+            hp: 100000,
+            damageRange: [100, 180],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionAttack: 0.25,
 			reductionMagic: 1,
           },
-		  860: {
+		  1020: {
             name: "Supreme Witch, Calamitas",
-            hp: 85000,
+            hp: 95000,
             damageRange: [120, 180],
             expReward: [1000, 1000],
             moneyReward: [1000, 1000],
 			reductionMagic: 1,
           },
-		  880: {
+		  1040: {
             name: "Warden Of Judgement, Will, And Balance",
             hp: 125000,
             damageRange: [75, 150],
@@ -2235,7 +2522,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             moneyReward: [1000, 1000],
 			reductionAll: 0.5,
           },
-		  900: {
+		  1060: {
             name: "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel",
             hp: 200000,
             damageRange: [80, 160],
@@ -2272,6 +2559,12 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 		  case "Goblin Emperor":
             allowed = ["Monster Crow", "Bull", "Dire Wolf", "Dire Bear", "Goblin", "Hobgoblin"];
             break;
+		  case "Orc Lord":
+		    allowed = ["Orc", "Hobgoblin", "Dire Wolf", "Dire Bear", "Orc Berserker", "High Orc", "Snake", "Monster Crow"];
+			break;
+		  case "Ogre King":
+		    allowed = ["Ogre", "Ogre Mage", "Skeleton", "Skeleton King", "Golem", "Giant Spider", "Ghoul", "Zombie"];
+			break;
           case "Zombie Mutant":
             allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Werewolf"];
             break;
@@ -2321,13 +2614,13 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Sandworm", "Snake", "Goblin", "Golem", "Skeleton", "Giant Spider"];
             break;
 		  case "The World Serpent, Jörmungandr":
-            allowed = ["Giant Sandworm", "Titanoboa Lord", "Hobgoblin", "Titan Golem", "Golem", "Skeleton", "Giant Spider"];
+            allowed = ["Giant Sandworm", "Titanoboa Lord", "Hobgoblin", "Titan Golem", "Golem", "Skeleton", "Giant Spider", "Snake", "Piranha", "Shark"];
             break;
           case "Abominable Snowman":
             allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Possessed Armor", "Skeleton"];
             break;
 		  case "Frost Queen, Borealis":
-            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Frost Knight", "Skeleton King"];
+            allowed = ["Ice Golem", "Ice Spirit", "Snowman", "Frost Knight", "Skeleton King", "Skeleton"];
             break;
           case "Omegalodon":
             allowed = ["Piranha", "Shark"];
@@ -2338,6 +2631,24 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 		  case "Charybdis":
             allowed = ["Piranha", "Shark", "Omegalodon", "Giant Albatross"];
             break;
+		  case "Kraken":
+		    allowed = ["Piranha", "Shark", "Omegalodon", "Giant Albatross"];
+			break;
+		  case "Crab God, Khaos":
+		    allowed = ["Crab", "Iron Crab", "King Crab", "Giant Crab", "Spider Crab", "Giant Albatross", "Skeleton"];
+			break;
+		  case "Ghost Leviathan":
+		    allowed = ["Piranha", "Shark", "Omegalodon", "Giant Albatross", "Ghoul"];
+			break;
+		  case "Island Turtle":
+		    allowed = ["Crab", "Iron Crab", "King Crab", "Giant Crab", "Spider Crab", "Giant Albatross", "Piranha", "Shark", "Omegalodon", "Snake", "Skeleton", "Giant Spider", "Dire Wolf", "Dire Bear", "Bull"];
+			break;
+		  case "Queen Ant":
+			allowed = ["Skeleton", "Ant Swarm", "Giant Warrior Ant", "Giant Worker Ant", "Giant Drone Ant"];
+			break;
+		  case "Ant King, Beru":
+			allowed = ["Skeleton", "Ant Swarm", "Giant Warrior Ant", "Giant Worker Ant", "Giant Black Ant"];
+			break;
           case "Angel":
             allowed = ["Giant Albatross", "Vulture", "Ghoul", "Ice Spirit", "Monster Crow", "Demon Bat"];
             break;
@@ -2387,7 +2698,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Hobgoblin", "Gorgon", "Mutant Zombie", "Skeleton", "Titan Golem", "Monster Crow", "Dire Wolf", "Ghoul", "Possessed Armor", "Giant Spider", "Demon Bat"];
             break;
           case "Omni":
-            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight"];
+            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight", "Orc", "Orc Berserker", "High Orc", "Ogre", "Ogre Mage", "Ant Swarm", "Giant Worker Ant", "Giant Warrior Ant", "Giant Drone Ant", "Giant Black", "Crab", "Iron Crab", "Giant Crab", "King Crab", "Spider Crab"];
             break;
 		  case "The Black King":
             allowed = ["Ghoul"];
@@ -2399,7 +2710,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Angel", "Archdemon", "Possessed Armor", "Ghoul", "Seraphim"];
             break;
 		  case "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel":
-            allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
+            allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Queen Ant", "Ant King, Beru", "Orc Lord", "Ogre King", "Kraken", "Crab King", "Ghost Leviathan", "Island Turtle", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
             break;
           default:
             allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight"];
@@ -2432,7 +2743,7 @@ let shopItemsList = [
   },
   {
     name: "Rage Potion",
-    cost: 100,
+    cost: 150,
     type: "rage",
     category: "consumable",
     usableInBattle: true,
@@ -2452,7 +2763,7 @@ let shopItemsList = [
   },
   {
   name: "Frost Potion",
-  cost: 120,
+  cost: 150,
   type: "freeze",
     category: "consumable",
   usableInBattle: true,
@@ -2472,13 +2783,23 @@ let shopItemsList = [
   },
   {
     name: "Weaken Potion",
-    cost: 100,
+    cost: 150,
     type: "weaken",
     category: "consumable",
     usableInBattle: true,
     usableOutOfBattle: false,
     usageScope: "battle",
 	description: "Throw on a target to make them slower and weaker. DO NOT CONSUME.",
+  },
+  {
+    name: "Lullaby Potion",
+    cost: 150,
+    type: "asleep",
+    category: "consumable",
+    usableInBattle: true,
+    usableOutOfBattle: false,
+    usageScope: "battle",
+	description: "Use on a target to put them to sleep. DO NOT CONSUME.",
   },
   {
     name: "Iron Potion",
@@ -2489,6 +2810,16 @@ let shopItemsList = [
     usableOutOfBattle: false,
     usageScope: "battle",
 	description: "Increases a warrior's defense on consumption.",
+  },
+  {
+    name: "Shock Potion",
+    cost: 150,
+    type: "paralyzed",
+    category: "consumable",
+    usableInBattle: true,
+    usableOutOfBattle: false,
+    usageScope: "battle",
+	description: "Use on a target to shock and paralyze them. DO NOT CONSUME.",
   },
 
   // Equipment (must be equipped to work)
@@ -2807,6 +3138,16 @@ shopItemsList = [
     usableOutOfBattle: false,
     usageScope: "battle",
 	description: "Releases sleeping gas when thrown, weakening and putting enemies affected to sleep.",
+  },
+  {
+    name: "EMP Grenade",
+    cost: 200,
+    type: "paralyzed",
+    category: "consumable",
+    usableInBattle: true,
+    usableOutOfBattle: false,
+    usageScope: "battle",
+	description: "Releases powerful, electromagnetic pulses when thrown, shocking and paralyzing anything in the vicinity.",
   },
   {
     name: "Armor+",
@@ -4532,40 +4873,40 @@ function createMercenary() {
 	    let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(10 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(currentEnemy.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(currentEnemy.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(20 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        Math.ceil(currentEnemy.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(currentEnemy.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(currentEnemy.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(currentEnemy.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
-    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
+    currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(15 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        currentEnemy.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        currentEnemy.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        currentEnemy.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane" && gameDifficulty === "doom") {
-	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
+	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
-        currentEnemy.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        currentEnemy.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        currentEnemy.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(50 * floorBonus * (player.level / floorCount));
-    currentEnemy.damageRange = [
-        currentEnemy.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
-        currentEnemy.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
-    ];
-} else {
 	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
     currentEnemy.damageRange = [
         currentEnemy.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         currentEnemy.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
+    ];
+} else {
+	currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
+    currentEnemy.damageRange = [
+        currentEnemy.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
+        currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 }
         let rewardMultiplier = Math.pow(1.5, floorBonus);
@@ -4575,6 +4916,8 @@ if (gameDifficulty === "normal") {
 		currentEnemy.frozen = 0;
 		currentEnemy.burned = false;
         currentEnemy.weaken = false;
+		currentEnemy.paralyzed = false;
+		currentEnemy.asleep = 0;
         player.rage = false;
         player.iron = false;
         const minLv = Math.max(player.level - 3, 1);
@@ -4623,6 +4966,8 @@ if (gameDifficulty === "normal") {
 	  frozen:      0,
 	  burned:      false,
       weaken:      false,
+	  paralyzed:   false,
+	  asleep:      0,
       boss:        true,
     };
 
@@ -4687,12 +5032,26 @@ finalizeRoom(key);
 	  alert("You have entered a Boss Room... but wait, a Mysterious Man stands in your way.");
   } else if (currentEnemy === "Omni") {
 	  alert("You sense a powerful presence, be careful.");
+	  alert("''Greetings human, we finally meet. Shall we begin the test?''");
   } else if (currentEnemy === "Six-Eyed Calamity") {
 	  alert("Between the Heavens and the Earth, you can sense the Honoured One.");
   } else if (currentEnemy === "The King of Curses") {
 	  alert("The Strongest of the Heian era himself, Ryomen Sukuna, sits on a throne in front of you.");
+  } else if (currentEnemy === "Island Turtle") {
+	  alert("You reach the top of the island as you gaze at the magnificent view of the ocean around you, taking a breath of achievement.");
+	  alert("You take the moment to think that despite the chaotic state the world is in right now, beautiful things such as this still exist to make up for it.");
+	  alert("Suddenly, the ground below you shakes as you fall and tumble down the hill, right back to shore where you fortunately land back on your boat.");
+	  alert("You get back up and look up, as an enraged, gigantic turtle stares down at you.");
+  } else if (currentEnemy === "The World Serpent, Jörmungandr") {
+	  alert("You stop your boat to gaze at one hell of a sight. An enormous serpent, probably long enough to encircle the planet, resting right beside the river.");
+	  alert("You then freeze in place as you realize the serpent's head is right behind you, breathing on you. You turn to see it staring right down at you as it begins to move.");
+	  alert("It raises its head and roars, as it initiates a battle.");
+  } else if (currentEnemy === "Demon God") {
+	  alert("You finally find the Gates of Hell, the exit to this hellhole... literally. However, a huge, powerful entity stands in your way once more.");
+	  alert("The monster's presence is almost familiar, similar to that god you faced before, but you stand your ground as you prepare to battle once more.");
   } else if (currentEnemy === "The Black King") {
 	  alert("You get the feeling you are about to die... but you go anyway.");
+	  alert("You have entered a Boss Room. Be careful.");
   } else if (currentEnemy === "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel") {
 	  alert("After everything you've been through, it's finally time. All of your effort, your struggles, and your victories, has come to this one moment. Good luck, warrior.");
   } else {
@@ -4767,6 +5126,8 @@ finalizeRoom(key);
     currentEnemy.burned = false;
     currentEnemy.frozen = 0;
     currentEnemy.weaken = false;
+	currentEnemy.paralyzed = false;
+	currentEnemy.asleep = 0;
     currentEnemy.maxHp  = currentEnemy.hp;
 
     // Show battle UI
@@ -4795,40 +5156,40 @@ finalizeRoom(key);
   let bossData = getBossForFloor(floorCount);
   
   if (gameDifficulty === "normal") {
-    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.ceil(25 * floorBonus * (player.level / floorCount));
+    bossData.hp = bossData.hp + Math.ceil(25 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(bossData.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(bossData.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.ceil(30 * floorBonus * (player.level / floorCount));
+    bossData.hp = bossData.hp + Math.ceil(30 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        Math.ceil(bossData.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(bossData.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(bossData.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(bossData.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme") {
-    bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
+    bossData.hp = bossData.hp + Math.round(30 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        bossData.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        bossData.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        bossData.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        bossData.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane") {
-	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(35 * floorBonus * (player.level / floorCount));
+	bossData.hp = bossData.hp + Math.round(35 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
-        bossData.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        bossData.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        bossData.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        bossData.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(60 * floorBonus * (player.level / floorCount));
-    bossData.damageRange = [
-        bossData.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
-        bossData.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
-    ];
-} else {
-	bossData.hp = Math.ceil(bossData.hp * floorBonus) + Math.round(40 * floorBonus * (player.level / floorCount));
+	bossData.hp = bossData.hp + Math.round(60 * floorBonus * (player.level / floorCount));
     bossData.damageRange = [
         bossData.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         bossData.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
+    ];
+} else {
+	bossData.hp = bossData.hp + Math.round(40 * floorBonus * (player.level / floorCount));
+    bossData.damageRange = [
+        bossData.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
+        bossData.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 }
 
@@ -4903,40 +5264,40 @@ finalizeRoom(key);
 	let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
-    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(10 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(e.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(e.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "hard") {
-    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(20 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.ceil(15 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        Math.ceil(e.damageRange[0] + 3 * floorBonus * (player.level / floorCount)),
-        Math.ceil(e.damageRange[1] + 3 * floorBonus * (player.level / floorCount))
+        Math.ceil(e.damageRange[0] + 2 * floorBonus * (player.level / floorCount)),
+        Math.ceil(e.damageRange[1] + 2 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "extreme" && gameDifficulty === "doom") {
-    e.hp = Math.ceil(e.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
+    e.hp = Math.ceil(e.hp * floorBonus) + Math.round(15 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        e.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        e.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        e.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        e.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "insane") {
-	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
+	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(20 * floorBonus * (player.level / floorCount));
     e.damageRange = [
-        e.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
-        e.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
+        e.damageRange[0] + Math.round(3 * floorBonus * (player.level / floorCount)),
+        e.damageRange[1] + Math.round(3 * floorBonus * (player.level / floorCount))
     ];
 } else if (gameDifficulty === "ultimate") {
-	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(50 * floorBonus * (player.level / floorCount));
-    e.damageRange = [
-        e.damageRange[0] + Math.round(10 * floorBonus * (player.level / floorCount)),
-        e.damageRange[1] + Math.round(10 * floorBonus * (player.level / floorCount))
-    ];
-} else {
 	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(30 * floorBonus * (player.level / floorCount));
     e.damageRange = [
         e.damageRange[0] + Math.round(5 * floorBonus * (player.level / floorCount)),
         e.damageRange[1] + Math.round(5 * floorBonus * (player.level / floorCount))
+    ];
+} else {
+	e.hp = Math.ceil(e.hp * floorBonus) + Math.round(25 * floorBonus * (player.level / floorCount));
+    e.damageRange = [
+        e.damageRange[0] + Math.round(4 * floorBonus * (player.level / floorCount)),
+        e.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 }
 
@@ -4947,6 +5308,8 @@ if (gameDifficulty === "normal") {
 	e.burned = false;
 	e.frozen = 0;
     e.weaken = false;
+	e.paralyzed = false;
+	e.asleep = 0;
     ambushEnemiesQueue.push(e);
   }
 
@@ -4979,6 +5342,8 @@ function getEnemyByName(enemyName) {
 		if (currentEnemy.frozen) name += " - Frozen";
 		if (currentEnemy.burned) name += " - Burned";
         if (currentEnemy.weaken) name += " - Weakened";
+		if (currentEnemy.paralyzed) name += " - Paralyzed";
+		if (currentEnemy.asleep) name += " - Asleep";
         enemyInfo.innerHTML = `
 			<h3>${name}</h3>
 			<p class="enemy-level">Level ${currentEnemy.level}</p>
@@ -5012,14 +5377,33 @@ function getEnemyByName(enemyName) {
     preBattleStats = {};
   }
   
+  if (defeatedBoss === "Demon King") {
+	alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
+	alert("You stand pridefully on top of the Demon King's corpse as you become the hero and saviour of the world, when suddenly, a bright flash of light blinds you.");
+	alert("''Greetings human, congratulations on coming this far. Find me, and I shall finally test you for myself''.");
+  }
   if (defeatedBoss === "Omni") {
-    alert("You feel as if the world suddenly shifted.");
+    alert("As you land the finishing blow, you suddenly feel as if the world shifted... no, reality shifted. A bright flash of light then blinds you once again, as you realize you're back in a familiar place, but... it's different, somhow.");
+  }
+  if (defeatedBoss === "Abominable Snowman") {
+	alert("You find an ancient, abandoned port near the frozen shore. You explore it and find a boat. You meddle around and somehow got it to work as you then hop on and resume your journey, through the sea.");
+  }
+  if (defeatedBoss === "Leviathan") {
+	alert("You slay the beast, as you then resume your journey. Finally, you find land, but something's off...");
+  }
+  if (defeatedBoss === "Island Turtle") {
+	alert("The gigantic turtle roars and bellows as it falls, creating huge tsunamis as you struggle on your boat, eventually knocking you out.");
+	alert("You wake up on your boat in a daze. You look around as you realize you're now sailing on a river, inside a huge cave... sparkling with stars and galaxies around you?");
+  }
+  if (defeatedBoss === " The World Serpent, Jörmungandr") {
+	alert("You finally slay the enormous serpent, as your head suddenly begins to ache, causing you to fall unconscious once more.");
+	alert("You wake up and realize you've crashed your boat on some land. You get up and see a familiar gate of fire. You step in and face a familiar world once more.");
   }
   if (defeatedBoss === "The Black King") {
-	alert("You suddenly get a huge headache, but you shake it off... Reality is distorting.");
+	alert("You suddenly get a huge headache once again, but you shake it off... Reality is distorting.");
   }
   if (defeatedBoss === "Demon God") {
-	alert("The Gates of Hell collapses in front of you, as a domain of light suddenly appears inside. You step inside, as you get a gut-wrenching feeling that youre journey is about to end.");
+	alert("The Gates of Hell collapses in front of you, as a domain of light suddenly appears inside. You step inside, as you get a gut-wrenching feeling that your journey is about to end.");
   }
   if (defeatedBoss === "Warden Of Judgement, Will, And Balance") {
 	alert("Your entire body aches as you fall to the ground. But you get back up, as you start to get a positive feeling this time, that your journey is finally coming to an end.");
@@ -5493,6 +5877,22 @@ function dealPlayerMagicDamage(mult = 1) {
   if (currentEnemy.frozen === 0) logBattle(`${currentEnemy.name} defrosted!`);
   updateEnemyInfo();
   return;
+  }
+  
+  if (currentEnemy.asleep > 0) {
+  currentEnemy.asleep--;
+  logBattle(`${currentEnemy.name} is asleep!`);
+  if (currentEnemy.asleep === 0) logBattle(`${currentEnemy.name} woke up!`);
+  updateEnemyInfo();
+  return;
+  }
+  
+  if (currentEnemy.paralyzed) {
+	if (Math.random() < 0.33) {
+      logBattle(`${currentEnemy.name} is paralyzed and couldn't move!`);
+      updateEnemyInfo();
+      return;
+    }
   }
   
   const rawEnemyDamage = Math.round(enemyDamage);
@@ -6074,12 +6474,28 @@ function useActiveAbility() {
 	  updateEnemyInfo();
 	  break;
 	  
+	case "Thunderbolt":
+	  logBattle("<em>Shock. Strike. Ignite. Thunderbolt!</em>");
+	  dealPlayerMagicDamage(1);
+	  currentEnemy.paralyzed = true;
+	  logBattle(`${currentEnemy.name} was paralyzed and may be unable to move!`);
+	  updateEnemyInfo();
+	  break;
+	  
 	case "Freeze":
 	  logBattle("<em>Cold. Shiver. Silence. Freeze!</em>");
 	  dealPlayerMagicDamage(1);
 	  const freezeTurns = Math.floor(Math.random() * 4) + 3; // 3 to 6 turns
 	  currentEnemy.frozen = freezeTurns;
 	  logBattle(`${currentEnemy.name} is frozen for ${freezeTurns} turns!`);
+	  updateEnemyInfo();
+	  break;
+	  
+	case "Mesmerizing Voice":
+	  logBattle("<em>Hush little baby don't say a word, I'm gonna buy you a mockingbird~</em>");
+	  const sleepTurns = Math.floor(Math.random() * 4) + 3; // 3 to 6 turns
+	  currentEnemy.asleep = sleepTurns;
+	  logBattle(`${currentEnemy.name} fell asleep for ${sleepTurns} turns!`);
 	  updateEnemyInfo();
 	  break;
 	
@@ -6483,109 +6899,154 @@ document.addEventListener("keydown", e => {
       worldNum = 23;
       worldName = "Abandoned Graveyard";
       break;
+	case "Orc Lord":
+      bgColor = "#063800";
+      worldNum = 24;
+      worldName = "Dark Forest";
+      break;
     case "Medusa, Lady of Stone":
       bgColor = "#5c2c00";
-      worldNum = 24;
+      worldNum = 25;
       worldName = "Deathly Cliffs";
+      break;
+	case "Ogre King":
+      bgColor = "#211000";
+      worldNum = 26;
+      worldName = "Ogre Cave";
       break;
     case "The Minotaur":
       bgColor = "#8a8a8a";
-      worldNum = 25;
+      worldNum = 27;
       worldName = "Bone Castle";
       break;
     case "Arachni Empress":
       bgColor = "#202421";
-      worldNum = 26;
+      worldNum = 28;
       worldName = "Silkwoven Caverns";
       break;
     case "Grand Sorceress":
       bgColor = "#1e0033";
-      worldNum = 27;
+      worldNum = 29;
       worldName = "Arcane Temple";
       break;
     case "Primordial Automaton":
       bgColor = "#242424";
-      worldNum = 28;
+      worldNum = 30;
       worldName = "The Depths";
       break;
     case "Dragon King":
       bgColor = "#a32c00";
-      worldNum = 29;
+      worldNum = 31;
       worldName = "Dragon King's Lair";
       break;
     case "Devourer of Worlds":
       bgColor = "#ffe863";
-      worldNum = 30;
+      worldNum = 32;
       worldName = "Scorching Desert";
-      break;
-    case "The World Serpent, Jörmungandr":
-      bgColor = "#1c0a00";
-      worldNum = 31;
-      worldName = "Eternity";
       break;
     case "Frost Queen, Borealis":
       bgColor = "#cedede";
-      worldNum = 32;
+      worldNum = 33;
       worldName = "Freezing Tundra";
       break;
     case "Charybdis":
       bgColor = "#2954a3";
-      worldNum = 33;
+      worldNum = 34;
       worldName = "Valrr Trench";
+      break;
+	case "Queen Ant":
+      bgColor = "#00b82e";
+      worldNum = 35;
+      worldName = "Jeju Island";
+      break;
+	case "Ant King, Beru":
+      bgColor = "#752300";
+      worldNum = 36;
+      worldName = "Giant Ant Nest";
       break;
     case "Seraphim":
       bgColor = "#ffffff";
-      worldNum = 34;
+      worldNum = 37;
       worldName = "Sky Dimension";
       break;
     case "Mega Meta Mecha Annihilator - Model: Grande":
       bgColor = "#7bb8c7";
-      worldNum = 35;
+      worldNum = 38;
       worldName = "Future Megalopolis";
       break;
     case "Grand Knight II":
       bgColor = "#260d00";
-      worldNum = 36;
+      worldNum = 39;
       worldName = "Ancient Kingdom";
       break;
     case "King of Curses":
       bgColor = "#b700ff";
-      worldNum = 37;
+      worldNum = 40;
       worldName = "Shibuya";
       break;
     case "The Restricted One, Kyojiro Allista":
       bgColor = "#ba0000";
-      worldNum = 38;
+      worldNum = 41;
       worldName = "Molten Treasure Trove";
       break;
     case "The Brazen Bull, Khalkotauri":
       bgColor = "#32e800";
-      worldNum = 39;
+      worldNum = 42;
       worldName = "Open Fields";
+      break;
+	case "Kraken":
+      bgColor = "#0300a1";
+      worldNum = 43;
+      worldName = "Violent Seas";
+      break;
+	case "King Crab":
+      bgColor = "#32e800";
+      worldNum = 44;
+      worldName = "Khaos Island";
+      break;
+	case "Ghost Leviathan":
+      bgColor = "#00543e";
+      worldNum = 45;
+      worldName = "Phantom Waters";
+      break;
+	case "Island Turtle":
+      bgColor = "#32e800";
+      worldNum = 46;
+      worldName = "Mysterious Island";
+      break;
+	case "The World Serpent, Jörmungandr":
+      bgColor = "#1c0a00";
+      worldNum = 47;
+      worldName = "River of Eternity";
       break;
 	case "The Behemoth":
       bgColor = "#b30003";
-      worldNum = 40;
+      worldNum = 48;
       worldName = "The Underworld";
       break;
     case "Demon God":
       bgColor = "#7d0000";
-      worldNum = 41;
+      worldNum = 49;
       worldName = "7th Layer of Hell";
       break;
     case "The Black King":
       bgColor = "#000000";
-      worldNum = 42;
+      worldNum = 50;
       worldName = "Shadow Realm";
+      break;
+	case "Supreme Witch, Calamitas":
+      bgColor = "#bd0000";
+      worldNum = 51;
+      worldName = "Realm of Calamity";
       break;
     case "Warden Of Judgement, Will, And Balance":
       bgColor = "#ffffff";
-      worldNum = 43;
+      worldNum = 52;
       worldName = "Even Further Beyond";
       break;
     case "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel":
       bgColor = "#fcf3dc";
-      worldNum = 44;
+      worldNum = 53;
       worldName = "Realm Of The Gods";
       break;
     default:
@@ -6726,114 +7187,154 @@ document.addEventListener("keydown", e => {
       worldNum = 23;
       worldName = "Abandoned Graveyard";
       break;
+	case "Orc Lord":
+      bgColor = "#063800";
+      worldNum = 24;
+      worldName = "Dark Forest";
+      break;
     case "Medusa, Lady of Stone":
       bgColor = "#5c2c00";
-      worldNum = 24;
+      worldNum = 25;
       worldName = "Deathly Cliffs";
+      break;
+	case "Ogre King":
+      bgColor = "#211000";
+      worldNum = 26;
+      worldName = "Ogre Cave";
       break;
     case "The Minotaur":
       bgColor = "#8a8a8a";
-      worldNum = 25;
+      worldNum = 27;
       worldName = "Bone Castle";
       break;
     case "Arachni Empress":
       bgColor = "#202421";
-      worldNum = 26;
+      worldNum = 28;
       worldName = "Silkwoven Caverns";
       break;
     case "Grand Sorceress":
       bgColor = "#1e0033";
-      worldNum = 27;
+      worldNum = 29;
       worldName = "Arcane Temple";
       break;
     case "Primordial Automaton":
       bgColor = "#242424";
-      worldNum = 28;
+      worldNum = 30;
       worldName = "The Depths";
       break;
     case "Dragon King":
       bgColor = "#a32c00";
-      worldNum = 29;
+      worldNum = 31;
       worldName = "Dragon King's Lair";
       break;
     case "Devourer of Worlds":
       bgColor = "#ffe863";
-      worldNum = 30;
+      worldNum = 32;
       worldName = "Scorching Desert";
-      break;
-    case "The World Serpent, Jörmungandr":
-      bgColor = "#1c0a00";
-      worldNum = 31;
-      worldName = "Eternity";
       break;
     case "Frost Queen, Borealis":
       bgColor = "#cedede";
-      worldNum = 32;
+      worldNum = 33;
       worldName = "Freezing Tundra";
       break;
     case "Charybdis":
       bgColor = "#2954a3";
-      worldNum = 33;
+      worldNum = 34;
       worldName = "Valrr Trench";
+      break;
+	case "Queen Ant":
+      bgColor = "#00b82e";
+      worldNum = 35;
+      worldName = "Jeju Island";
+      break;
+	case "Ant King, Beru":
+      bgColor = "#752300";
+      worldNum = 36;
+      worldName = "Giant Ant Nest";
       break;
     case "Seraphim":
       bgColor = "#ffffff";
-      worldNum = 34;
+      worldNum = 37;
       worldName = "Sky Dimension";
       break;
     case "Mega Meta Mecha Annihilator - Model: Grande":
       bgColor = "#7bb8c7";
-      worldNum = 35;
+      worldNum = 38;
       worldName = "Future Megalopolis";
       break;
     case "Grand Knight II":
       bgColor = "#260d00";
-      worldNum = 36;
+      worldNum = 39;
       worldName = "Ancient Kingdom";
       break;
     case "King of Curses":
       bgColor = "#b700ff";
-      worldNum = 37;
+      worldNum = 40;
       worldName = "Shibuya";
       break;
     case "The Restricted One, Kyojiro Allista":
       bgColor = "#ba0000";
-      worldNum = 38;
+      worldNum = 41;
       worldName = "Molten Treasure Trove";
       break;
     case "The Brazen Bull, Khalkotauri":
       bgColor = "#32e800";
-      worldNum = 39;
+      worldNum = 42;
       worldName = "Open Fields";
+      break;
+	case "Kraken":
+      bgColor = "#0300a1";
+      worldNum = 43;
+      worldName = "Violent Seas";
+      break;
+	case "King Crab":
+      bgColor = "#32e800";
+      worldNum = 44;
+      worldName = "Khaos Island";
+      break;
+	case "Ghost Leviathan":
+      bgColor = "#00543e";
+      worldNum = 45;
+      worldName = "Phantom Waters";
+      break;
+	case "Island Turtle":
+      bgColor = "#32e800";
+      worldNum = 46;
+      worldName = "Mysterious Island";
+      break;
+	case "The World Serpent, Jörmungandr":
+      bgColor = "#1c0a00";
+      worldNum = 47;
+      worldName = "River of Eternity";
       break;
 	case "The Behemoth":
       bgColor = "#b30003";
-      worldNum = 40;
+      worldNum = 48;
       worldName = "The Underworld";
       break;
     case "Demon God":
       bgColor = "#7d0000";
-      worldNum = 41;
+      worldNum = 49;
       worldName = "7th Layer of Hell";
       break;
     case "The Black King":
       bgColor = "#000000";
-      worldNum = 42;
+      worldNum = 50;
       worldName = "Shadow Realm";
       break;
 	case "Supreme Witch, Calamitas":
       bgColor = "#bd0000";
-      worldNum = 43;
+      worldNum = 51;
       worldName = "Realm of Calamity";
       break;
     case "Warden Of Judgement, Will, And Balance":
       bgColor = "#ffffff";
-      worldNum = 44;
+      worldNum = 52;
       worldName = "Even Further Beyond";
       break;
     case "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel":
       bgColor = "#fcf3dc";
-      worldNum = 45;
+      worldNum = 53;
       worldName = "Realm Of The Gods";
       break;
     default:
@@ -6966,14 +7467,36 @@ document.addEventListener("keydown", e => {
               updateStats();
 			  updateEnemyInfo();
               break;
-
+		
+		case "Lullaby Potion":
 	    case "Sleeping Gas":
+			let asleepTurns = Math.floor(Math.random() * 4) + 3;
+			  currentEnemy.frozen = asleepTurns;
+			if (gameDifficulty !== "doom") {
+              logBattle(`You threw a Lullaby Potion and put ${currentEnemy.name} to sleep!`);
+			} else {
+			  logBattle(`You used some Sleeping Gas and put ${currentEnemy.name} to sleep!`);
+			}
+			  updateStats();
+			  updateEnemyInfo();
+              break;
+			  
+		case "EMP Grenade":
+		case "Shock Potion":
+			currentEnemy.paralyzed = true;
+			if (gameDifficulty !== "doom") {
+              logBattle(`You threw a Shock Potion and paralyzed ${currentEnemy.name}!`);
+			} else {
+			  logBattle(`You threw an EMP Grenade and paralyzed ${currentEnemy.name}!`);
+			}
+            updateStats();
+			updateEnemyInfo();
+			break;
+			
             case "Weaken Potion":
               currentEnemy.weaken = true;
 	    if (gameDifficulty !== "doom") {
               logBattle(`You threw a Weaken potion and weakened ${currentEnemy.name}!`);
-	    } else {
-	      logBattle(`You used some Sleeping Gas and weakened ${currentEnemy.name}!`);
 	    }
               updateStats();
 			  updateEnemyInfo();
@@ -7080,17 +7603,37 @@ document.addEventListener("keydown", e => {
 			  updateEnemyInfo();
               break;
 
-	    case "Sleeping Gas":
             case "Weaken Potion":
               currentEnemy.weaken = true;
-	    if (gameDifficulty !== "doom") {
               logBattle(`You threw a Weaken potion and weakened ${currentEnemy.name}!`);
-	    } else {
-	      logBattle(`You used some Sleeping Gas and weakened ${currentEnemy.name}!`);
-	    }
               updateStats();
 			  updateEnemyInfo();
               break;
+			  
+			case "Lullaby Potion":
+	    case "Sleeping Gas":
+			let asleepTurns = Math.floor(Math.random() * 4) + 3;
+			  currentEnemy.frozen = asleepTurns;
+			if (gameDifficulty !== "doom") {
+              logBattle(`You threw a Lullaby Potion and put ${currentEnemy.name} to sleep!`);
+			} else {
+			  logBattle(`You used some Sleeping Gas and put ${currentEnemy.name} to sleep!`);
+			}
+			  updateStats();
+			  updateEnemyInfo();
+              break;
+			  
+			case "EMP Grenade":
+		case "Shock Potion":
+			currentEnemy.paralyzed = true;
+			if (gameDifficulty !== "doom") {
+              logBattle(`You threw a Shock Potion and paralyzed ${currentEnemy.name}!`);
+			} else {
+			  logBattle(`You threw an EMP Grenade and paralyzed ${currentEnemy.name}!`);
+			}
+            updateStats();
+			updateEnemyInfo();
+			break;
 	    
 	    case "Armor+":
             case "Iron Potion":
