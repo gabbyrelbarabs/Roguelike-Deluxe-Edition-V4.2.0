@@ -5052,7 +5052,7 @@ finalizeRoom(key);
   let bossData = JSON.parse(JSON.stringify(bossTemplate));
   currentEnemy = JSON.parse(JSON.stringify(bossData));;
   if (currentEnemy === "The Restricted One, Kyojiro Allista") {
-	  alert("You have entered a Boss Room... but wait, a Mysterious Man stands in your way.");
+	  alert("You have encountered a Legend Room... but wait, a Mysterious Man stands in your way.");
   } else if (currentEnemy === "Omni") {
 	  alert("You sense a powerful presence, be careful.");
 	  alert("''Greetings human, we finally meet. Shall we begin the test?''");
@@ -5074,11 +5074,11 @@ finalizeRoom(key);
 	  alert("The monster's presence is almost familiar, similar to that god you faced before, but you stand your ground as you prepare to battle once more.");
   } else if (currentEnemy === "The Black King") {
 	  alert("You get the feeling you are about to die... but you go anyway.");
-	  alert("You have entered a Boss Room. Be careful.");
+	  alert("You have encountered a Legend Room. Be careful.");
   } else if (currentEnemy === "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel") {
 	  alert("After everything you've been through, it's finally time. All of your effort, your struggles, and your victories, has come to this one moment. Good luck, warrior.");
   } else {
-	  alert("You have entered a Boss Room. Be careful.");
+	  alert("You have encountered a Legend Room. Be careful.");
   }
   player.weaponSkill.usedThisBattle = false;
   skillUsedThisBattle = true;
@@ -6034,7 +6034,11 @@ function dealPlayerMagicDamage(mult = 1) {
       alert(`${currentEnemy.name} defeated!`);
       endBattle();
       return;
-    }
+    } else if (currentEnemy.hp <= 0 && currentEnemy.boss) {
+	  alert(`You have slayed the Legend, ${currentEnemy.name}!`);
+      endBattle();
+      return;
+	}
 	// Mercenary dodge check
 if (player.mercenaries.length > 0) {
   // did enemy hit? if they fail the dodge roll, mercenary dies immediately
