@@ -283,6 +283,9 @@ let lastClickTime = 0;
 document.addEventListener(
   "click",
   (event) => {
+	if (event.target.closest("#guildMenu")) {
+      return;
+    }
     const currentTime = Date.now();
 
     // Check if 1 second (1000 ms) has passed since the last accepted click.
@@ -433,7 +436,7 @@ casinoMusic.loop = true;
   dodgeChance: 0.2,
   neverMiss: false,
   critMultiplier: 1,
-  money: 10,
+  money: 1000,
   exp: 0,
   level: 1,
   expToLevel: 5,
@@ -491,6 +494,12 @@ casinoMusic.loop = true;
     p.defense = Math.ceil(p.defense * 1.5);
 	p.maxArmor += 10;
     p.agility = p.agility - 10;
+  },
+  "Warhammer": p => {
+    p.attack = p.attack * 3;
+    p.defense = Math.ceil(p.defense * 1.67);
+	p.maxArmor += 15;
+    p.agility = p.agility - 15;
   },
   "Dagger":     p => {
     p.attack = Math.ceil(p.attack * 1.33);
@@ -747,6 +756,7 @@ const weaponSkillMap = {
   "Dagger": "Assassinate",
   "Shield": "Bash",
   "Greatsword": "Heavy Slash",
+  "Warhammer": "Smash",
   "Staff": "Blast Minima",
   "Excalibur": "Execution",
   "Sorceress' Staff": "Rewind",
@@ -2813,7 +2823,7 @@ let shopItemsList = [
   },
   {
     name: "Shock Potion",
-    cost: 150,
+    cost: 200,
     type: "paralyzed",
     category: "consumable",
     usableInBattle: true,
@@ -2957,6 +2967,16 @@ let shopItemsList = [
     usableOutOfBattle: false,
     usageScope: "passive",
 	description: "Heavy, but powerful, allowing you to land devastating strikes from all around.",
+  },
+  {
+    name: "Warhammer",
+    cost: 500,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "Extremely heavy, but very powerful, allowing you to smash foes to bits.",
   },
   {
     name: "Spear",
@@ -3388,7 +3408,7 @@ applyPassiveAbilityEffects();
 
 player.guildUnlocked     = true;
 player.guildMissionStage = 7;
-player.guildMissionKills = getCurrentMissionRequirement();
+player.guildMissionKills = 0;
 updateGuildRankUI();
 updateStats();
 updateManaDisplay();
@@ -3407,7 +3427,7 @@ updateManaDisplay();
  magicBtn.innerText = "Spell";
 player.guildUnlocked     = false;
 player.guildMissionStage = 0;
-player.guildMissionKills = getCurrentMissionRequirement();
+player.guildMissionKills = 0;
  document.getElementById("abilityMenu").style.display   = "block";
 }
 
@@ -4554,7 +4574,7 @@ if (gameDifficulty !== "doom") {
   map[key].element.innerHTML = '<div class="player"></div>';
   centerCamera();
   
-  if ((gameDifficulty === "normal" || gameDifficulty === "hard") && ![ ROOM_TYPES.BATTLE, ROOM_TYPES.AMBUSH, ROOM_TYPES.BOSS, ROOM_TYPES.WARRIOR ].includes(map[key].type)) {
+  if ((gameDifficulty === "normal" || gameDifficulty === "hard") && ![ ROOM_TYPES.BATTLE, ROOM_TYPES.AMBUSH, ROOM_TYPES.BOSS, ROOM_TYPES.WARRIOR, ROOM_TYPES.SHOP, ROOM_TYPES.CASINO, ROOM_TYPES.ALTAR,  ].includes(map[key].type)) {
 	player.exp += 1;
 	if (player.exp >= player.expToLevel) {
 		levelUp();
@@ -4681,7 +4701,12 @@ function finalizeRoom(key) {
        * GUILD SHIT
        *******************/
 	  
-	  function showGuildApplicationPrompt() {
+function showGuildApplicationPrompt() {
+  if (player.money < 500) {
+	alert("You do not have the requirement to apply, please return when you do.");
+    return;
+  }
+  
   let input = prompt("Welcome to the Guild! Please pay $500 if you wish to apply!");
   // If the player cancels or inputs nothing, assume they’re choosing to leave.
   if (input === null) {
@@ -4689,15 +4714,17 @@ function finalizeRoom(key) {
     return;
   }
   let amount = Number(input);
-  if (amount < 500) {
-    alert("You do not have the requirement to apply, please return when you do.");
-    return;
+  if (isNaN(amount) || amount < 500) {
+     alert("Please input the right amount of money.");
+	 return;
   }
-  // Deduct the fee and mark the guild as unlocked.
-  player.money -= 500;
-  alert("Thank you for applying. Welcome to the Guild!");
-  player.guildUnlocked = true;
-  showGuildMainMenu();
+  
+  if (amount >= 500) {
+	player.money -= 500;
+	alert("Thank you for applying. Welcome to the Guild!");
+	player.guildUnlocked = true;
+	showGuildMainMenu();
+  }
 }
 
 function getGuildRank() {
@@ -4740,25 +4767,23 @@ function showGuildMainMenu() {
   const guildMenu = document.getElementById("guildMenu");
   updateGuildRankUI();
 
-  const missionBtn = document.getElementById("missionButton");
   const hireMercenaryBtn = document.getElementById("hireMercenaryButton");
   const closeBtn = document.getElementById("closeGuildMenu");
 
   // Remove any existing event listeners by reassigning the onclick properties
-  missionBtn.onclick = handleMission;
+  document.getElementById("missionButton").onclick = handleMission;
   hireMercenaryBtn.onclick = handleHireMercenary;
   closeBtn.onclick = function() {
     guildMenu.style.display = "none";
-	battleTint.style.display = "none";
+	document.getElementById("battleTint").style.display = "none";
   };
 
   // Display the guild menu.
   guildMenu.style.display = "block";
-  battleTint.style.display = "block";
+  document.getElementById("battleTint").style.display = "block";
 }
 
 function getCurrentMissionRequirement() {
-  // Requirements for missions 1 through 7:
   let requirements = [5, 10, 20, 30, 50, 100, 200];
   return requirements[player.guildMissionStage - 1] || 200;
 }
@@ -4792,7 +4817,7 @@ function handleMission() {
     player.money = Math.round(player.money + moneyReward);
     player.guildMissionStage++;
     player.guildMissionKills = 0;
-    setMissionUI();
+	setMissionUI();
     updateGuildRankUI();
     document.getElementById("guildRankText").innerText = "Guild Rank: " + getGuildRank();
     return;
@@ -4812,7 +4837,6 @@ function updateGuildMissionProgress() {
   let counterEl = document.getElementById("missionCounter");
   if (player.guildMissionKills >= req) {
     counterEl.innerText = "Mission Completed!";
-    // Optionally, update the guild menu to reflect new rank immediately.
     updateGuildRankUI();
   } else {
     counterEl.innerText = `${player.guildMissionKills}/${req}`;
@@ -4823,7 +4847,6 @@ function handleHireMercenary() {
   // Prompt the player for hiring a mercenary.
   let choice = confirm("Hire Mercenary for $200? Press OK to pay, Cancel for Nevermind.");
   if (!choice) {
-    alert("We hope you reconsider applying!");
     return;
   }
   if (player.money < 200) {
@@ -6670,6 +6693,11 @@ document.addEventListener("keydown", e => {
     case "Heavy Slash":
 	  logBattle("<em>With one big windup, you strike with your sword!</em>");
       dealPlayerDamage(2);
+	  break;
+
+	case "Smash":
+	  logBattle("<em>You muster up all your strength as you lift up your hammer in the air, before smashing it onto the enemy.</em>");
+      dealPlayerDamage(1);
 	  break;
 	
 	case "Bash":

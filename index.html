@@ -337,7 +337,7 @@
 	  <br>
 	  <div id="timerDisplay"></div>
 	  <!-- Mission Display (HUD) -->
-<div id="missionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white;"></div>
+	<div id="missionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
       <!-- Dynamic Map -->
       <div id="map"></div>
       <!-- Stats Panel -->
@@ -511,7 +511,7 @@
     <h2><strong>Guild Hall</strong></h2>
     <div id="guildRankText"> Guild Rank: Newbie </div>
     <div class="guild-buttons">
-      <button id="missionButton">Mission</button>
+      <button id="missionButton" onclick="handleMission()">Mission</button>
       <button id="hireMercenaryButton">Hire Mercenary</button>
 	  <button id="libraryButton">Library</button>
     </div>
@@ -565,6 +565,12 @@
 			<br>
 			<li><em><strong>Weaken Potions</strong>: </em>Weaken Potions are potions that, same as Poison Potions, are not meant to be consumed. When thrown, the bottle will break and the target will be slowed down and weakened. This costs $100 to buy in shops.</li>
 			<br>
+			<li><em><strong>Shock Potion</strong>: </em>Shock Potions are unique items, as it is literally electricity caught in a bottle. When thrown, the bottle breaks to then release the electricity, shocking and paralyzing anything in its vicinity. They cost $200 to buy in shops.</li>
+			<br>
+			<li><em><strong>Lullaby Potion</strong>: </em>Lullaby Potions are potions that are basically amplified sleeping pills and are not meant to be consumed. When thrown, the bottle breaks and the liquid inside evaporates into gas that, when inhaled, puts the inhalers to sleep. They cost $150 to buy in shops.</li>
+			<br>
+			<li><em><strong>Molotovs</strong>: </em>Molotovs are simply bottles filled with oil/gasoline set on fire to cause destruction on enemies. They cost $200 to buy in shops.</li>
+			<br>
 			<p>Equipment: </p>
 			<ul>
 				<p>Weapon-type: </p>
@@ -576,6 +582,12 @@
 					<li><em><strong>Spear</strong>: </em>The spear is a heavy weapon made for attack-type warriors. With precision, this weapon allows the user to hit targets from a distance with immaculate accuracy. They cost $360 to buy in shops.</li>
 					<br>
 					<li><em><strong>Greatword</strong>: </em>A powerful, but heavy weapon. This weapon was made for devastation, but makes the warrior's severely slower than others. They cost $360 to buy in shops.</li>
+					<br>
+					<li><em><strong>Gauntlets</strong>: </em>The gauntlets are modified gloves with armored plating, allowing Warriors, especially of the Berserker Attribute, to go ham in close combat. They cost $320 to buy in shops.</li>
+					<br>
+					<li><em><strong>Warhammer</strong>: </em>The warhammer is by far the most heavy, and devastating weapon built by mankind. A two-handed weapon that, with a single swing, can take out multiple enemies at once! They cost $500 to buy in shops.</li>
+					<br>
+					<li><em><strong>Shield</strong>: </em>The shield is a must-have on a Warrior's arsenal, allowing Warriors to block, defend, protect, or bash their way through foes. They cost $400 to buy in shops.</li>
 					<br>
 					<li><em><strong>Wand</strong>: </em>The wand is essential to a magic-type warrior, as it helps them focus their Magic into one spot, allowing for deadly spells to blow away foes. They cost $320 to buy in shops.</li>
 					<br>
@@ -600,6 +612,8 @@
 					<li><em><strong>Scarf</strong>: </em>The scarf may seem like a simple cosmetic to you, but it actually has a special enchantment to help warriors be more agile in battle. They cost $300 to buy in shops.</li>
 					<br>
 					<li><em><strong>Glasses</strong>: </em>Ah yes, glasses, to help those with visual impairments see better, and to help warriors NEVER MISS ATTACKS. They cost $320 to buy in shops.</li>
+					<br>
+					<li><em><strong>Ring</strong>: </em>The ring, a famous piece of jewelry used in proposals, weddings, flexing, and for good luck! They cost $500 to buy in shops.</li>
 					<br>
 					<li><em><strong>Sharpener</strong>: </em>Sharpeners are not what you think. You might think they're for pencils, but these sharpeners are meant to sharpen your weapons and land critical attacks much easier. They cost $360 to buy in shops.</li>
 					<br>
@@ -779,7 +793,11 @@
 			<br>
 			<li><em><strong>Freeze</strong>: </em>This Innate is yet another simple one, similar to the Fireball Innate. Warriors conjure up extremely cold, powerful winds that can freeze anything to its core.</li>
 			<br>
+			<li><em><strong>Thunderbolt</strong>: </em>This Innate is also another one like the Freeze, and Fireball Innate, completing the elemental trio, allowing Warriors to summon straight up lightning bolts from the sky to strike down foes and shock survivors.</li>
+			<br>
 			<li><em><strong>Acid Spit</strong>: </em>This Innate is, yet again, very simple. It allows warriors to, well, have highly acidic and poisonous spit, allowing them to melt through anything.</li>
+			<br>
+			<li><em><strong>Mesmerizing Voice</strong>: </em>This Innate is more like an Attribute, allowing people to have amazing voices, with main users of this Innate actually being entertainers instead of warriors, but is classified as an Innate due to it's special ability to manipulate its hearers to do what the user wants.</li>
 			<br>
 			<li><em><strong>Hunt</strong>: </em>This Innate is usually used by Hunter-type people, hence why it's called Hunt, as with a single Hunt, you can deal massive, critical damage to an enemy, and weaken them.</li>
 			<br>
