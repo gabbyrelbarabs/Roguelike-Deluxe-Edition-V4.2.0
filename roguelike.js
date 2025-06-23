@@ -451,7 +451,14 @@ casinoMusic.loop = true;
   guildMissionKills: 0,
   mercenaries: [],
   canRowMovement: false,
-  
+  statuses: {
+    poisoned: false,
+    burned: false,
+    paralyzed: false,
+    weakened: false,
+    frozen: 0,
+    asleep: 0,
+  },
   // "True" base stats (permanent upgrades are stored here)
   baseStats: {
     attack:    2,
@@ -2725,7 +2732,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Queen Ant", "Ant King, Beru", "Orc Lord", "Ogre King", "Kraken", "Crab King", "Ghost Leviathan", "Island Turtle", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
             break;
           default:
-            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight"];
+            allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight", "Orc", "Orc Berserker", "High Orc", "Ogre", "Ogre Mage", "Ant Swarm", "Giant Worker Ant", "Giant Warrior Ant", "Giant Drone Ant", "Giant Black", "Crab", "Iron Crab", "Giant Crab", "King Crab", "Spider Crab"];
         }
         return enemies.filter(e => allowed.includes(e.name));
 	  }
@@ -4544,6 +4551,17 @@ if (gameDifficulty !== "doom") {
         }
         return item;
       }
+	  
+function applyPlayerStatus(type, duration = null) {
+  const s = player.statuses[type];
+  if (!s) return;
+  s.active = true;
+  if (duration !== null) {
+    s.turnsLeft = type==='frozen'||type==='asleep'
+      ? duration 
+      : null;
+  }
+}
       /*******************
        * MOVEMENT & CAMERA
        *******************/
@@ -4642,6 +4660,16 @@ if (gameDifficulty !== "doom") {
     handleTrapRoom();
   }
   
+  if (player.statuses.poisoned) {
+    const dmg = Math.ceil(player.maxHP * 0.02);
+    player.currentHP = Math.max(0, player.currentHP - dmg);
+    // optionally: show floating text “–X HP (Poison)”
+  }
+  if (player.statuses.burned) {
+    const dmg = Math.ceil(player.maxHP * 0.02);
+    player.currentHP = Math.max(0, player.currentHP - dmg);
+  }
+  
   // Finalize the room if none of the above events delay room completion.
   finalizeRoom(key);
 }
@@ -4694,6 +4722,8 @@ function finalizeRoom(key) {
 		} else {
 			player.hp = effMaxHp;
 		}
+		['burned','poisoned','paralyzed','weakened'].forEach(s => player.statuses[s] = false);
+		updatePlayerStatusUI();
 		player.mana = player.maxMana
         updateStats();
 		updateManaDisplay();
@@ -5485,6 +5515,9 @@ function getEnemyByName(enemyName) {
     player.iron          = false;
     preBattleStats = {};
   }
+  player.statuses.frozen = 0;
+  player.statuses.asleep = 0;
+  updatePlayerStatusUI();
   
   if (defeatedBoss === "Demon King") {
 	alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
@@ -5883,6 +5916,23 @@ function getEnemyByName(enemyName) {
   }
 		if (damage < 1) damage = 1;
 		setTimeout(enemyTurnWrapper, 250);
+
+if (player.statuses.frozen > 0 || player.statuses.asleep > 0) {
+  battleLog(`Player is currently ${player.statuses.frozen>0?'frozen':'asleep'} and is unable to move!`);
+  // decrement counter
+  if (player.statuses.frozen > 0) player.statuses.frozen--;
+  if (player.statuses.asleep > 0)  player.statuses.asleep--;
+  updatePlayerStatusUI();
+  enemyTurn();  // skip to enemy
+  return;
+}
+// check paralysis chance
+if (player.statuses.paralyzed && Math.random() < 0.33) {
+  battleLog(`Player is paralyzed and is unable to move!`);
+  enemyTurn();
+  return;
+}
+
       }
 	  
 function mercenaryAttack() {
@@ -5933,6 +5983,81 @@ function dealPlayerMagicDamage(mult = 1) {
 /*******************
        * ENEMY TURN
        *******************/
+const statusInflictConfig = [
+  // Weaken
+  { statuses:'weakened', list:[
+    'Golem','The Witch','Giant Spider','Giant Warrior Ant','Omni'
+  ], chance:0.02 },
+  { statuses:'weakened', list:[
+    'Dire Wolf','Grand Sorceress','Giant Scorpion','Giant Lord',
+    'Titan Golem','Primordial Automaton','Angel','Seraphim',
+    'Ghoul','Ghost Leviathan','Island Turtle',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+
+  // Poison
+  { statuses:'poisoned', list:[
+    'Snake','Hobgoblin','The Witch','Zombie','Giant Warrior Ant','Omni'
+  ], chance:0.02 },
+  { statuses:'poisoned', list:[
+    'Gorgon','Grand Sorceress','Titanoboa Lord','Zombie Mutant',
+    'Spider Queen','Arachni Empress',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+
+  // Burn
+  { statuses:'burned', list:[
+    'Demon','Imp','Guardian of Hell, Cerberus',
+    'Behemoth','Brazen Bull, Khalkotauri','Omni'
+  ], chance:0.02 },
+  { statuses:'burned', list:[
+    'Archdemon','Wyvern','Hydra','Dragon King',
+    'Demon King','Demon God','King of Curses',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+
+  // Freeze
+  { statuses:'frozen', list:[
+    'Ice Golem','Snowman','Abominable Snowman','Frost Knight','Omni'
+  ], chance:0.02 },
+  { statuses:'frozen', list:[
+    'Ice Spirit','Frost Queen Borealis',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+
+  // Sleep
+  { statuses:'asleep', list:[
+    'The Witch','Omni'
+  ], chance:0.02 },
+  { statuses:'asleep', list:[
+    'Grand Sorceress',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+
+  // Paralyze
+  { statuses:'paralyzed', list:[
+    'Bull','Orc Mage','Omni','Ghoul','Gorgon',
+    'The Witch','Behemoth','Shikigami','Hydra','Wyvern'
+  ], chance:0.02 },
+  { statuses:'paralyzed', list:[
+    'Medusa, Lady of Stone','Grand Sorceress','Giant Lord',
+    'Primordial Automaton','Titan Golem','Dragon King',
+    'Six-Eyed Calamity','Ghost Leviathan','Grand Knight',
+    'Grand Knight II','Island Turtle',
+    'King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel'
+  ], chance:0.05 },
+];
+
+// 2️⃣ Attach status chances to each enemy object
+statusInflictConfig.forEach(cfg => {
+  cfg.list.forEach(enemyName => {
+    const e = enemies.find(en => en.name === enemyName);
+    if (e) {
+      e.statusChances = e.statusChances || {};
+      e.statusChances[cfg.status] = cfg.chance;
+    }
+  });
+});
 
       function enemyTurn() {
   // If Infinity Innate is active, drain mana instead of taking hits
@@ -6043,6 +6168,24 @@ function dealPlayerMagicDamage(mult = 1) {
     logBattle(`${currentEnemy.name} attacked and dealt ${rawEnemyDamage} damage.`);
   }
   updateStats();
+  
+  if (currentEnemy.statusChances) {
+    Object.entries(currentEnemy.statusChances).forEach(([statuses, chance]) => {
+      if (Math.random() < chance) {
+        if (statuses === 'frozen') {
+          player.statuses.frozen = getRandomInt(2, 4);
+        } else if (statuses === 'asleep') {
+          player.statuses.asleep = getRandomInt(1, 3);
+        } else {
+          player.statuses[statuses] = true;
+        }
+        battleLog(
+          `Player was ${statuses.charAt(0).toUpperCase() + statuses.slice(1)}!`
+        );
+      }
+    });
+    updatePlayerStatusUI();
+  }
   
   if (player.burning && Math.random() < 0.67) {
   currentEnemy.burned = true;
@@ -7731,7 +7874,7 @@ document.addEventListener("keydown", e => {
 			case "Lullaby Potion":
 	    case "Sleeping Gas":
 			let asleepTurns = Math.floor(Math.random() * 4) + 3;
-			  currentEnemy.frozen = asleepTurns;
+			  currentEnemy.asleep = asleepTurns;
 			if (gameDifficulty !== "doom") {
               logBattle(`You threw a Lullaby Potion and put ${currentEnemy.name} to sleep!`);
 			} else {
@@ -7989,14 +8132,14 @@ closeSellBtn.addEventListener("click", () => {
           if (stat === "hp") {
             player.maxHp += 20 + Math.round((player.level / player.maxHp) + (player.attack / player.maxHp) + (player.defense / player.maxHp));
 			player.baseStats.maxHp += 20 + Math.round((player.level / player.maxHp) + (player.attack / player.maxHp) + (player.defense / player.maxHp));
-			if (gameDifficulty !== "extreme" && gameDifficulty !== "insane" && gameDifficulty !== "calamity" && gameDifficulty !== "doom") {
+			if (gameDifficulty !== "extreme" && gameDifficulty !== "insane" && gameDifficulty !== "calamity" && gameDifficulty !== "doom" && gameDifficulty !== "ultimate") {
 				player.hp = player.maxHp;
 			}
 			updateStats();
 		  } else if (stat === "magic") {
 			player.maxMana += 5;
 			player.baseStats.maxMana += 5;
-			if (gameDifficulty !== "extreme" && gameDifficulty !== "insane" && gameDifficulty !== "calamity" && gameDifficulty !== "doom") {
+			if (gameDifficulty !== "extreme" && gameDifficulty !== "insane" && gameDifficulty !== "calamity" && gameDifficulty !== "doom" && gameDifficulty !== "ultimate") {
 				player.mana = player.maxMana;
 			}
 			player.magic += 1;
@@ -8471,6 +8614,19 @@ function updatePlayerStatsUI() {
   // Update HP text: The hpText element might now show effective values.
   const effectiveMaxHp = getEffectiveMaxHp();
   document.getElementById("hpText").innerText = `${player.hp}/${effectiveMaxHp.toFixed(0)}`;
+}
+
+function updatePlayerStatusUI() {
+  const cont = document.getElementById('player-status-container');
+  cont.innerHTML = '';
+  const { burned, poisoned, paralyzed, weakened, frozen, asleep } = player.statuses;
+  if (burned)    cont.insertAdjacentHTML('beforeend','<span class="status-burned">Burned</span>');
+  if (poisoned)  cont.insertAdjacentHTML('beforeend','<span class="status-poisoned">Poisoned</span>');
+  if (weakened)  cont.insertAdjacentHTML('beforeend','<span class="status-weakened">Weakened</span>');
+  if (paralyzed) cont.insertAdjacentHTML('beforeend','<span class="status-paralyzed">Paralyzed</span>');
+  if (frozen > 0)  cont.insertAdjacentHTML('beforeend','<span class="status-frozen">Frozen</span>');
+  if (asleep > 0)  cont.insertAdjacentHTML('beforeend','<span class="status-asleep">Asleep</span>');
+
 }
 
 /********************
