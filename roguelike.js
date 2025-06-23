@@ -4818,6 +4818,7 @@ function applyClassEffects(cls) {
       player.luck    = Math.ceil(player.luck    * 1.20);
       player.agility = Math.ceil(player.agility * 1.20);
       player.attack  = Math.ceil(player.attack  * 0.90);
+	  player.magic   = Math.ceil(player.magic  * 0.90);
       break;
 
     case "All-rounder":
