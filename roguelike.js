@@ -139,29 +139,39 @@ window.addEventListener("DOMContentLoaded", () => {
 	  exitCredits.addEventListener("click", () => {
 		creditsCredits.style.display = "none";
 	  });
-	  
+
 	  const libraryButton = document.getElementById("libraryButton");
 	  const libraryMenu = document.getElementById("libraryMenu");
 	  const exitLibrary = document.getElementById("exitLibrary");
+	  const cultLibraryButton = document.getElementById("cultLibraryButton");
+	  const cultLibraryMenu = document.getElementById("cultLibraryMenu");
+	  const exitCultLibrary = document.getElementById("exitCultLibrary");
 	  const tabGuide  = document.getElementById("tabGuide");
 	  const tabGuide2 = document.getElementById("tabGuide2");
 	  const tabHistory = document.getElementById("tabHistory");
+	  const tabCultHistory = document.getElementById("tabCultHistory");
 	  const tabPlayer = document.getElementById("tabPlayer");
 	  const tabInnates = document.getElementById("tabInnates");
 	  const tabMonsters = document.getElementById("tabMonsters");
 	  const tabLegends = document.getElementById("tabLegends");
 	  const tabCrime = document.getElementById("tabCrime");
+	  const tabCultCrime = document.getElementById("tabCultCrime");
 	  const contentGuide = document.getElementById("contentGuide");
 	  const contentGuide2 = document.getElementById("contentGuide2");
 	  const contentHistory = document.getElementById("contentHistory");
+	  const contentCultHistory = document.getElementById("contentCultHistory");
 	  const contentPlayer = document.getElementById("contentPlayer");
 	  const contentInnates = document.getElementById("contentInnates");
 	  const contentMonsters = document.getElementById("contentMonsters");
 	  const contentLegends = document.getElementById("contentLegends");
 	  const contentCrime = document.getElementById("contentCrime");
+	  const contentCultCrime = document.getElementById("contentCultCrime");
 	  
 	  let hasHistoryUnlocked = false;
 	  let hasCrimeUnlocked = false;
+	  let hasCultHistoryUnlocked = false;
+	  let hasCultCrimeUnlocked = false;
+	  
 	  let hasAmmoUnlocked = false;
 	  let hasGunUnlocked = false;
 	  let hasDragonBallUnlocked = false;
@@ -194,7 +204,6 @@ libraryButton.addEventListener("click", () => {
 
 exitLibrary.addEventListener("click", () => {
   libraryMenu.style.display = "none";
-  battleTint.style.display = "none";
 });
 
 tabGuide.addEventListener("click", () => {
@@ -276,6 +285,27 @@ tabCrime.addEventListener("click", () => {
   contentMonsters.style.display = "none";
   contentLegends.style.display = "none";
   contentCrime.style.display = "block";
+});
+
+/*CULT LIBRARY THINGS*/
+cultLibraryButton.addEventListener("click", () => {
+  tabCultHistory.style.display = hasCultHistoryUnlocked ? "inline-block" : "none";
+  tabCultCrime.style.display = hasCultCrimeUnlocked ? "inline-block" : "none";
+  
+  cultLibraryMenu.style.display = "block";
+  battleTint.style.display = "block";
+});
+
+exitCultLibrary.addEventListener("click", () => {
+  cultLibraryMenu.style.display = "none";
+});
+tabCultHistory.addEventListener("click", () => {
+  contentCultHistory.style.display = "block";
+  contentCrime.style.display = "none";
+});
+tabCultCrime.addEventListener("click", () => {
+  contentCultHistory.style.display = "none";
+  contentCultCrime.style.display = "block";
 });
 
 let lastClickTime = 0;
@@ -412,7 +442,9 @@ casinoMusic.loop = true;
 	  let battleAudio = null;
 	  let ambushCompleteCallback = null;
 	  let guildEncounteredBefore = false;
+	  let cultEncounteredBefore = false;
 	  let guildFound = false;
+	  let cultFound = false;
 	  let skillUsedThisBattle = false;
 	  let ignoreEnemyResistances = false;
 
@@ -449,6 +481,9 @@ casinoMusic.loop = true;
   playerClass: "None",
   guildMissionStage: 0,
   guildMissionKills: 0,
+  cultMissionStage: 0,
+  cultKills: 0,
+  monsterKills: 0,
   mercenaries: [],
   canRowMovement: false,
   statuses: {
@@ -891,6 +926,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         LOOT: "loot",
 		TRAP: "trap",
 		GUILD: "guild",
+		CULT: "cult",
 		WARRIOR:  "warrior",
       };
       const roomIcons = {
@@ -904,6 +940,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         loot: "loot.png",
 		trap: "trap.png",
 		guild: "guild.png",
+		cult: "cult.png",
       };
       const enemies = [{
         name: "Monster Crow",
@@ -3819,17 +3856,23 @@ function resumeWorldMusicAfterBattle() {
 
     // === Guild room chance ===
     // 1% before first discovery, then 5% thereafter
-    const guildChance = guildEncounteredBefore ? 0.05 : 0.1;
+    const guildChance = guildEncounteredBefore ? 0.1 : 0.05;
+	const cultChance = cultEncounteredBefore ? 0.05 : 0.025;
 	if (gameDifficulty !== "doom") {
 		if (Math.random() < guildChance) {
 			guildEncounteredBefore = true;
 			type = ROOM_TYPES.GUILD;
 			roomDiv.dataset.type = type;
 		}
+		if (Math.random() < cultChance) {
+			cultEncounteredBefore = true;
+			type = ROOM_TYPES.CULT;
+			roomDiv.dataset.type = type;
+		}
 	}
 
 	// if it’s a special room, slap the icon on it
-	if ((type === ROOM_TYPES.TRAP && !disguised) || [ ROOM_TYPES.BATTLE, ROOM_TYPES.HEALING, ROOM_TYPES.SHOP, ROOM_TYPES.BOSS, ROOM_TYPES.ALTAR, ROOM_TYPES.CASINO, ROOM_TYPES.LOOT, ROOM_TYPES.GUILD ].includes(type)) {
+	if ((type === ROOM_TYPES.TRAP && !disguised) || [ ROOM_TYPES.BATTLE, ROOM_TYPES.HEALING, ROOM_TYPES.SHOP, ROOM_TYPES.BOSS, ROOM_TYPES.ALTAR, ROOM_TYPES.CASINO, ROOM_TYPES.LOOT, ROOM_TYPES.GUILD, ROOM_TYPES.CULT ].includes(type)) {
 		const img = document.createElement("img");
 		img.src    = roomIcons[type];
 		img.alt    = type;
@@ -4053,12 +4096,14 @@ function generateAdjacentRooms(cx, cy) {
 if (gameDifficulty !== "doom") {
   if (!hasHistoryUnlocked && Math.random() < rareChance) {
     hasHistoryUnlocked = true;
+	hasCultHistoryUnlocked = true;
     alert("You found the **World History** book! It now has been added to the Guild library.");
     return;
   }
   
   if (!hasCrimeUnlocked && Math.random() < epicChanceOne) {
     hasCrimeUnlocked = true;
+	hasCultCrimeUnlocked = true;
     alert("You found a mysterious file... **Case 001: The Restricted One (UNSOLVED)**, it says. You decide to hand it over to the Guild.");
     return;
   }
@@ -4625,11 +4670,20 @@ function applyPlayerStatus(type, duration = null) {
 		return;
 	  }
   } else if (map[key].type === ROOM_TYPES.GUILD) {
-    if (!player.guildUnlocked) {
-      showGuildApplicationPrompt();
-    } else {
-      showGuildMainMenu();
-    }
+	if (player.organization === "Cult") {
+    const msg = Math.random() < 0.5
+      ? "It's a Cult Member! Guards, get them!"
+      : "What the hell is the Cult doing out here in the open? Get 'em!";
+    alert(msg);
+    forceGuildAmbush();
+    return;
+	} else {
+		if (!player.guildUnlocked) {
+			showGuildApplicationPrompt();
+		} else {
+			showGuildMainMenu();
+		}
+	}
   } else if (map[key].type === ROOM_TYPES.HEALING) {
     healPlayer();
   } else if (map[key].type === ROOM_TYPES.SHOP) {
@@ -4650,6 +4704,60 @@ function applyPlayerStatus(type, duration = null) {
   } else if (map[key].type === ROOM_TYPES.CASINO) {
     openCasino(() => finalizeRoom(key));
     return;
+  } else if (map[key].type === ROOM_TYPES.CULT) {
+    const inGuild = player.organization === "Guild";
+  const inCult  = player.organization === "Cult";
+  const requiredKills = 100; // or use your CULT_MISSIONS[0], etc.
+
+  if (inGuild) {
+    // Guild member stumbles into Cult domain
+    const msg = Math.random() < 0.5
+      ? "It's the Guild! Guards, get them!"
+      : "Who the hell do you think you are? Get 'em boys!";
+    alert(msg);
+    forceCultAmbush();
+    return;
+  } else if (inCult) {
+    // Already accepted—always show Cult menu
+    showCultMainMenu();
+    return;
+  } else {
+    // Not yet worthy: give them a chance (and only now do we do the kill-check logic)
+    const choice = confirm(
+      "Who are you, and what do you want?\n" +
+      "Are you part of the guild or… do you wish to join our cause?\n\n"
+    );
+    if (!choice) {
+      // Declined: random ambush/finalize
+      const texts = [
+        "So I see... looks like we have something new to sacrifice. Get him!",
+        "Hmm, well in that case... Guards!",
+        "Then get out of here, foolish human! You are not worthy to join us anyway...",
+        "Then get out of here! Get out before I call the guards!"
+      ];
+      const t = texts[Math.floor(Math.random() * texts.length)];
+      alert(t);
+      if (t.startsWith("So I see") || t.startsWith("Hmm,")) {
+        forceCultAmbush();
+      } else {
+        finalizeRoom(key);
+      }
+    } else {
+		alert("Hmm...");
+      if (player.monsterKills >= requiredKills) {
+    // Automatically accept once you have enough kills
+    alert("I see... welcome to the Clan then, my boy!");
+    player.organization = "Cult";
+    showCultMainMenu();
+	finalizeRoom(key);
+    return;
+  } else {
+      alert("I'm sorry, but you are not worthy. Maybe in another universe, my boy.");
+      finalizeRoom(key);
+  }
+    }
+    return;
+  }
   } else if (map[key].type === ROOM_TYPES.AMBUSH) {
 		generateAdjacentRooms(player.x, player.y);
 		startAmbushBattle(() => finalizeRoom(key));
@@ -4659,6 +4767,7 @@ function applyPlayerStatus(type, duration = null) {
   } else if (map[key].type === ROOM_TYPES.TRAP) {
     handleTrapRoom();
   }
+
   
   if (player.statuses.poisoned) {
     const dmg = Math.ceil(player.maxHP * 0.02);
@@ -4729,6 +4838,217 @@ function finalizeRoom(key) {
 		updateManaDisplay();
       }
 	  
+	  /*******************
+       * CULT SHIT
+       *******************/
+
+function forceCultAmbush() {
+  // Mark we used a skill, switch music
+  skillUsedThisBattle = true;
+  stopWorldMusic();
+  warriorTrack.play();
+
+  // Clear & show log + tint
+  battleLog.innerHTML     = "";
+  battleLog.style.display = "block";
+  battleTint.style.display= "block";
+
+  // Build 2–3 Cult Member clones
+  ambushEnemiesQueue = [];
+  const count = 2 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < count; i++) {
+    ambushEnemiesQueue.push({
+      name:        "Cult Member",
+      hp:          player.maxHp,
+      maxHp:       player.maxHp,
+      damageRange: [player.attack, player.magic],
+      expReward:   player.level,
+      moneyReward: player.level,
+      poison:      false,
+      frozen:      0,
+      burned:      false,
+      weaken:      false,
+      paralyzed:   false,
+      asleep:      0,
+      boss:        true
+    });
+  }
+
+  // Kick off the first wave
+  startNextAmbush();
+}
+
+/**
+ * Starts a Guild ambush: 2–3 Warriors in a row.
+ */
+function forceGuildAmbush() {
+  skillUsedThisBattle = true;
+  stopWorldMusic();
+  warriorTrack.play();
+
+  battleLog.innerHTML     = "";
+  battleLog.style.display = "block";
+  battleTint.style.display= "block";
+
+  ambushEnemiesQueue = [];
+  const count = 2 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < count; i++) {
+    ambushEnemiesQueue.push({
+      name:        "Warrior",
+      hp:          player.maxHp,
+      maxHp:       player.maxHp,
+      damageRange: [player.attack, player.magic],
+      expReward:   player.level,
+      moneyReward: player.level,
+      poison:      false,
+      frozen:      0,
+      burned:      false,
+      weaken:      false,
+      paralyzed:   false,
+      asleep:      0,
+      boss:        true
+    });
+  }
+
+  startNextAmbush();
+}
+
+function startNextAmbush() {
+  if (ambushEnemiesQueue.length === 0) {
+    // all waves done
+    battleTint.style.display = "none";
+    finalizeRoom(key);
+    return;
+  }
+
+  // 1) Pop next enemy
+  currentEnemy = ambushEnemiesQueue.shift();
+
+  // 2) Randomize its level around the player’s
+  const minLv = Math.max(player.level - 2, 1);
+  const maxLv = player.level + 2;
+  const lvl   = Math.floor(Math.random() * (maxLv - minLv + 1)) + minLv;
+  currentEnemy.level = lvl;
+
+  // 3) Scale HP by ~5% per level difference
+  if (currentEnemy.baseMaxHp === undefined) {
+    currentEnemy.baseMaxHp = currentEnemy.hp;
+  }
+  const scale = 1 + 0.05 * (lvl - player.level);
+  const newHp = Math.max(1, Math.round(currentEnemy.baseMaxHp * scale));
+  currentEnemy.hp    = newHp;
+  currentEnemy.maxHp = newHp;
+
+  // 4) Reset log & statuses
+  battleLog.innerHTML = "";
+  // (If you clear status icons separately, do it here.)
+
+  // 5) Show UI & enable actions
+  battleTint.style.display    = "block";
+  updateEnemyInfo();           // draws name, HP bar, statuses… :contentReference[oaicite:0]{index=0}
+  battleMenu.style.display    = "block";
+  unlockActions();             // Attack/Magic/Items…
+}
+
+function onEnemyDefeated() {
+  if (ambushEnemiesQueue.length > 0) {
+    startNextAmbush();
+  } else {
+    endBattle();
+    finalizeRoom(key);
+  }
+}
+
+function showCultMainMenu() {
+  updateCultRankUI();
+
+  // 3) Display the Cult menu + tint
+  const cultMenu = document.getElementById("cultMenu");
+  cultMenu.style.display = "block";
+  battleTint.style.display = "block";
+
+  // 4) Wire up the buttons inside the menu
+  document.getElementById("closeCultMenu").onclick = () => {
+    cultMenu.style.display = "none";
+    battleTint.style.display = "none";
+  };
+  document.getElementById("cultMissionButton").onclick = () => {
+    handleCultMission();
+  };
+}
+
+const CULT_RANKS = [
+  "Potential Sacrifice","Follower","Disciple",
+  "Zealot","Elder","Prophet","Priest","Grand Priest"
+];
+const CULT_MISSIONS = [1, 3, 5, 10, 20, 30, 50];
+const CULT_BONUSES = [
+  { luck:1, fortune:1, potential:1 },
+  { luck:2, fortune:2, potential:2, maxMana:10 },
+  { luck:3, fortune:3, potential:3, maxMana:25 },
+  { luck:5, fortune:5, potential:5, maxMana:30 },
+  { luck:7, fortune:7, potential:7, maxMana:50 },
+  { luck:10, fortune:10, potential:10, maxMana:75 },
+  { luck:20, fortune:20, potential:20, maxMana:100 }
+];
+
+function getCultRank() {
+  return CULT_RANKS[player.cultMissionStage];
+}
+function updateCultRankUI() {
+  document.getElementById("guildRankText").innerText = "Rank: " + getCultRank();
+}
+function getCurrentCultRequirement() {
+  return CULT_MISSIONS[player.cultMissionStage - 1] || 50;
+}
+
+function handleCultMission() {
+  if (player.cultMissionStage > 0 && player.cultKills < getCurrentCultRequirement()) {
+    alert("Complete your current objective.");
+    return;
+  }
+  if (player.cultMissionStage > 0 && player.cultKills >= getCurrentCultRequirement()) {
+    if (player.cultMissionStage === CULT_MISSIONS.length) {
+      alert("You have completed all objectives!");
+      return;
+    }
+    // reward
+    const req = getCurrentCultRequirement();
+    Object.assign(player, {
+      luck: player.luck + CULT_BONUSES[player.cultMissionStage].luck,
+      fortune: player.fortune + CULT_BONUSES[player.cultMissionStage].fortune,
+      potential: player.potential + CULT_BONUSES[player.cultMissionStage].potential,
+      maxMana: player.maxMana + CULT_BONUSES[player.cultMissionStage].maxMana
+    });
+    player.cultKills = 0;
+    updateCultRankUI();
+    return;
+  }
+  if (player.cultMissionStage === 0 && player.cultKills === 0) {
+    player.cultMissionStage = 1;
+    setCultMissionUI();
+  }
+}
+	
+function setCultMissionUI() {
+  const hud = document.getElementById("cultMissionDisplay");
+  const req  = getCurrentCultRequirement();
+  hud.innerHTML = `<p>Objective: Hunt ${req} warriors</p><p id="cultMissionCounter">${player.cultKills}/${req}</p>`;
+  hud.style.display = "block";
+}
+
+function updateCultMissionProgress() {
+  if (!player.cultUnlocked || player.cultMissionStage === 0) return;
+  player.cultKills++;
+  let req = getCurrentCultRequirement();
+  let counterEl = document.getElementById("cultMissionCounter");
+  if (player.cultKills >= req) {
+    counterEl.innerText = "Objective Completed!";
+    updateGuildRankUI();
+  } else {
+    counterEl.innerText = `${player.cultKills}/${req}`;
+  }
+}	
 	  /*******************
        * GUILD SHIT
        *******************/
@@ -4936,7 +5256,7 @@ function handleMission() {
     player.guildMissionKills = 0;
 	setMissionUI();
     updateGuildRankUI();
-    document.getElementById("guildRankText").innerText = "Guild Rank: " + getGuildRank();
+    document.getElementById("guildRankText").innerText = "Rank: " + getGuildRank();
     return;
   }
   
@@ -5083,7 +5403,7 @@ if (gameDifficulty === "normal") {
   );
 
   // helper to kick off the battle
-  function startWarriorBattle() {
+  function startWarriorBattle(nameOverride) {
 	skillUsedThisBattle = true;
 	// stop any world music
 	stopWorldMusic();
@@ -5096,7 +5416,7 @@ if (gameDifficulty === "normal") {
 
     // build the mimic Warrior
     const warrior = {
-      name:        "Warrior",
+      name:        nameOverride || "Warrior",
       hp:          player.maxHp,
       maxHp:       player.maxHp,
       damageRange: [ player.attack, player.magic ],
@@ -5110,24 +5430,6 @@ if (gameDifficulty === "normal") {
 	  asleep:      0,
       boss:        true,
     };
-
-    // when they’re beaten…
-    ambushCompleteCallback = () => {
-      let spare = confirm("You have defeated the Warrior, spare them?");
-      if (spare) {
-        if (Math.random() < 0.33) {
-          alert("They join you as a mercenary!");
-          player.mercenaries.push(createMercenary());
-finalizeRoom(key);
-        } else {
-          alert("They thank you and leave.");
-finalizeRoom(key);
-        }
-	finalizeRoom(key);
-      }
-      finalizeRoom(key);
-    };
-
     // launch via ambush flow
     ambushEnemiesQueue = [ warrior ];
     currentEnemy        = ambushEnemiesQueue.shift();
@@ -5147,20 +5449,51 @@ finalizeRoom(key);
     battleMenu.style.display = "block";
     unlockActions();
   }
+  
+  let alias = "Warrior";
 
   if (fight) {
     // player chose to fight
     startWarriorBattle();
   } else {
     // passing by: 10% chance they still attack
-    if (Math.random() < 0.10) {
-      alert("The Warrior attacked you anyway!");
-      startWarriorBattle();
-    } else {
-      // safe passage
-      finalizeRoom(key);
-    }
+    const fightChance = player.organization==="Cult" ? 0.5 : 0.15;
+	if (Math.random() < fightChance) {
+		// name alias distribution
+		const r2 = Math.random();
+		if (player.organization==="Cult") {
+			if (r2 < 0.67) alias="Warrior";
+			else if (r2 < 0.835) alias="Outlaw";
+			else alias="Bandit";
+		} else {
+			// original 40/40/20 split
+			if (r2 < 0.4) alias="Outlaw";
+			else if (r2 < 0.8) alias="Bandit";
+			else alias="Cult Member";
+		}
+		alert(`The ${alias} attacked you anyway!`);
+		startWarriorBattle(alias);
+	} else {
+		finalizeRoom(key);
+	}
   }
+  
+  ambushCompleteCallback = () => {
+      let spare = confirm(`You have defeated the ${alias}, spare them?`);
+      if (spare) {
+        if (Math.random() < 0.33) {
+          alert("They join you as a mercenary!");
+          player.mercenaries.push(createMercenary());
+finalizeRoom(key);
+        } else {
+          alert("They thank you and leave.");
+finalizeRoom(key);
+        }
+	finalizeRoom(key);
+      }
+      finalizeRoom(key);
+    };
+
 }
 
 
@@ -5493,7 +5826,14 @@ function getEnemyByName(enemyName) {
       function endBattle() {
 		  const defeatedBoss = currentEnemy && currentEnemy.boss && currentEnemy.hp <= 0 ? currentEnemy.name : null;
 		  
-		  killCount++;
+const name = currentEnemy.name;
+  killCount++;
+  // only count true monsters
+  if (!["Warrior","Outlaw","Bandit","Cult Member"].includes(name)) {
+    player.monsterKills++;
+    if (player.organization==="Guild") updateGuildMissionProgress();
+    if (player.organization==="Cult")  player.cultKills++, updateCultRankUI(), updateCultMissionProgress();
+  }
 		  
   if (preBattleStats.attack !== undefined) {
     player.attack        = preBattleStats.attack;
@@ -5799,7 +6139,6 @@ function getEnemyByName(enemyName) {
   if (!currentBGM) {
 	  resumeWorldMusicAfterBattle();
   }
-  updateGuildMissionProgress();
 }
 
 	   /*******************

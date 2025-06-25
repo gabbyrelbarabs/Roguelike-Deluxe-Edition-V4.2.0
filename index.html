@@ -61,7 +61,7 @@
     <!-- Title Screen -->
     <div id="titleScreen">
   <div id="titleBox">
-    <h1>Roguelike! Deluxe Edition<br> Alpha V4.2.0</h1>
+    <h1>Roguelike! Deluxe Edition<br> Alpha V5.0.0</h1>
     <p>
       From a weak, random nobody in this mysterious world of monsters, to an overpowered, monster slayer razing through crowds of demons. With an unlimited amount of potential, journey through this mysterious world, get stronger, grind for new items and equipment, fight your way through endless waves of monsters, and battle the gods that sent you to this hellhole!
     </p>
@@ -246,7 +246,7 @@
 	  <br>
 	  <br>
 	  <br>
-	  <p>Roguelike! Deluxe Edition Alpha V4.2.0</p>
+	  <p>Roguelike! Deluxe Edition Alpha V5.0.0</p>
 	  <br>
 	  <br>
 	  ===============================================
@@ -337,8 +337,10 @@
 	  <br>
 	  <div id="timerDisplay"></div>
 	  <!-- Mission Display (HUD) -->
-	<div id="missionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
-      <!-- Dynamic Map -->
+	  <div id="missionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
+      <!-- CULT Mission HUD (new) -->
+	  <div id="cultMissionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
+	  <!-- Dynamic Map -->
       <div id="map"></div>
       <!-- Stats Panel -->
       <div id="stats">
@@ -513,7 +515,105 @@
       </div>
     </div>
 	
-	<div id="classSelectionMenu" class="modal" style="display: none;">
+<div id="cultMenu" class="modal" style="display:none;">
+  <div class="modal-content">
+    <button id="closeCultMenu" class="close-btn">X</button>
+    <h2><strong>Cultists' Domain</strong></h2><br>
+    Rank:<div id="guildRankText"> Potential Sacrifice </div>
+	<br>
+	<br>
+    <div class="cult-buttons">
+      <button id="cultMissionButton">Objectives</button>
+      <button id="cultLibraryButton">Library</button>
+    </div>
+  </div>
+</div>
+
+<div id="cultLibraryMenu" style="display: none;">
+	<p><strong>The Library</strong></p>
+	<div class="tabs">
+        <button id="tabCultHistory">World History</button>
+		<button id="tabCultCrime">Case 001: The Restricted One (CLASSIFIED)</button>
+	</div>
+	<div id="contentHistory" class="content scrollable" style="display: none;">
+		<h1><strong>"The Story of Valrr"</strong></h1>
+		<h5>The History of a post-modern, medieval planet of magic, monsters and gods.</h5>
+		<br><br>
+		<strong>Chapter 1 - Cause</strong>
+		<br><br><br>
+		This world was once peaceful, known as Earth, and we were once very technologically advanced. 
+		<br><br>However, one day, something occurred. A terrible, terrible event, known as "Judgement Day". What we once assumed was one God, turned out to be multiple, as numerous titanic entities appeared out of nowhere in the sky. One was as dark as the voids of space, one shined as brightly as the brighest star, one was wise in appearance, and one stood below them all... a Demon. However, the one that caught everyone's eye, was the one stood high above everything, everyone, everywhere else. <br><br>The one standing in the middle began speaking, saying something like, 
+		<br><br>
+		"<strong>Humans, thou all hast failed us for the last time. <br>'tis  finally time for thou all to repent for thy sins.</strong>" 
+		<br><br>
+		Then, the gods vanished, beginning the Judgement era of humanity.
+		<br><br><br> 
+		<strong>Chapter 2 - Effect</strong> 
+		<br><br>
+		Humanity panicked, society went into chaos. Scientist quickly began rushing to build spaceships to fly us all out of here, but it only resulted in failure, as the worldwide economy crashed down on itself. Every government in the world also began crashing down, the military began blindly launching missiles in the sky as if it would do something, backfiring horribly as it all launched back down on other countries. The world fell into a huge war, destroying itself, slowly but surely. 
+		<br><br>
+		5 years into the war, the world realized, 5 years passed after the gods appeared, yet, nothing happened. Were we played? Were we fooled? Is this their form of judgement? 
+		<br><br>
+		The war stopped abruptly as soon as they all found this out, all governments of the world quickly going to peace to work together, to try and fix this whole mistake. 
+		<br><br>
+		However, the damage was done, the planet was in ruins, and it would take 1000 years to bring it all back. The modern era was over...
+		<br><br><br> 
+		<strong>Chapter 3 - Aftershock</strong> 
+		<br><br>
+		A decade passed since the war, humanity tries to put itself back together, thinking the problem was over, as the gods that appeared all those years ago have not made a single move since then. <br><br>However, just when humanity though they were back in the game. Boom. The gods reappeared, saying, 
+		<br><br>
+		"<strong>Humans, thou hast passed the first trial, but 'tis isn't over yet. It is finally time for thy second trial. <br>When thou art all complete, thou all shall find us, meet us, and bargain.<br>Maybe then, thy judgement shall finally be over.</strong>" 
+		<br><br> 
+		The gods say once more, as portals suddenly began appearing all over the world, as powerful monsters began coming out of them. 
+		<br><br>
+		The military tried to shoot them all down, and it worked. Monsters were falling down one by one with each shot. However, they also began getting back up, as humans also realized they all had multiple of each vital organs, and even got stronger each time they did. 
+		<br><br>
+		Humanity then also tried bombing them, but more and more monsters kept coming back out of the portal, more than what was even being killed. <br><br>So then, humanity, surrendered...<br><br><strong>Chapter 4 - The Return</strong>
+		<br><br>
+		We all went into hiding for the next hundred years, before rising back up another hundred years later. Humanity was back to where we were before all the technology, as we tried to redo all of our progress when in hiding, but due to the lack of resources, and how humans have relied too much on our own tech and AI, we fell back down and had to start from scratch. When we returned to the surface, we found that all of the portals around the world have closed, but monsters were now everywhere, and were exponentially stronger than they were before. Humanity knew we were ruined. 
+		<br><br>
+		However, one day, another thing occurred... the gods have given the humans, a chance to fight back. 
+		<br><br>
+		Humans all over the world began getting stronger, faster, and better. People could cast magic, and best of all, humans gained powerful abilities what we call, "Innates". These innates varied, from superhuman strength, to powerful unique abilities that only those humans can have. 
+		<br><br>
+		Humans started fighting back, with those who do being called "<strong>Warriors</strong>" able to even kill monsters with their bare fists. Monsters also dropped strange materials, some were nothing, so humans made them into currency, and another thing, which us humans called EXP(similar to video games in the Modern era), made humans grow stronger when touched, as they seemed to dissolve. Humans began making businesses with the new monster currency, which was stilled named Dollars($) after the most prominent type of currency in the Modern era, to help the warriors who kills the monsters; weapons, armor, equipment, sold all over the world as we all got even stronger and stronger. 
+		<br><br>
+		Humanity was back, in fact, humans got so strong, and were killing the monsters faster than we could ever imagine, the worldwide monster population fell by 5% in 2 weeks. 
+		<br><br><br>
+		<strong>Chapter 4 - Monsters</strong>
+		<br><br>
+		However, the gods didn't just idle around, watching this all go down. We passed our second trial, as the gods quickly began the third. The gods made the monsters evolve exactly as animals do. The monsters grew reproductive organs, they gained sentience, and they evolved, at a matching rate as the humans did. 
+		<br><br>
+		With that, Legends were born. Powerful, gigantic monsters that lived in a certain part of the world called a domain. These Legends lived in their domains and guarded them, protecting the monsters that lived with them. Monsters all around the world also began living in certain domains, to gain the protection of their own legend. And so, the monsters started the monster society, and humanity was basically at war with them. 
+		<br><br>
+		And all that, leads to where we are now. The planet was named Valrr by the new governments, who were once kids that loved playing the video games that we managed to salvage from the Modern era, and thought that it sounded like a fantasy game, and it was named after the word, valor, to encourage, motivate and inspire the warriors who fight for us against the monsters.
+		<br><br><br><br>
+		Legends state that someday, an entity from a world beyond our own will appear and save us from all the monsters, become stronger than anything our world has ever seen, fight back against the gods that have damned us all, and finally free us from this eternal torture that they call "Trials".
+		<br><br><br><br>
+		<h2><strong>-END-</strong></h2>
+	  </div>
+	  <div id="contentCultCrime" class="content scrollable" style="display:none;">
+		<h5>Case 001&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;November 28, 2301<br>Reporting Officer: Tony Flour&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prepared by: Johnny Bread<br>Location of incident: Countrywide</h5>
+		<br>
+		<p>Name: Kyojiro Allista
+		<br>
+		Sex: Male
+		<br>
+		Age: 32
+		<br>
+		Height: 6'05"
+		<br>
+		Weight: 101kg
+		<br>
+		Innate: Unknown
+		<br>
+		<br>
+		<p>This man has been charged with mass murder, mutilation, torture.<br>With an estimated kill count of over 378 warriors and warriors only, all in the span of 3 months, this man has only been slaughtering warriors who were adventuring. In the middle of battles, Allista would come out of nowhere and brutally murder them, and play with their corpses as if they're some toys.<br>Over 200 bodies of his victims were seen only near the forests, which is usually the first spot adventurers would go to. Some bodies were even found near the Shi Mountains, which is a very deadly place to be, indicating that this man is either a very strong warrior, or just en extremely powerful man with a special Innate.<br>However, when we captured him, we found out... he doesn't even have an Innate? When we left him alone and returned only a few minutes later to sounds of explosions and rumblings, only broken shackles and a hole in the wall was found.<br>Not a single trace of blood was found, and the way he broke through the walls and escaped the shackles was extremely clean, and there was no sign of struggle. There was no sign of Magic anywhere either, which only further indicates that this man was exceptionally strong.<br>Not a few minutes later, some of my partners called from one of our stations a few cities away, and they reported sighting Allista walking through the streets.<br>This man is a serious threat to society and mankind and has to be dealt with immediately.<br><br> Sentence: <strong>Death</strong></p>
+	  </div>
+	<button id="exitCultLibrary">Exit</button>
+ </div>
+	
+	<div id="classSelectionMenu" class="content scrollable" style="display: none;">
   <div class="modal-content">
     <h2>Select Your Class</h2>
     <button data-class="Swordsman">Swordsman</button>
@@ -559,7 +659,7 @@
         <button id="tabInnates">Innates</button>
 		<button id="tabMonsters">Monster Encyclopedia</button>
 		<button id="tabLegends">The Legends of Valrr</button>
-		<button id="tabCrime">Case 001: The Restricted One (UNSOLVED)</button>
+		<button id="tabCrime">Case 001: The Restricted One (CLASSIFIED)</button>
       </div>
 	  <div id="contentGuide" class="content scrollable" style="display:none;">
 		<h1><strong>Guild Guide Vol. 1</strong></h1>
