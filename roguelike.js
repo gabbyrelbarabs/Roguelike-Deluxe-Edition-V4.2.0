@@ -3670,6 +3670,27 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
   document.getElementById("hudPlayerPassive").innerText = player.passiveAbility || "None";
   document.getElementById("hudPlayerActive").innerText = player.activeAbility || "None";
   applyPassiveAbilityEffects();
+  showClassSelectionMenu();
+});
+
+/*********************
+ CLASS SELECTION MENU
+ *********************/
+function showClassSelectionMenu() {
+  player.organization = "Guild";
+  const menu = document.getElementById("classSelectionMenu");
+  if (!menu) return console.error("No #classSelectionMenu in HTML!");
+  console.log("📢 Opening Class Selection Menu");
+  menu.style.display = "flex";
+  battleTint.style.display = "block";
+}
+
+// 2) Global inline handler from each button:
+function selectClass(cls) {
+  console.log("📢 selectClass() got:", cls);
+  player.playerClass = cls;
+  applyClassEffects(cls);
+  document.getElementById("classSelectionMenu").style.display = "none";
   initGame();
   document.getElementById("gameContainer").style.display = "block";
   document.getElementById("battleTint").style.display = "none";
@@ -3677,6 +3698,109 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
     titleMusic.pause();
   }
   titleMusic.currentTime = 0;
+  updateStats();
+}
+
+function applyClassEffects(cls) {
+  // (You may want to clear previous buffs first if you store them)
+  switch (cls) {
+    const swordNames     = ["Sword", "Greatsword", "Excalibur"];
+	const greatSwordName = ["Greatsword"];
+	const daggerNames    = ["Dagger"];
+	const hammerNames    = ["Warhammer"];
+	const spearNames     = ["Spear"];
+	const gauntletNames  = ["Gauntlet"];
+	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
+
+  switch (cls) {
+    case "Swordsman":
+      if (w && swordNames.includes(w)) {
+        // +10% with swords
+        player.attack = Math.ceil(player.attack * 1.10);
+      } else {
+        // -10% with anything else (or no weapon)
+        player.attack = Math.ceil(player.attack * 0.90);
+      }
+      break;
+
+    case "Assassin":
+      if (w && daggerNames.includes(w)) {
+        // +20% with daggers
+        player.attack = Math.ceil(player.attack * 1.20);
+      }
+      player.perception = (player.perception || 0) + 5;
+      player.dodgeChance = (player.dodgeChance || 0) + 0.10;
+      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.10;
+      break;
+
+    case "Heavy Knight":
+      if (w && (hammerNames.includes(w) || greatSwordName.includes(w) || spearNames.includes(w))) {
+        // +10% with warhammer, greatsword, spear
+        player.attack = Math.ceil(player.attack * 1.10);
+      } else {
+        // -10% with any other
+        player.attack = Math.ceil(player.attack * 0.90);
+      }
+      player.defense = Math.ceil(player.defense * 1.10);
+      player.agility = Math.ceil(player.agility * 0.80); // -20%
+      break;
+
+    case "Berserker":
+      if (!w) {
+        // +25% with no weapon
+        player.attack = Math.ceil(player.attack * 1.25);
+      } else if (gauntletNames.includes(w)) {
+        // +15% with gauntlets
+        player.attack = Math.ceil(player.attack * 1.375);
+      } else {
+        // -10% with any other weapon
+        player.attack = Math.ceil(player.attack * 0.90);
+      }
+      player.defense    = Math.ceil(player.defense    * 1.05);
+      player.perception = (player.perception || 0) + 5;
+      player.agility    = Math.ceil(player.agility    * 1.05);
+      player.magic      = Math.ceil(player.magic      * 0.90);
+      break;
+
+    case "Tank":
+      player.defense = Math.ceil(player.defense * 1.25);
+      break;
+
+    case "Mage":
+      player.magic = Math.ceil(player.magic * 1.05);
+      player.attack = Math.ceil(player.attack * 0.85);
+      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.05;
+      break;
+
+    case "Expeditionist":
+      player.fortune = Math.ceil(player.fortune * 1.20);
+      player.luck    = Math.ceil(player.luck    * 1.20);
+      player.agility = Math.ceil(player.agility * 1.20);
+      player.attack  = Math.ceil(player.attack  * 0.90);
+	  player.magic   = Math.ceil(player.magic  * 0.90);
+      break;
+
+    case "All-rounder":
+      [
+        "attack", "defense", "magic",
+        "agility","perception","potential",
+        "luck",   "fortune"
+      ].forEach(stat => {
+        player[stat] = Math.ceil(player[stat] + 2);
+      });
+      break;
+
+    default:
+      console.warn("Unknown class:", cls);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document
+    .querySelectorAll('#classSelectionMenu button[data-class]')
+    .forEach(btn => {
+      btn.addEventListener('click', e => selectClass(e.currentTarget.dataset.class));
+    });
 });
 
 /*********************
@@ -5159,93 +5283,9 @@ function showGuildApplicationPrompt() {
 	alert("Thank you for applying. Welcome to the Guild!");
 	player.guildUnlocked = true;
 	player.organization = "Guild";
-    showClassSelectionMenu();
+    showGuildMainMenu();
   }
 }
-
-// ——— CLASS SELECTION MENU ———
-function showClassSelectionMenu() {
-  player.organization = "Guild";
-  const menu = document.getElementById("classSelectionMenu");
-  if (!menu) return console.error("No #classSelectionMenu in HTML!");
-  console.log("📢 Opening Class Selection Menu");
-  menu.style.display = "flex";
-  battleTint.style.display = "block";
-}
-
-// 2) Global inline handler from each button:
-function selectClass(cls) {
-  console.log("📢 selectClass() got:", cls);
-  player.playerClass = cls;
-  applyClassEffects(cls);
-  document.getElementById("classSelectionMenu").style.display = "none";
-  showGuildMainMenu();
-  updateStats();
-}
-
-function applyClassEffects(cls) {
-  // (You may want to clear previous buffs first if you store them)
-  switch (cls) {
-    case "Swordsman":
-      if (player.equipment.weapon?.type === "sword") {
-        player.attack = Math.ceil(player.attack * 1.10);
-      } else {
-        player.attack = Math.ceil(player.attack * 0.90);
-      }
-      break;
-
-    case "Assassin":
-      if (
-        player.equipment.weapon?.type === "dagger" ||
-        player.equipment.accessory?.type === "dagger"
-      ) {
-        player.attack = Math.ceil(player.attack * 1.20);
-      }
-      player.perception = Math.ceil(player.perception + 5);
-      player.dodgeChance = (player.dodgeChance || 0) + 0.10;
-      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.10;
-      break;
-
-    case "Tank":
-      player.defense = Math.ceil(player.defense * 1.25);
-      break;
-
-    case "Mage":
-      player.magic = Math.ceil(player.magic * 1.05);
-      player.attack = Math.ceil(player.attack * 0.85);
-      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.05;
-      break;
-
-    case "Expeditionist":
-      player.fortune = Math.ceil(player.fortune * 1.20);
-      player.luck    = Math.ceil(player.luck    * 1.20);
-      player.agility = Math.ceil(player.agility * 1.20);
-      player.attack  = Math.ceil(player.attack  * 0.90);
-	  player.magic   = Math.ceil(player.magic  * 0.90);
-      break;
-
-    case "All-rounder":
-      [
-        "attack", "defense", "magic",
-        "agility","perception","potential",
-        "luck",   "fortune"
-      ].forEach(stat => {
-        player[stat] = Math.ceil(player[stat] + 2);
-      });
-      break;
-
-    default:
-      console.warn("Unknown class:", cls);
-  }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  document
-    .querySelectorAll('#classSelectionMenu button[data-class]')
-    .forEach(btn => {
-      btn.addEventListener('click', e => selectClass(e.currentTarget.dataset.class));
-    });
-});
 
 function getGuildRank() {
   let ranks = ["Newbie", "Rookie", "Amateur", "Journeyman", "Pro", "Veteran", "Master", "Grandmaster"];
