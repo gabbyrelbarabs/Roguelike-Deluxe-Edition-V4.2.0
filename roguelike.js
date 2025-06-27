@@ -429,6 +429,7 @@ casinoMusic.loop = true;
       let shopCooldown = 0;
       let allowedMoves = [];
       let floorCount = 1;
+	  const bossInterval = 3;
       let roomMoves = 0;
       let roomsThisFloor = 0;
 	  let trapCount = 0;
@@ -496,12 +497,12 @@ casinoMusic.loop = true;
   },
   // "True" base stats (permanent upgrades are stored here)
   baseStats: {
-    attack:    2,
-    defense:   2,
-    magic:     2,
-    maxHp:    100,
+    attack:    20,
+    defense:   20,
+    magic:     20,
+    maxHp:    1000,
 	maxArmor: 20,
-    maxMana:  10,
+    maxMana:  100,
     agility:   1,
     perception:1,
 	potential: 1,
@@ -1687,7 +1688,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   {
     name: "The Black King",
     hp: 900,
-    damageRange: [50, 60],
+    damageRange: [60, 80],
     expReward: [95, 95],
     moneyReward: [90, 90],
     reductionMagic: 0.5,
@@ -1700,8 +1701,78 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
     moneyReward: [100, 100],
     reductionAttack: 0.5,
     reductionMagic: 0.5,
-  }
+  },
+  {
+    name: "Demon God",
+    hp: 1050,
+    damageRange: [55, 70],
+    expReward: [105, 105],
+    moneyReward: [90, 90],
+    reductionMagic: 0.5,
+  },
+  {
+    name: "Warden Of Judgement, Will, And Balance",
+    hp: 1200,
+    damageRange: [50, 60],
+    expReward: [120, 120],
+    moneyReward: [120, 120],
+    reductionAttack: 0.5,
+    reductionMagic: 0.5,
+  },
 ];
+
+const bossQueues = {
+	20: ["Goblin", "Goblin", "Wolf", "Hobgoblin"],
+	40: ["Zombie", "Zombie", "Skeleton"],
+	60: ["Skeleton", "Bear", "Bears"],
+	80: ["Skeleton", "Skeleton", "Ghoul", "Possessed Armor"],
+	100: ["Giant Spider", "Giant Spider", "Giant Scorpion", "Golem"],
+	120: ["Zombie", "Zombie", "Skeleton", "Ghoul", "Ghoul"],
+	140: ["Golem", "Golem", "Golem"],
+	160: ["Skeleton", "Skeleton", "Possessed Armor", "Golem"],
+	180: ["Vulture", "Sandworm", "Sandworm", "Giant Scorpion"],
+	200: ["Snake", "Snake", "Snake", "Gorgon"],
+	220: ["Snowman", "Snowman", "Ice Spirit", "Ice Golem"],
+	240: ["Piranha", "Piranha", "Shark"],
+	260: ["Piranha", "Giant Albatross", "Shark", "Shark"],
+	280: ["Monster Crow", "Vulture", "Giant Albatross", "Giant Albatross", "Ghoul", "Ghoul"],
+	300: ["Cyborg Guard", "Cyborg Guard", "Drone", "Giant Robot"],
+	320: ["Possessed Armor", "Possessed Armor", "Golem"],
+	340: ["Cursed Spirit", "Cursed Spirit", "Sorcerer", "Sorcerer"],
+	360: ["Gorgon", "Possessed Armor", "Possessed Armor", "Wyvern"],
+	380: ["Imp", "Imp", "Demon"],
+	400: ["Imp", "Demon", "Demon", "Archdemon"],
+	420: ["Golem", "Werewolf", "Archdemon", "Shikigami", "Giant Black Ant", "King Crab", "Golem", "Frost Knight"],
+	440: ["Goblin", "Dire Wolf", "Hobgoblin", "Hobgoblin"],
+	460: ["Skeleton", "Skeleton", "Skeleton", "Hobgoblin", "Zombie", "Zombie", "Skeleton", "Zombie", "Giant Spider", "Giant Spider", "Zombie", "Giant Spider"],
+	480: ["Orc", "Orc Berserker", "Orc Berserker", "High Orc"],
+	500: ["Snake", "Snake", "Skeleton", "Gorgon", "Gorgon", "Dire Bear"],
+	520: ["Ogre", "Ogre", "Ogre Mage", "Ogre Mage", "Golem"],
+	540: ["Bull", "Bull", "Skeleton", "Bull", "Golem", "Zombie Mutant"],
+	560: ["Giant Spider", "Giant Spider", "Skeleton", "Giant Spider", "Skeleton", "Skeleton", "Skeleton King", "Giant Spider"],
+	580: ["Gorgon", "Ghoul", "Ghoul", "Golem", "Zombie Mutant"],
+	600: ["Dire Wolf", "Dire Bear", "Dire Bear", "Golem", "Golem", "Skeleton King"],
+	620: ["Wyvern", "Wyvern", "Hydra"],
+	640: ["Sandworm", "Giant Scorpion", "Giant Sandworm", "Giant Sandworm"],
+	660: ["Ice Spirit", "Ice Golem", "Ice Golem", "Frost Knight"],
+	680: ["Piranha", "Shark", "Shark", "Omegalodon"],
+	700: ["Ant Swarm", "Ant Swarm", "Giant Worker Ant", "Giant Warrior Ant", "Giant Drone Ant", "Giant Warrior Ant"],
+	720: ["Giant Warrior Ant", "Giant Warrior Ant", "Giant Black Ant"],
+	740: ["Ghoul", "Ghoul", "Ice Spirit", "Angel"],
+	760: ["Cyborg Guard", "Drone", "Giant Robot", "Jeager"],
+	780: ["Possessed Armor", "Possessed Armor", "Dire Wolf", "Dire Bear", "Frost Knight", "Golem"],
+	800: ["Cursed Spirit", "Sorcerer", "Sorcerer", "Shikigami", "Shikigami"],
+	840: ["Bull", "Bull", "Dire Wolf", "Dire Wolf", "Dire Bear", "Bull"],
+	860: ["Giant Albatross", "Shark", "Shark", "Giant Albatross", "Shark", "Omegalodon"],
+	880: ["Iron Crab", "Iron Crab", "Giant Crab", "Giant Crab", "Spider Crab", "King Crab"],
+	900: ["Shark", "Ghoul", "Ghoul", "Shark", "Kraken"],
+	960: ["Sinner", "Sinner", "Demon", "Archdemon"],
+	980: ["Sinner", "Sinner", "Archdemon", "Gargoyle", "Archdemon", "Gargoyle", "Cacodemon", "Hell Knight", "Baron", "Baron", "Cyberdemon", "Guardian of Hell, Cerberus"],
+	1000: ["Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul", "Ghoul"],
+	1020: ["Gorgon", "Gorgon", "Ghoul", "Ghoul", "Zombie Mutant", "Zombie Mutant", "Skeleton King", "Cyberdemon", "Titan Golem", "Ghost Leviathan"],
+	1040: ["Angel", "Angel", "Seraphim"],
+	1060: ["Omni", "Demon God", "Black King", "Warden Of Judgement, Will, And Balance"],
+};
 
       function getBossForFloor(floor) {
 		if (gameDifficulty === "doom") {
@@ -2164,7 +2235,6 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 		// If you exceed the highest defined boss, just give the final one
 	return bosses[bossFloors[bossFloors.length - 1]];
 	}
- 
         const bosses = {
           20: {
             name: "Goblin King",
@@ -2637,7 +2707,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Zombie", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor", "Werewolf"];
             break;
 		  case "The Minotaur":
-            allowed = ["Zombie", "Bull", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor"];
+            allowed = ["Zombie Mutant", "Bull", "Skeleton", "Ghoul", "Demon Bat", "Monster Crow", "Giant Spider", "Possessed Armor"];
             break;
           case "Spider Queen":
             allowed = ["Giant Spider", "Demon Bat", "Golem", "Ghoul", "Giant Scorpion", "Goblin"];
@@ -2649,7 +2719,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Giant Spider", "Snake", "Demon Bat", "Monster Crow", "Ghoul", "Piranha", "Skeleton", "Zombie"];
             break;
 		  case "Grand Sorceress":
-            allowed = ["Giant Spider", "Gorgon", "Demon Bat", "Monster Crow", "Ghoul", "Piranha", "Skeleton", "Mutant Zombie"];
+            allowed = ["Giant Spider", "Gorgon", "Demon Bat", "Monster Crow", "Ghoul", "Piranha", "Skeleton", "Zombie Mutant"];
             break;
           case "Titan Golem":
             allowed = ["Golem", "Demon Bat", "Giant Crow", "Skeleton", "Wolf", "Bear", "Giant Spider"];
@@ -2664,7 +2734,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Giant Scorpion", "Sandworm", "Skeleton", "Zombie", "Vulture"];
             break;
 		  case "Devourer of Worlds":
-            allowed = ["Giant Scorpion", "Golem", "Ghoul", "Giant Sandworm", "Skeleton", "Mutant Zombie", "Vulture"];
+            allowed = ["Giant Scorpion", "Golem", "Ghoul", "Giant Sandworm", "Skeleton", "Zombie Mutant", "Vulture"];
             break;
           case "Titanoboa Lord":
             allowed = ["Sandworm", "Snake", "Goblin", "Golem", "Skeleton", "Giant Spider"];
@@ -2718,7 +2788,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Cyborg Guard", "Giant Robot", "Drone", "Jeager"];
             break;
           case "Grand Knight":
-            allowed = ["Skeleton", "Wolf", "Bear", "Possessed Armor", "Golem"];
+            allowed = ["Skeleton", "Wolf", "Bear", "Gorgon", "Possessed Armor", "Golem"];
             break;
 		  case "Grand Knight II":
             allowed = ["Skeleton", "Dire Wolf", "Dire Bear", "Bull", "Gorgon", "Snake", "Possessed Armor", "Golem"];
@@ -2751,7 +2821,7 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 			allowed = ["Bull", "Dire Wolf", "Dire Bear", "Hobgoblin", "Monster Crow", "Demon Bat", "Vulture", "Snake"];
 			break;
 		  case "Dragon King":
-            allowed = ["Hobgoblin", "Gorgon", "Mutant Zombie", "Skeleton", "Titan Golem", "Monster Crow", "Dire Wolf", "Ghoul", "Possessed Armor", "Giant Spider", "Demon Bat"];
+            allowed = ["Hobgoblin", "Gorgon", "Zombie Mutant", "Skeleton", "Titan Golem", "Monster Crow", "Dire Wolf", "Ghoul", "Possessed Armor", "Giant Spider", "Demon Bat"];
             break;
           case "Omni":
             allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight", "Orc", "Orc Berserker", "High Orc", "Ogre", "Ogre Mage", "Ant Swarm", "Giant Worker Ant", "Giant Warrior Ant", "Giant Drone Ant", "Giant Black", "Crab", "Iron Crab", "Giant Crab", "King Crab", "Spider Crab"];
@@ -2760,13 +2830,13 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
             allowed = ["Ghoul"];
             break;
 		  case "Supreme Witch, Calamitas":
-		    allowed = ["Ghoul"];
+		    allowed = ["Ghoul", "Zombie", "Skeleton", "Zombie Mutant", "Skeleton King", "Golem"];
             break;
 		  case "Warden Of Judgement, Will, And Balance":
             allowed = ["Angel", "Archdemon", "Possessed Armor", "Ghoul", "Seraphim"];
             break;
 		  case "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel":
-            allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Mutant Zombie", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Queen Ant", "Ant King, Beru", "Orc Lord", "Ogre King", "Kraken", "Crab King", "Ghost Leviathan", "Island Turtle", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
+            allowed = ["Goblin King", "Medusa, Lady of Stone", "Giant Cyclops, Eater of Men", "The Minotaur", "Seraphim", "Devourer of Worlds", "Goblin Emperor", "Frost Queen, Borealis", "The World Serpent, Jörmungandr", "Charybdis", "Primordial Automaton", "Grand Sorceress", "Arachni Empress", "The Brazen Bull, Khalkotauri", "Seraphim", "Grand Knight II", "Mega Meta Mecha Annihilator - Model: Grande", "Zombie Mutant", "Giant Lord", "Skeleton King", "Spider Queen", "The Witch", "Titan Golem", "Wyvern", "Giant Sandworm", "Titanoboa Lord", "Abominable Snowman", "Omegalodon", "Leviathan", "Angel", "Mega Meta Mecha Annihilator - Model: Ultima", "Grand Knight", "Six-Eyed Calamity", "The King of Curses", "Queen Ant", "Ant King, Beru", "Orc Lord", "Ogre King", "Kraken", "Crab King", "Ghost Leviathan", "Island Turtle", "Dragon King", "Guardian of Hell, Cerberus", "The Behemoth", "Demon King", "The Black King", "Supreme Witch, Calamitas", "Omni"];
             break;
           default:
             allowed = ["Goblin", "Zombie", "Skeleton", "Golem", "Monster Crow", "Wolf", "Werewolf", "Ghoul", "Giant Spider", "Demon Bat", "Giant Scorpion", "Ice Golem", "Ice Spirit", "Piranha", "Shark", "Giant Albatross", "Vulture", "Sandworm", "Possessed Armor", "Bear", "Drone", "Cyborg Guard", "Giant Robot", "Shikigami", "Sorcerer", "Cursed Spirit", "Demon", "Imp", "Archdemon", "Frost Knight", "Orc", "Orc Berserker", "High Orc", "Ogre", "Ogre Mage", "Ant Swarm", "Giant Worker Ant", "Giant Warrior Ant", "Giant Drone Ant", "Giant Black", "Crab", "Iron Crab", "Giant Crab", "King Crab", "Spider Crab"];
@@ -3859,12 +3929,12 @@ function resumeWorldMusicAfterBattle() {
     const guildChance = guildEncounteredBefore ? 0.1 : 0.05;
 	const cultChance = cultEncounteredBefore ? 0.05 : 0.025;
 	if (gameDifficulty !== "doom") {
-		if (Math.random() < guildChance) {
+		if (Math.random() < guildChance && floorCount % bossInterval === 0) {
 			guildEncounteredBefore = true;
 			type = ROOM_TYPES.GUILD;
 			roomDiv.dataset.type = type;
 		}
-		if (Math.random() < cultChance) {
+		if (Math.random() < cultChance && floorCount % bossInterval === 0) {
 			cultEncounteredBefore = true;
 			type = ROOM_TYPES.CULT;
 			roomDiv.dataset.type = type;
@@ -3929,7 +3999,6 @@ function generateAdjacentRooms(cx, cy) {
   
   // === Boss Rush mode: only Altars, Shops, Loots & Bosses ===
   if (gameDifficulty === "bossRush") {
-    const bossInterval = 3;
     if (floorCount % bossInterval === 0 && !bossRoomGenerated) {
       // spawn the boss room straight ahead
       const bossPos = { x: cx, y: cy - 1 };
@@ -4042,7 +4111,7 @@ function generateAdjacentRooms(cx, cy) {
 
     // ——— Doom override: force-forbid Casino, Guild, Warrior ———
     if (gameDifficulty === "doom"
-        && [ROOM_TYPES.CASINO, ROOM_TYPES.GUILD, ROOM_TYPES.WARRIOR]
+        && [ROOM_TYPES.CASINO, ROOM_TYPES.GUILD, ROOM_TYPES.CULT, ROOM_TYPES.WARRIOR]
             .includes(type)) {
       type = ROOM_TYPES.EMPTY;
 	  disguised = false;
@@ -4696,9 +4765,7 @@ function applyPlayerStatus(type, duration = null) {
 	openShopMenu();
   } else if (map[key].type === ROOM_TYPES.BOSS) {
 	stopWorldMusic();
-    startBossBattle(() => finalizeRoom(key));
-	generateAdjacentRooms(player.x, player.y);
-	return;
+	handleBossRoom(key);
   } else if (map[key].type === ROOM_TYPES.ALTAR) {
     initiateLevelUp(3);
   } else if (map[key].type === ROOM_TYPES.CASINO) {
@@ -4720,6 +4787,7 @@ function applyPlayerStatus(type, duration = null) {
   } else if (inCult) {
     // Already accepted—always show Cult menu
     showCultMainMenu();
+	finalizeRoom(key);
     return;
   } else {
     // Not yet worthy: give them a chance (and only now do we do the kill-check logic)
@@ -4728,7 +4796,6 @@ function applyPlayerStatus(type, duration = null) {
       "Are you part of the guild or… do you wish to join our cause?\n\n"
     );
     if (!choice) {
-      // Declined: random ambush/finalize
       const texts = [
         "So I see... looks like we have something new to sacrifice. Get him!",
         "Hmm, well in that case... Guards!",
@@ -4748,13 +4815,15 @@ function applyPlayerStatus(type, duration = null) {
     // Automatically accept once you have enough kills
     alert("I see... welcome to the Clan then, my boy!");
     player.organization = "Cult";
+	player.cultUnlocked = true;
+    player.cultMissionStage = 0;
     showCultMainMenu();
 	finalizeRoom(key);
     return;
-  } else {
-      alert("I'm sorry, but you are not worthy. Maybe in another universe, my boy.");
-      finalizeRoom(key);
-  }
+	  } else {
+    alert("I'm sorry, but you are not worthy. Maybe in another universe, my boy.");
+    finalizeRoom(key);
+	  }
     }
     return;
   }
@@ -4785,8 +4854,6 @@ function applyPlayerStatus(type, duration = null) {
 
 function finalizeRoom(key) {
   map[key].type = ROOM_TYPES.EMPTY;
-  map[key].type = ROOM_TYPES.AMBUSH;
-  map[key].type = ROOM_TYPES.WARRIOR;
   map[key].element.innerHTML = "";
 
   player.x = parseInt(key.split("_")[0], 10);
@@ -4842,7 +4909,7 @@ function finalizeRoom(key) {
        * CULT SHIT
        *******************/
 
-function forceCultAmbush() {
+function forceCultAmbush(key) {
   // Mark we used a skill, switch music
   skillUsedThisBattle = true;
   stopWorldMusic();
@@ -4873,7 +4940,11 @@ function forceCultAmbush() {
       boss:        true
     });
   }
-
+  ambushCompleteCallback = () => {
+    finalizeRoom(key);
+    // regenerate the four neighboring rooms
+    generateAdjacentRooms(player.x, player.y);
+  };
   // Kick off the first wave
   startNextAmbush();
 }
@@ -4881,7 +4952,7 @@ function forceCultAmbush() {
 /**
  * Starts a Guild ambush: 2–3 Warriors in a row.
  */
-function forceGuildAmbush() {
+function forceGuildAmbush(key) {
   skillUsedThisBattle = true;
   stopWorldMusic();
   warriorTrack.play();
@@ -4909,7 +4980,11 @@ function forceGuildAmbush() {
       boss:        true
     });
   }
-
+  ambushCompleteCallback = () => {
+    finalizeRoom(key);
+    // regenerate the four neighboring rooms
+    generateAdjacentRooms(player.x, player.y);
+  };
   startNextAmbush();
 }
 
@@ -4917,7 +4992,6 @@ function startNextAmbush() {
   if (ambushEnemiesQueue.length === 0) {
     // all waves done
     battleTint.style.display = "none";
-    finalizeRoom(key);
     return;
   }
 
@@ -4954,8 +5028,14 @@ function onEnemyDefeated() {
   if (ambushEnemiesQueue.length > 0) {
     startNextAmbush();
   } else {
-    endBattle();
-    finalizeRoom(key);
+	if (player.organization === "Cult") {
+		alert(`You defeated the Guild Warriors! You report to the Cult of your achievement.`);
+		endBattle();
+	} else {
+		alert(`You defeated the Cultists! You report to the Guild for them to take care of the rest.`);
+		endBattle();
+	}
+	finalizeRoom(key);
   }
 }
 
@@ -4983,7 +5063,7 @@ const CULT_RANKS = [
 ];
 const CULT_MISSIONS = [1, 3, 5, 10, 20, 30, 50];
 const CULT_BONUSES = [
-  { luck:1, fortune:1, potential:1 },
+  { luck:1, fortune:1, potential:1, maxMana:0 },
   { luck:2, fortune:2, potential:2, maxMana:10 },
   { luck:3, fortune:3, potential:3, maxMana:25 },
   { luck:5, fortune:5, potential:5, maxMana:30 },
@@ -5013,15 +5093,23 @@ function handleCultMission() {
       return;
     }
     // reward
-    const req = getCurrentCultRequirement();
+	const req   = getCurrentCultRequirement();
+    const idx   = player.cultMissionStage - 1;
+    const bonus = CULT_BONUSES[idx];
     Object.assign(player, {
-      luck: player.luck + CULT_BONUSES[player.cultMissionStage].luck,
-      fortune: player.fortune + CULT_BONUSES[player.cultMissionStage].fortune,
-      potential: player.potential + CULT_BONUSES[player.cultMissionStage].potential,
-      maxMana: player.maxMana + CULT_BONUSES[player.cultMissionStage].maxMana
+      luck: player.luck + bonus.luck,
+      fortune: player.fortune + bonus.fortune,
+      potential: player.potential + bonus.potential,
+      maxMana: player.maxMana + bonus.maxMana,
     });
     player.cultKills = 0;
+    player.cultMissionStage++;
     updateCultRankUI();
+    setCultMissionUI();
+	updateStats();
+	updateManaDisplay();
+	updatePlayerStatsUI();
+	updatePlayerStatusUI();
     return;
   }
   if (player.cultMissionStage === 0 && player.cultKills === 0) {
@@ -5054,11 +5142,6 @@ function updateCultMissionProgress() {
        *******************/
 	  
 function showGuildApplicationPrompt() {
-  if (player.money < 500) {
-	alert("You do not have the requirement to apply, please return when you do.");
-    return;
-  }
-  
   let input = prompt("Welcome to the Guild! Please pay $500 if you wish to apply!");
   // If the player cancels or inputs nothing, assume they’re choosing to leave.
   if (input === null) {
@@ -5067,7 +5150,7 @@ function showGuildApplicationPrompt() {
   }
   let amount = Number(input);
   if (isNaN(amount) || amount < 500) {
-     alert("Please input the right amount of money.");
+     alert("You do not have the requirement to apply, please return when you do.");
 	 return;
   }
   
@@ -5480,29 +5563,102 @@ if (gameDifficulty === "normal") {
   
   ambushCompleteCallback = () => {
       let spare = confirm(`You have defeated the ${alias}, spare them?`);
-      if (spare) {
-        if (Math.random() < 0.33) {
-          alert("They join you as a mercenary!");
-          player.mercenaries.push(createMercenary());
-finalizeRoom(key);
-        } else {
-          alert("They thank you and leave.");
-finalizeRoom(key);
-        }
-	finalizeRoom(key);
-      }
-      finalizeRoom(key);
-    };
-
+	  if (player.organization==="Cult") {
+		alert(`You have defeated the ${alias}! You report to the Cult about your achievement.`);
+		finalizeRoom(key);
+      } else {
+		if (spare) {
+			if (Math.random() < 0.33) {
+				alert("They join you as a mercenary!");
+				player.mercenaries.push(createMercenary());
+				finalizeRoom(key);
+			} else {
+				alert("They thank you and leave.");
+				finalizeRoom(key);
+				ambushCompleteCallback = null;
+			}
+			finalizeRoom(key);
+			ambushCompleteCallback = null;
+		} else {
+			finalizeRoom(key);
+			ambushCompleteCallback = null;
+		}
+	  }
+	  ambushCompleteCallback = null;
+  };
 }
 
+function handleBossRoom(key) {
+  const floor = floorCount;
+
+  // === 1) GLOBAL SKIP: No bosses ever in doom or bossRush modes ===
+  if (gameDifficulty === "doom" || gameDifficulty === "bossRush") {
+    // Just clear the room and move on—no boss fight
+    startBossBattle(() => finalizeRoom(key));
+    generateAdjacentRooms(player.x, player.y);
+    return;
+  }
+
+  // === 2) SKIP AMBUSH on special floors 820, 920, 940 ===
+  const skipAmbushFloors = [820, 920, 940];
+  if (skipAmbushFloors.includes(floor)) {
+    // Directly start the boss, no minions
+    startBossBattle(() => finalizeRoom(key));
+    generateAdjacentRooms(player.x, player.y);
+    return;
+  }
+
+  // === 3) NORMAL FLOW: Check for a bossQueue ambush ===
+  const queueNames = bossQueues[floor] || [];
+  if (Array.isArray(queueNames) && queueNames.length > 0) {
+    // Flavor alert
+    alert("You manage to find the Boss room, however, a few of its minions stand in your way.");
+
+    // Build ambush queue
+    ambushEnemiesQueue = queueNames.map(name => {
+      const template = enemies.find(e => e.name === name);
+      if (!template) {
+        console.warn(`Unknown enemy “${name}” in bossQueues[${floor}]`);
+        return {...getDummyEnemy(name)};
+      }
+      return JSON.parse(JSON.stringify(template)); // deep copy
+    });
+
+    // When ambush clears, kick off boss battle
+    ambushCompleteCallback = () => {
+      startBossBattle(() => finalizeRoom(key));
+      generateAdjacentRooms(player.x, player.y);
+    };
+
+    startNextAmbush();
+    return;
+  }
+
+  // === 4) NO QUEUE? Final boss directly ===
+  startBossBattle(() => finalizeRoom(key));
+  generateAdjacentRooms(player.x, player.y);
+}
+
+// Helper for dummy fallback (you can keep your original if you prefer)
+function getDummyEnemy(name) {
+  return {
+    name,
+    hp: 1, maxHp: 1,
+    damageRange: [1,1],
+    expReward: [0,0],
+    moneyReward: [0,0],
+    poison: false, frozen: 0, burned: false,
+    weaken: false, paralyzed: false, asleep: 0,
+    boss: true
+  };
+}
 
       function startBossBattle(onComplete) {
   let bossTemplate = getBossForFloor(floorCount);
   let bossData = JSON.parse(JSON.stringify(bossTemplate));
-  currentEnemy = JSON.parse(JSON.stringify(bossData));;
+  currentEnemy = JSON.parse(JSON.stringify(bossData));
   if (currentEnemy === "The Restricted One, Kyojiro Allista") {
-	  alert("You have encountered a Legend Room... but wait, a Mysterious Man stands in your way.");
+	  alert("You have entered a Boss Room... but wait, a Mysterious Man stands in your way.");
   } else if (currentEnemy === "Omni") {
 	  alert("You sense a powerful presence, be careful.");
 	  alert("''Greetings human, we finally meet. Shall we begin the test?''");
@@ -5514,7 +5670,7 @@ finalizeRoom(key);
 	  alert("You reach the top of the island as you gaze at the magnificent view of the ocean around you, taking a breath of achievement.");
 	  alert("You take the moment to think that despite the chaotic state the world is in right now, beautiful things such as this still exist to make up for it.");
 	  alert("Suddenly, the ground below you shakes as you fall and tumble down the hill, right back to shore where you fortunately land back on your boat.");
-	  alert("You get back up and look up, as an enraged, gigantic turtle stares down at you.");
+	  alert("You get back up and look up as an enraged, gigantic turtle stares down at you.");
   } else if (currentEnemy === "The World Serpent, Jörmungandr") {
 	  alert("You stop your boat to gaze at one hell of a sight. An enormous serpent, probably long enough to encircle the planet, resting right beside the river.");
 	  alert("You then freeze in place as you realize the serpent's head is right behind you, breathing on you. You turn to see it staring right down at you as it begins to move.");
@@ -5524,11 +5680,11 @@ finalizeRoom(key);
 	  alert("The monster's presence is almost familiar, similar to that god you faced before, but you stand your ground as you prepare to battle once more.");
   } else if (currentEnemy === "The Black King") {
 	  alert("You get the feeling you are about to die... but you go anyway.");
-	  alert("You have encountered a Legend Room. Be careful.");
+	  alert("You have entered a Boss Room. Be careful.");
   } else if (currentEnemy === "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel") {
 	  alert("After everything you've been through, it's finally time. All of your effort, your struggles, and your victories, has come to this one moment. Good luck, warrior.");
   } else {
-	  alert("You have encountered a Legend Room. Be careful.");
+	  alert("You have entered a Boss Room. Be careful.");
   }
   player.weaponSkill.usedThisBattle = false;
   skillUsedThisBattle = true;
@@ -5825,49 +5981,49 @@ function getEnemyByName(enemyName) {
 
       function endBattle() {
 		  const defeatedBoss = currentEnemy && currentEnemy.boss && currentEnemy.hp <= 0 ? currentEnemy.name : null;
+		  const enemyName = currentEnemy.name;
+		killCount++;
+		  // only count true monsters
+		  if (!["Warrior","Outlaw","Bandit","Cult Member"].includes(enemyName)) {
+			  player.monsterKills++;
+			  if (player.organization==="Guild") updateGuildMissionProgress();
+		  } else {
+			  if (player.organization==="Cult") updateCultMissionProgress();
+		  }
 		  
-const name = currentEnemy.name;
-  killCount++;
-  // only count true monsters
-  if (!["Warrior","Outlaw","Bandit","Cult Member"].includes(name)) {
-    player.monsterKills++;
-    if (player.organization==="Guild") updateGuildMissionProgress();
-    if (player.organization==="Cult")  player.cultKills++, updateCultRankUI(), updateCultMissionProgress();
-  }
-		  
-  if (preBattleStats.attack !== undefined) {
-    player.attack        = preBattleStats.attack;
-	player.defense        = preBattleStats.defense;
-    player.agility       = preBattleStats.agility;
-    player.critMultiplier = preBattleStats.critMultiplier;
-    player.critChance    = preBattleStats.critChance;
-    player.rage          = false;
-    player.iron          = false;
-    preBattleStats = {};
-  }
+		  if (preBattleStats.attack !== undefined) {
+			  player.attack        = preBattleStats.attack;
+			  player.defense        = preBattleStats.defense;
+			  player.agility       = preBattleStats.agility;
+			  player.critMultiplier = preBattleStats.critMultiplier;
+			  player.critChance    = preBattleStats.critChance;
+			  player.rage          = false;
+			  player.iron          = false;
+			  preBattleStats = {};
+		  }
   
-  if (preBattleStats.defense !== undefined) {
-    player.attack        = preBattleStats.attack;
-	player.defense        = preBattleStats.defense;
-    player.agility       = preBattleStats.agility;
-    player.critMultiplier = preBattleStats.critMultiplier;
-    player.critChance    = preBattleStats.critChance;
-    player.rage          = false;
-    player.iron          = false;
-    preBattleStats = {};
-  }
-  player.statuses.frozen = 0;
-  player.statuses.asleep = 0;
-  updatePlayerStatusUI();
+		  if (preBattleStats.defense !== undefined) {
+			player.attack        = preBattleStats.attack;
+			player.defense        = preBattleStats.defense;
+			player.agility       = preBattleStats.agility;
+			player.critMultiplier = preBattleStats.critMultiplier;
+			player.critChance    = preBattleStats.critChance;
+			player.rage          = false;
+			player.iron          = false;
+			preBattleStats = {};
+		  }
+		  player.statuses.frozen = 0;
+		  player.statuses.asleep = 0;
+		  updatePlayerStatusUI();
   
-  if (defeatedBoss === "Demon King") {
-	alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
-	alert("You stand pridefully on top of the Demon King's corpse as you become the hero and saviour of the world, when suddenly, a bright flash of light blinds you.");
-	alert("''Greetings human, congratulations on coming this far. Find me, and I shall finally test you for myself''.");
-  }
-  if (defeatedBoss === "Omni") {
-    alert("As you land the finishing blow, you suddenly feel as if the world shifted... no, reality shifted. A bright flash of light then blinds you once again, as you realize you're back in a familiar place, but... it's different, somhow.");
-  }
+		  if (defeatedBoss === "Demon King") {
+			alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
+			alert("You stand pridefully on top of the Demon King's corpse as you become the hero and saviour of the world, when suddenly, a bright flash of light blinds you.");
+			alert("''Greetings human, congratulations on coming this far. Find me, and I shall finally test you for myself''.");
+		  }
+		  if (defeatedBoss === "Omni") {
+			alert("As you land the finishing blow, you suddenly feel as if the world shifted... no, reality shifted. A bright flash of light then blinds you once again, as you realize you're back in a familiar place, but... it's different, somhow.");
+		  }
   if (defeatedBoss === "Abominable Snowman") {
 	alert("You find an ancient, abandoned port near the frozen shore. You explore it and find a boat. You meddle around and somehow got it to work as you then hop on and resume your journey, through the sea.");
   }
@@ -6171,7 +6327,7 @@ const name = currentEnemy.name;
           const multiplier = Math.random() * (1.15 - 0.85) + 0.85;
           baseDamage = Math.floor(multiplier * player.attack * (1 + extra.damage + fsBonus));
         } else if (moveType === "magic") {
-          const multiplier = Math.random() * (2 - 1) + 1;
+          const multiplier = Math.random() * (1.5 - 1) + 1;
           baseDamage = Math.floor(multiplier * player.magic * (1 + extra.damage + fsBonus));
         }
         let damage = Math.round(baseDamage);
