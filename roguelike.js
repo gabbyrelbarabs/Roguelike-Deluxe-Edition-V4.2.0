@@ -3707,7 +3707,7 @@ function applyClassEffects(cls) {
 	const daggerNames    = ["Dagger"];
 	const hammerNames    = ["Warhammer"];
 	const spearNames     = ["Spear"];
-	const gauntletNames  = ["Gauntlet"];
+	const gauntletNames  = ["Gauntlets"];
 	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
 	
   switch (cls) {
