@@ -1410,55 +1410,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   white-space: normal;
 }
 
-#classSelectionMenu {
-  display: none;              /* hidden by default */
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.85); /* dark overlay */
-  z-index: 10010;             /* above battle tint (e.g. 10000) */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#classSelectionMenu .modal-content {
-  background: #1a1a1a;
-  color: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.7);
-  max-width: 90%;
-  width: 360px;
-  text-align: center;
-  position: center;
-}
-
-#classSelectionMenu .modal-content h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-#classSelectionMenu .modal-content button {
-  display: block;
-  width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.75rem;
-  font-size: 1rem;
-  background: #7d7d7d;
-  border: 2px solid #555;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-#classSelectionMenu .modal-content button:hover {
-  background: #444;
-  border-color: #777;
-}
-
 #playerJobs {
   display: flex;
   justify-content: center;

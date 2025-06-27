@@ -497,12 +497,12 @@ casinoMusic.loop = true;
   },
   // "True" base stats (permanent upgrades are stored here)
   baseStats: {
-    attack:    20,
-    defense:   20,
-    magic:     20,
-    maxHp:    1000,
+    attack:    2,
+    defense:   2,
+    magic:     2,
+    maxHp:    100,
 	maxArmor: 20,
-    maxMana:  100,
+    maxMana:  10,
     agility:   1,
     perception:1,
 	potential: 1,
@@ -3702,82 +3702,80 @@ function selectClass(cls) {
 }
 
 function applyClassEffects(cls) {
-  // (You may want to clear previous buffs first if you store them)
-  switch (cls) {
-    const swordNames     = ["Sword", "Greatsword", "Excalibur"];
+  const swordNames = ["Sword", "Greatsword", "Excalibur"];
 	const greatSwordName = ["Greatsword"];
 	const daggerNames    = ["Dagger"];
 	const hammerNames    = ["Warhammer"];
 	const spearNames     = ["Spear"];
 	const gauntletNames  = ["Gauntlet"];
 	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
-
+	
   switch (cls) {
     case "Swordsman":
       if (w && swordNames.includes(w)) {
         // +10% with swords
-        player.attack = Math.ceil(player.attack * 1.10);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
         // -10% with anything else (or no weapon)
-        player.attack = Math.ceil(player.attack * 0.90);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
       break;
 
     case "Assassin":
       if (w && daggerNames.includes(w)) {
         // +20% with daggers
-        player.attack = Math.ceil(player.attack * 1.20);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.20);
       }
-      player.perception = (player.perception || 0) + 5;
-      player.dodgeChance = (player.dodgeChance || 0) + 0.10;
-      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.10;
+      player.baseStats.perception = (player.baseStats.perception || 0) + 5;
+      player.baseStats.dodgeChance = (player.baseStats.dodgeChance || 0) + 0.10;
+      player.baseStats.enemyDamageTaken = (player.baseStats.enemyDamageTaken || 1) * 1.10;
       break;
 
     case "Heavy Knight":
       if (w && (hammerNames.includes(w) || greatSwordName.includes(w) || spearNames.includes(w))) {
         // +10% with warhammer, greatsword, spear
-        player.attack = Math.ceil(player.attack * 1.10);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
         // -10% with any other
-        player.attack = Math.ceil(player.attack * 0.90);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
-      player.defense = Math.ceil(player.defense * 1.10);
-      player.agility = Math.ceil(player.agility * 0.80); // -20%
+      player.baseStats.defense = Math.ceil(player.baseStats.defense * 1.10);
+      player.baseStats.agility = Math.ceil(player.baseStats.agility * 0.80); // -20%
       break;
 
     case "Berserker":
       if (!w) {
         // +25% with no weapon
-        player.attack = Math.ceil(player.attack * 1.25);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.25);
       } else if (gauntletNames.includes(w)) {
         // +15% with gauntlets
-        player.attack = Math.ceil(player.attack * 1.375);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.375);
       } else {
         // -10% with any other weapon
-        player.attack = Math.ceil(player.attack * 0.90);
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
-      player.defense    = Math.ceil(player.defense    * 1.05);
-      player.perception = (player.perception || 0) + 5;
-      player.agility    = Math.ceil(player.agility    * 1.05);
-      player.magic      = Math.ceil(player.magic      * 0.90);
+      player.baseStats.defense    = Math.ceil(player.baseStats.defense    * 1.05);
+      player.baseStats.perception = (player.baseStats.perception || 0) + 5;
+      player.baseStats.agility    = Math.ceil(player.baseStats.agility    * 1.05);
+      player.baseStats.magic      = Math.ceil(player.baseStats.magic      * 0.90);
       break;
 
     case "Tank":
-      player.defense = Math.ceil(player.defense * 1.25);
+      player.baseStats.defense = Math.ceil(player.baseStats.defense * 1.25);
       break;
 
     case "Mage":
-      player.magic = Math.ceil(player.magic * 1.05);
-      player.attack = Math.ceil(player.attack * 0.85);
-      player.enemyDamageTaken = (player.enemyDamageTaken || 1) * 1.05;
+      player.baseStats.magic = Math.ceil(player.baseStats.magic * 1.05);
+      player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.85);
+      player.baseStats.enemyDamageTaken = (player.baseStats.enemyDamageTaken || 1) * 1.05;
       break;
 
     case "Expeditionist":
-      player.fortune = Math.ceil(player.fortune * 1.20);
-      player.luck    = Math.ceil(player.luck    * 1.20);
-      player.agility = Math.ceil(player.agility * 1.20);
-      player.attack  = Math.ceil(player.attack  * 0.90);
-	  player.magic   = Math.ceil(player.magic  * 0.90);
+      player.baseStats.fortune = Math.ceil(player.baseStats.fortune * 1.20);
+      player.baseStats.luck    = Math.ceil(player.baseStats.luck    * 1.20);
+      player.baseStats.agility = Math.ceil(player.baseStats.agility * 1.20);
+      player.baseStats.attack  = Math.ceil(player.baseStats.attack  * 0.90);
+	  player.baseStats.magic   = Math.ceil(player.baseStats.magic  * 0.90);
       break;
 
     case "All-rounder":
@@ -3786,7 +3784,7 @@ function applyClassEffects(cls) {
         "agility","perception","potential",
         "luck",   "fortune"
       ].forEach(stat => {
-        player[stat] = Math.ceil(player[stat] + 2);
+        player.baseStats[stat] = Math.ceil(player.baseStats[stat] + 2);
       });
       break;
 
