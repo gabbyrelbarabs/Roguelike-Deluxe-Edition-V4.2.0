@@ -546,10 +546,15 @@ casinoMusic.loop = true;
 	p.maxArmor += 15;
     p.agility = p.agility - 15;
   },
+  "Ball & Chain": p => {
+    p.attack = Math.ceil(p.attack * 2.5);
+	p.defense = Math.ceil(p.defense * 1.2);
+    p.agility = p.agility - 10;
+  },
   "Dagger":     p => {
     p.attack = Math.ceil(p.attack * 1.33);
     p.agility = Math.ceil(p.agility * 1.5);
-    p.perception = Math.ceil(p.perception * 1.5);
+    p.perception *= 2;
   },
   "Spear":      p => {
     p.attack = p.attack * 2;
@@ -3095,6 +3100,16 @@ let shopItemsList = [
 	description: "Extremely heavy, but very powerful, allowing you to smash foes to bits.",
   },
   {
+    name: "Ball & Chain",
+    cost: 500,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "A heavy, but strong weapon, allowing you to swing around and obliterate with momentum.",
+  },
+  {
     name: "Spear",
     cost: 360,
     type: "equipment",
@@ -3434,13 +3449,23 @@ shopItemsList = [
   },
   {
     name: "Sentinel Hammer",
-    cost: 480,
+    cost: 600,
     type: "equipment",
     category: "weapon",
     usableInBattle: false,
     usableOutOfBattle: false,
     usageScope: "passive",
 	description: "A heavy, powerful hammer filled with positive-energy, and is kinetic-energy absorbant, given to the Slayer by the Night Sentinels.",
+  },
+  {
+    name: "Ball & Chain",
+    cost: 600,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "A heavy, but strong weapon, allowing you to swing around and obliterate with momentum.",
   },
   {
     name: "Energy Spear",
@@ -4274,6 +4299,22 @@ function generateAdjacentRooms(cx, cy) {
 		}, 125);
 	  }
 	  
+const mimicTemplate = {
+  name: "Mimic",
+  hp: 200,
+  damageRange: [4, 8],
+  expReward: [2, 3],
+  moneyReward: [10, 15],
+  reductionAll: 0,
+  poison: false,
+  frozen: 0,
+  burned: false,
+  weaken: false,
+  paralyzed: false,
+  asleep: 0,
+  boss: false
+};
+
 	  const baseItemChance = 0.5;
 	  const itemChance = Math.min(0.9, baseItemChance + player.luck * 0.001);
 
@@ -4954,7 +4995,20 @@ function applyPlayerStatus(type, duration = null) {
 		startAmbushBattle(() => finalizeRoom(key));
 		return;
   } else if (map[key].type === ROOM_TYPES.LOOT) {
+    if (Math.random() < 0.05) {
+    alert("A treasure chest turned out to be a Mimic!");
+    ambushEnemiesQueue = [ JSON.parse(JSON.stringify(mimicTemplate)) ];
+    ambushCompleteCallback = () => {
+      alert("You have defeated the Mimic!");
+      handleLootRoom();
+      finalizeRoom(key);
+    };
+    // kick off the fight
+    startNextAmbush();
+    return;
+  } else {
     handleLootRoom();
+  }
   } else if (map[key].type === ROOM_TYPES.TRAP) {
     handleTrapRoom();
   }
