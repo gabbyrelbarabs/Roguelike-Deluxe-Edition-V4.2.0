@@ -4996,12 +4996,12 @@ function applyPlayerStatus(type, duration = null) {
 		return;
   } else if (map[key].type === ROOM_TYPES.LOOT) {
     if (Math.random() < 0.05) {
-    alert("A treasure chest turned out to be a Mimic!");
+    alert("You found some treasure!");
+	alert("But wait... a treasure chest turned out to be a Mimic!");
     ambushEnemiesQueue = [ JSON.parse(JSON.stringify(mimicTemplate)) ];
     ambushCompleteCallback = () => {
       alert("You have defeated the Mimic!");
       handleLootRoom();
-      finalizeRoom(key);
     };
     // kick off the fight
     startNextAmbush();
@@ -5012,8 +5012,6 @@ function applyPlayerStatus(type, duration = null) {
   } else if (map[key].type === ROOM_TYPES.TRAP) {
     handleTrapRoom();
   }
-
-  
   if (player.statuses.poisoned) {
     const dmg = Math.ceil(player.maxHP * 0.02);
     player.currentHP = Math.max(0, player.currentHP - dmg);
