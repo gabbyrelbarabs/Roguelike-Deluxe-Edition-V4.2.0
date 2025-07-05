@@ -546,6 +546,14 @@ casinoMusic.loop = true;
 	p.maxArmor += 15;
     p.agility = p.agility - 15;
   },
+  "Battle Axe": p => {
+    p.attack = p.attack * 2;
+  },
+  "Mace": p => {
+    p.attack = p.attack * 4;
+	p.defense = Math.ceil(p.defense * 2);
+	p.agility = -999;
+  },
   "Ball & Chain": p => {
     p.attack = Math.ceil(p.attack * 2.5);
 	p.defense = Math.ceil(p.defense * 1.2);
@@ -3274,6 +3282,26 @@ let shopItemsList = [
 	description: "A heavy, but strong weapon, allowing you to swing around and obliterate with momentum.",
   },
   {
+    name: "Mace",
+    cost: 500,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "The heaviest weapon by its head alone. A single swing should be enough to crush an ogre's head.",
+  },
+  {
+    name: "Battle Axe",
+    cost: 500,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "A deadly, double sided axe used in medieval warfare, now reused for its proficiency in group combat when swung.",
+  },
+  {
     name: "Spear",
     cost: 360,
     type: "equipment",
@@ -3632,6 +3660,16 @@ shopItemsList = [
 	description: "A heavy, but strong weapon, allowing you to swing around and obliterate with momentum.",
   },
   {
+    name: "Battle Axe",
+    cost: 500,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "A deadly, double sided axe used in medieval warfare, now reused for its proficiency in group combat when swung.",
+  },
+  {
     name: "Energy Spear",
     cost: 450,
     type: "equipment",
@@ -3891,11 +3929,14 @@ function selectClass(cls) {
 }
 
 function applyClassEffects(cls) {
-  const swordNames = ["Sword", "Greatsword", "Excalibur"];
+	const swordNames = ["Sword", "Greatsword", "Excalibur"];
 	const greatSwordName = ["Greatsword"];
 	const daggerNames    = ["Dagger"];
 	const hammerNames    = ["Warhammer"];
 	const spearNames     = ["Spear"];
+	const ballNames      = ["Ball & Chain"];
+	const axeNames       = ["Battle Axe"];
+	const maceNames      = ["Mace"];
 	const gauntletNames  = ["Gauntlets"];
 	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
 	
@@ -3921,7 +3962,7 @@ function applyClassEffects(cls) {
       break;
 
     case "Heavy Knight":
-      if (w && (hammerNames.includes(w) || greatSwordName.includes(w) || spearNames.includes(w))) {
+      if (w && (hammerNames.includes(w) || greatSwordName.includes(w) || spearNames.includes(w) || maceNames.includes(w) || axeNames.includes(w) || ballNames.includes(w))) {
         // +10% with warhammer, greatsword, spear
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
