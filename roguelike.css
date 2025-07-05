@@ -87,6 +87,10 @@ body {
   color: white;
 }
 
+#finalBattleBtn {
+  background-color: #e8e8e8;
+}
+
 /* Hover states to brighten them up */
 #difficultyMenu button:hover {
   opacity: 0.85;

@@ -2662,6 +2662,170 @@ const bossQueues = {
 			reductionAttack: 0.67,
 			reductionMagic: 0.67
           },
+		  1080: {
+            name: "Goblin King",
+            hp: 50000,
+            damageRange: [10, 15],
+            expReward: [30, 30],
+            moneyReward: [30, 30],
+          },
+          1100: {
+            name: "Zombie Mutant",
+            hp: 70000,
+            damageRange: [15, 25],
+            expReward: [70, 70],
+            moneyReward: [70, 70],
+			reductionMagic: 0.5,
+          },
+          1120: {
+            name: "Giant Lord",
+            hp: 100000,
+            damageRange: [10, 20],
+            expReward: [100, 100],
+            moneyReward: [100, 100],
+            reductionAttack: 0.5,
+          },
+          1140: {
+            name: "Skeleton King",
+            hp: 80000,
+            damageRange: [20, 30],
+            expReward: [120, 120],
+            moneyReward: [120, 120],
+			reductionAttack: 0.5,
+          },
+          1160: {
+            name: "Spider Queen",
+            hp: 95000,
+            damageRange: [20, 35],
+            expReward: [150, 150],
+            moneyReward: [150, 150]
+          },
+          1180: {
+            name: "The Witch",
+            hp: 89000,
+            damageRange: [40, 60],
+            expReward: [180, 180],
+            moneyReward: [180, 180],
+            reductionMagic: 0.5,
+          },
+          1200: {
+            name: "Titan Golem",
+            hp: 150000,
+            damageRange: [20, 30],
+            expReward: [210, 210],
+            moneyReward: [210, 210],
+            reductionAll: 0.33,
+          },
+          1220: {
+            name: "Wyvern",
+            hp: 125000,
+            damageRange: [35, 70],
+            expReward: [240, 240],
+            moneyReward: [240, 240],
+			reductionAttack: 0.5,
+          },
+          1240: {
+            name: "Giant Sandworm",
+            hp: 115000,
+            damageRange: [35, 60],
+            expReward: [250, 250],
+            moneyReward: [250, 250]
+          },
+          1260: {
+            name: "Titanoboa Lord",
+            hp: 130000,
+            damageRange: [40, 65],
+            expReward: [280, 280],
+            moneyReward: [280, 280]
+          },
+          1280: {
+            name: "Abominable Snowman",
+            hp: 129000,
+            damageRange: [50, 75],
+            expReward: [300, 300],
+            moneyReward: [300, 300]
+          },
+          1300: {
+            name: "Omegalodon",
+            hp: 140000,
+            damageRange: [45, 60],
+            expReward: [320, 320],
+            moneyReward: [320, 320],
+            reductionAttack: 0.5,
+          },
+          1320: {
+            name: "Leviathan",
+            hp: 180000,
+            damageRange: [50, 65],
+            expReward: [360, 360],
+            moneyReward: [360, 360],
+            reductionAttack: 0.33,
+          },
+          1340: {
+            name: "Angel",
+            hp: 145000,
+            damageRange: [60, 90],
+            expReward: [400, 400],
+            moneyReward: [400, 400],
+            reductionMagic: 0.5,
+          },
+          1360: {
+            name: "Mega Meta Mecha Annihilator - Model: Ultima",
+            hp: 165000,
+            damageRange: [50, 75],
+            expReward: [420, 420],
+            moneyReward: [500, 500],
+			reductionAttack: 0.5,
+          },
+          1380: {
+            name: "Grand Knight",
+            hp: 185000,
+            damageRange: [60, 90],
+            expReward: [480, 480],
+            moneyReward: [480, 480],
+            reductionAll: 0.33,
+          },
+          1400: {
+            name: "Six-Eyed Calamity",
+            hp: 175000,
+            damageRange: [90, 125],
+            expReward: [600, 600],
+            moneyReward: [560, 560],
+            reductionAll: 0.33,
+		  },
+          1420: {
+            name: "Hydra",
+            hp: 185000,
+            damageRange: [80, 120],
+            expReward: [900, 900],
+            moneyReward: [800, 800],
+			reductionAttack: 0.5,
+          },
+          1440: {
+            name: "Guardian of Hell, Cerberus",
+            hp: 178000,
+            damageRange: [60, 95],
+            expReward: [500, 500],
+            moneyReward: [800, 800],
+			reductionMagic: 0.33,
+          },
+          1460: {
+            name: "Demon King",
+            hp: 195000,
+            damageRange: [85, 120],
+            expReward: [800, 800],
+            moneyReward: [850, 850],
+			reductionMagic: 0.5,
+          },
+		  1480: {
+            name: "Omni",
+            hp: 200000,
+            damageRange: [90, 130],
+            expReward: [1000, 1000],
+            moneyReward: [1000, 1000],
+			reductionAttack: 0.5,
+			reductionMagic: 0.5,
+          },
         };
 		
          const bossFloors = Object.keys(bosses).map(Number).sort((a, b) => a - b);
@@ -5686,6 +5850,67 @@ function handleBossRoom(key) {
     // Just clear the room and move on—no boss fight
     startBossBattle(() => finalizeRoom(key));
     generateAdjacentRooms(player.x, player.y);
+    return;
+  }
+  if (gameDifficulty === "bossRush" && floor > 159) {
+	alert("You sense a powerful presence... however, it's a bit off...");
+	alert("''Greetings warrior! You might not be expecting this... in fact, you might not have expected me here at all.''");
+	alert("''But that's not what matters...''");
+	alert("''I've been watching you from up here, warrior. And I'm impressed.''");
+	alert("''You actually managed to take down ALL of those Legends and the gods themselves!''");
+	alert("'In a quick succession too...''");
+	alert("''But congratulations on that achievement, warrior.''");
+	alert("''Anyway...''");
+	alert("''My point is... I'm shocked that you didn't actually take the opportunity to become one of them.''");
+	alert("''If I were you, I would've taken it, no questions asked, haha.''");
+	alert("''But you rejected it... you're one special guy to have done that so casually, huh, and you even killed the one and only God!''");
+	alert("''Like damn, dude...''");
+	alert("''But anyway! I'm not here to just blabber on glazing you and all that...''");
+	alert("''I've been watching you.''");
+	alert("''I've watched you from the very start.''");
+	alert("''All of your struggles, your near death experiences, and your easy kills with that extremely overpowered, one-shot magic spell.''");
+	alert("''Heh... you reminded me of the old days...''");
+	alert("''I was like you once. However, when I faced Him, I failed to take him down... but you did!''");
+	alert("''After that, I wanted to go straight down to you and face you immediately, but...''");
+	alert("''I realized I'd just be killing myself if I did... even as the already dead man that I am! Because uhh, killing spirits and ghosts seemed to be an everyday thing for you.''");
+	alert("''But whatever... I decided I didn't want to... yet, at least.''");
+	alert("''I decided to let you train and get stronger first, and myself as well.''");
+	alert("''Though to you, its only a few days, years, etc.! But to me... here in this heavenscape, it's been eons! It only doesn't feel like it when I observe the land of the living below, since the dimensions basically connect.''");
+	alert("''And so I spent those days training, honing and re-perfecting the techniques I already did when I was alive. And now... I'm ready.''");
+	alert("''And you be ready as well, warrior! For I... your predecessor, challenge you, to a duel!''");
+	alert("''But first... all these newgen things are really not my style... I mean, what are ''potions'' or ''skills'' or ''Innates''. Blegh.''");
+	alert("''Let's do this, the old fashioned way...''");
+    window.location.href = "galacta.html";
+    return;
+  }
+  if (gameDifficulty === "ultimate" && floor > 1460) {
+	alert("You sense a powerful presence... however, it's a bit off...");
+	alert("''Greetings warrior! You might not be expecting this... in fact, you might not have expected me here at all.''");
+	alert("''But that's not what matters...''");
+	alert("''I've been watching you from up here, warrior. And I'm impressed.''");
+	alert("''You actually managed to take down the gods!''");
+	alert("''Congratulations on that achievement, warrior.''");
+	alert("''Anyway...''");
+	alert("''My point is... I'm shocked that you didn't actually take the opportunity to become one of them.''");
+	alert("''If I were you, I would've taken it, no questions asked, haha.''");
+	alert("''But you rejected it... you're one special guy to have done that so casually, huh, and you even killed the one and only God!''");
+	alert("''Like damn, dude...''");
+	alert("''But anyway! I'm not here to just blabber on glazing you and all that...''");
+	alert("''I've been watching you.''");
+	alert("''I've watched you from the very start.''");
+	alert("''All of your struggles, your near death experiences, and your easy kills with that extremely overpowered, one-shot magic spell.''");
+	alert("''Heh... you reminded me of the old days...''");
+	alert("''I was like you once. However, when I faced Him, I failed to take him down... but you did!''");
+	alert("''After that, I wanted to go straight down to you and face you immediately, but...''");
+	alert("''I realized I'd just be killing myself if I did... even as the already dead man that I am! Because uhh, killing spirits and ghosts seemed to be an everyday thing for you.''");
+	alert("''But whatever... I decided I didn't want to... yet, at least.''");
+	alert("''I decided to let you train and get stronger first, and myself as well.''");
+	alert("''Though to you, its only a few days, years, etc.! But to me... here in this heavenscape, it's been eons! It only doesn't feel like it when I observe the land of the living below, since the dimensions basically connect.''");
+	alert("''And so I spent those days training, honing and re-perfecting the techniques I already did when I was alive. And now... I'm ready.''");
+	alert("''And you be ready as well, warrior! For I... your predecessor, challenge you, to a duel!''");
+	alert("''But first... all these newgen things are really not my style... I mean, what are ''potions'' or ''skills'' or ''Innates''. Blegh.''");
+	alert("''Let's do this, the old fashioned way...''");
+	window.location.href = "galacta.html";
     return;
   }
 

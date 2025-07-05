@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Final Battle</title>
+  <link rel="shortcut icon" type="x-icon" href="galacta.ico" />
+  <style>
+    /* --- Fullscreen overlays --- */
+    .splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 1.5rem;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+    .splash.fade-out {
+      opacity: 0;
+	  transition: opacity 1s ease;
+    }
+	.fade-out {
+	  opacity: 0;
+	  transition: opacity 1s ease;
+	}
+
+    /* --- Game UI --- */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #222;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .bar-container {
+      margin: 1rem 0;
+      width: 300px;
+      background: #444;
+      border: 2px solid #222;
+      border-radius: 5px;
+      position: relative;
+    }
+    .bar-fill {
+      height: 25px;
+      width: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    #player-bar .bar-fill { background: green; }
+    #energy-bar .bar-fill { background: blue; }
+    #boss-bar .bar-fill   { background: red; }
+    .bar-label {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      line-height: 25px;
+      font-weight: bold;
+    }
+    #log {
+      width: 300px;
+      height: 150px;
+      background: #111;
+      border: 1px solid #333;
+      padding: 0.5rem;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+    button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Version splash (unclickable) -->
+  <div id="versionSplash" class="splash">
+    Roguelike! Deluxe Edition V<span id="versionText">5.0.0</span>
+  </div>
+
+  <h1>The Final Battle</h1>
+  <audio id="bgm" src="galacta.mp3" loop></audio>
+
+  <!-- Bars -->
+  <div id="player-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Player: 100 / 100</div>
+  </div>
+  <div id="energy-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Energy: 100 / 100</div>
+  </div>
+  <div id="boss-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Previous Hero: 1000 / 1000</div>
+  </div>
+
+  <!-- Controls -->
+  <div>
+    <button id="attack-btn">Attack</button>
+    <button id="magic-btn">Magic</button>
+    <button id="rest-btn">Rest</button>
+    <button id="heal-btn">Heal</button>
+  </div>
+  <div id="log"></div>
+
+  <script>
+    // Helper: step version triple down by one patch
+    function prevVersion([M, m, p]) {
+      if (p > 0) return [M, m, p - 1];
+      if (m > 0) return [M, m - 1, 9];
+      return [M - 1, 9, 9];
+    }
+
+    // Your exact getDelay function
+    function getDelay([M, m, p], isInitial) {
+      if (isInitial) return 1500;                             // hold 5.0.0
+      if (M === 4 && m === 9 && p === 7) return 500;          // 4.9.9
+      if (M === 4 && m === 9 && p >= 0) return 350;           // 4.9.8→4.9.0
+      if (M === 4 && m === 8 && p >= 0) return 200;           // 4.8.x
+      if (M === 4 && m >= 7 && p >= 0) return 100;            // 4.7.x
+      if (M === 4 && m >= 5 && p >= 0) return 50;             // 4.5.x
+      if (M === 1 && m >= 2) return 10;                       // 1.9.x→1.5.x
+      if (M === 1 && m === 2 && p === 0) return 20;           // 1.5.0
+      if (M === 1 && (m > 0 || p > 5)) return 100;            // 1.4.x→1.0.6
+      if (M === 1 && m === 0 && p <= 5 && p > 0) return 500;  // 1.0.5→1.0.1
+      if (M === 1 && m === 0 && p === 0) return 1500;         // hold 1.0.0
+      return 10;                                              // fallback
+    }
+
+    const versionSplash = document.getElementById('versionSplash');
+    const versionText   = document.getElementById('versionText');
+    const clickable     = document.getElementById('clickable');
+    const bgm           = document.getElementById('bgm');
+
+    // Run through versions 5.0.0 → 1.0.0
+    (function runVersionSplash() {
+      let ver = [5,0,0];
+      let initial = true;
+
+      function step() {
+        const delay = getDelay(ver, initial);
+        versionText.textContent = ver.join('.');
+        initial = false;
+
+        setTimeout(() => {
+          if (ver[0] === 1 && ver[1] === 0 && ver[2] === 0) {
+            // Fade out version splash, then show clickable
+            versionSplash.innerHTML =
+			`<div style="text-align: center;">
+				Your true fate shall be decided in this final battle... are you ready?
+				<br>
+				<br>
+				<br>
+				<em>Press to continue...</em>`;
+			versionSplash.id = 'clickable';
+			versionSplash.addEventListener('click', () => {
+				bgm.play();
+				versionSplash.classList.add('fade-out');
+				versionSplash.addEventListener('transitionend', () => {
+					versionSplash.remove();
+					log('The battle begins with Previous Hero!');
+					startTurn();
+				});
+			});
+
+			return;
+          }
+          ver = prevVersion(ver);
+          step();
+        }, delay);
+      }
+
+      step();
+    })();
+
+    const player = {
+      maxHp: 100, hp: 100,
+      minDmg: 8, maxDmg: 15,
+      healMin: 15, healMax: 30,
+      maxEnergy: 100, energy: 100,
+      healCost: 15, attackCost: 2, magicCost: 10
+    };
+    const boss = { maxHp: 1000, hp: 1000, minDmg: 8, maxDmg: 13 };
+    let turn = 1;
+
+    const pFill   = document.querySelector('#player-bar .bar-fill');
+    const pLabel  = document.querySelector('#player-bar .bar-label');
+    const eFill   = document.querySelector('#energy-bar .bar-fill');
+    const eLabel  = document.querySelector('#energy-bar .bar-label');
+    const bFill   = document.querySelector('#boss-bar .bar-fill');
+    const bLabel  = document.querySelector('#boss-bar .bar-label');
+    const atkBtn  = document.getElementById('attack-btn');
+    const magBtn  = document.getElementById('magic-btn');
+    const restBtn = document.getElementById('rest-btn');
+    const healBtn = document.getElementById('heal-btn');
+    const logEl   = document.getElementById('log');
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function updateUI() {
+      pFill.style.width = `${Math.max(0, player.hp/player.maxHp*100)}%`;
+      pLabel.textContent = `Player: ${Math.max(0, player.hp)} / ${player.maxHp}`;
+      eFill.style.width = `${player.energy/player.maxEnergy*100}%`;
+      eLabel.textContent = `Energy: ${player.energy} / ${player.maxEnergy}`;
+      bFill.style.width = `${Math.max(0, boss.hp/boss.maxHp*100)}%`;
+      bLabel.textContent = `Previous Hero: ${Math.max(0, boss.hp)} / ${boss.maxHp}`;
+    }
+    function log(msg) {
+      const p = document.createElement('p');
+      p.textContent = msg;
+      logEl.appendChild(p);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function checkEnd() {
+      if (boss.hp <= 0) { log('You defeated the Previous Hero!'); return true; }
+      if (player.hp <= 0) { log('You were defeated...'); return true; }
+      return false;
+    }
+    function startTurn() {
+      log('--------------------------Turn ' + turn + '--------------------------');
+      updateUI();
+      atkBtn.disabled  = player.energy < player.attackCost || checkEnd();
+      magBtn.disabled  = player.energy < player.magicCost  || checkEnd();
+      healBtn.disabled = player.energy < player.healCost   || checkEnd();
+      restBtn.disabled = checkEnd();
+    }
+    function bossAction() {
+      if (Math.random() < 0.10) {
+        log('You dodge the attack.');
+      } else {
+        const dmg = rand(boss.minDmg, boss.maxDmg);
+        player.hp -= dmg;
+        log('Previous Hero attacks for ' + dmg + ' damage.');
+      }
+      updateUI();
+      if (checkEnd()) return;
+      turn++;
+      setTimeout(startTurn, 500);
+    }
+
+    atkBtn.addEventListener('click', () => {
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.attackCost;
+      if (Math.random() < 0.10) {
+        log('Previous Hero dodged your attack!');
+      } else {
+        let dmg = rand(player.minDmg, player.maxDmg);
+        if (Math.random() < 0.05) { dmg*=2; log('Critical Hit! You attacked and dealt ' + dmg + ' damage.'); }
+        else                  { log('You attack for ' + dmg + ' damage.'); }
+        boss.hp -= dmg;
+      }
+      updateUI();
+      if (checkEnd()) return;
+      setTimeout(() => {
+        if (boss.hp > 0 && Math.random() < 0.10) {
+          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
+          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+          updateUI();
+          if (checkEnd()) return;
+          turn++;
+          setTimeout(startTurn, 500);
+        } else {
+          bossAction();
+        }
+      }, 500);
+    });
+
+    magBtn.addEventListener('click', () => {
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.magicCost;
+      if (Math.random() < 0.25) {
+        log('Previous Hero dodged your attack!');
+      } else {
+        const base = rand(player.minDmg, player.maxDmg),
+              mult = rand(130,200)/100,
+              dmg  = Math.floor(base*mult);
+        log('You cast Magic and dealt ' + dmg + ' damage.');
+        boss.hp -= dmg;
+      }
+      updateUI();
+      if (checkEnd()) return;
+      setTimeout(() => {
+        if (boss.hp > 0 && Math.random() < 0.10) {
+          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
+          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+          updateUI();
+          if (checkEnd()) return;
+          turn++;
+          setTimeout(startTurn, 500);
+        } else {
+          bossAction();
+        }
+      }, 500);
+    });
+
+    restBtn.addEventListener('click', () => {
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      const eng = rand(19,30);
+      player.energy = Math.min(player.maxEnergy, player.energy+eng);
+      log('You rest and recover ' + eng + ' energy.');
+      updateUI();
+      if (checkEnd()) return;
+      setTimeout(bossAction, 500);
+    });
+
+    healBtn.addEventListener('click', () => {
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.healCost;
+      const amt = rand(player.healMin, player.healMax);
+      player.hp = Math.min(player.maxHp, player.hp+amt);
+      log('You cast a healing spell and healed ' + amt + ' HP.');
+      updateUI();
+      if (checkEnd()) return;
+      setTimeout(bossAction, 500);
+    });
+  </script>
+</body>
+</html>
