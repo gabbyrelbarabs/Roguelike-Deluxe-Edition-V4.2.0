@@ -149,6 +149,33 @@
     const versionText   = document.getElementById('versionText');
     const clickable     = document.getElementById('clickable');
     const bgm           = document.getElementById('bgm');
+	let   discoInterval = null;
+
+  function runDiscoMode() {
+    // if there’s already a disco running, don’t start a second one
+    if (discoInterval !== null) return;
+    document.body.style.transition = 'none';
+
+    const discoColors = [
+      '#446643', '#664343', '#5d6643',
+      '#664360', '#436665', '#434466',
+      '#665643'
+    ];
+    let lastColor = null;
+
+    discoInterval = setInterval(() => {
+      const bg = window.getComputedStyle(document.body).backgroundColor;
+      if (bg === 'rgb(0, 0, 0)') {
+        return; // paused on pure black/white
+      }
+      let next;
+      do {
+        next = discoColors[Math.floor(Math.random() * discoColors.length)];
+      } while (next === lastColor);
+      lastColor = next;
+      document.body.style.backgroundColor = next;
+    }, 330);
+  }
 
     // Run through versions 5.0.0 → 1.0.0
     (function runVersionSplash() {
@@ -175,8 +202,14 @@
 				bgm.play();
 				versionSplash.classList.add('fade-out');
 				versionSplash.addEventListener('transitionend', () => {
+					// —————— Schedule disco mode 7s after click ——————
+					setTimeout(() => {
+						runDiscoMode();
+					}, 5900);
+
+					// —————— Now remove splash & start the fight ——————
 					versionSplash.remove();
-					log('The battle begins with Previous Hero!');
+					log('The battle with the Previous Hero begins!');
 					startTurn();
 				});
 			});
@@ -193,13 +226,19 @@
 
     const player = {
       maxHp: 100, hp: 100,
-      minDmg: 8, maxDmg: 15,
+      minDmg: 8, maxDmg: 20,
       healMin: 15, healMax: 30,
       maxEnergy: 100, energy: 100,
       healCost: 15, attackCost: 2, magicCost: 10
     };
     const boss = { maxHp: 1000, hp: 1000, minDmg: 8, maxDmg: 13 };
+	boss.maxHp = boss.hp;
     let turn = 1;
+	let counterNext     = false;
+	let counterDamage   = 0;
+	let enrageTriggered = false;
+	let enraged         = false;
+	let rageDamage      = 0;
 
     const pFill   = document.querySelector('#player-bar .bar-fill');
     const pLabel  = document.querySelector('#player-bar .bar-label');
@@ -212,6 +251,8 @@
     const restBtn = document.getElementById('rest-btn');
     const healBtn = document.getElementById('heal-btn');
     const logEl   = document.getElementById('log');
+	const usageStreaks = { magic: 0, rest: 0, heal: 0 };
+	const cooldowns    = { magic: 0, rest: 0, heal: 0 };
 
     function rand(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -231,65 +272,88 @@
       logEl.scrollTop = logEl.scrollHeight;
     }
     function checkEnd() {
-      if (boss.hp <= 0) { log('You defeated the Previous Hero!'); return true; }
-      if (player.hp <= 0) { log('You were defeated...'); return true; }
+      if (player.hp <= 0) {
+		alert("You were defeated... as the Previous Hero prevails once more.");
+		window.location.href = "index.html";
+		return true;
+	  }
+
+	  if (boss.hp <= 0) {
+		alert("You defeated the Previous Hero!");
+		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
+		alert("''Congratulations, kid.''");
+		window.location.href = "index.html";
+		return true;
+	  }
       return false;
     }
     function startTurn() {
       log('--------------------------Turn ' + turn + '--------------------------');
       updateUI();
-      atkBtn.disabled  = player.energy < player.attackCost || checkEnd();
-      magBtn.disabled  = player.energy < player.magicCost  || checkEnd();
-      healBtn.disabled = player.energy < player.healCost   || checkEnd();
-      restBtn.disabled = checkEnd();
-    }
-    function bossAction() {
-      if (Math.random() < 0.10) {
-        log('You dodge the attack.');
-      } else {
-        const dmg = rand(boss.minDmg, boss.maxDmg);
-        player.hp -= dmg;
-        log('Previous Hero attacks for ' + dmg + ' damage.');
+	  if (!enrageTriggered && boss.hp <= boss.maxHp / 2) {
+		enrageTriggered = true;
+		return triggerEnrageSequence();
       }
-      updateUI();
-      if (checkEnd()) return;
-      turn++;
-      setTimeout(startTurn, 500);
+	  if (checkEnd()) return;
+	  for (let action of ['magic','rest','heal']) {
+		if (cooldowns[action] > 0) cooldowns[action]--;
+	  }
+	  if (cooldowns.magic === 0) magBtn.textContent  = 'Magic';
+	  if (cooldowns.rest  === 0) restBtn.textContent = 'Rest';
+	  if (cooldowns.heal  === 0) healBtn.textContent = 'Heal';
+      atkBtn.disabled  = player.energy < player.attackCost;
+      magBtn.disabled  = player.energy < player.magicCost;
+      healBtn.disabled = player.energy < player.healCost;
+	  magBtn.disabled  = player.energy < player.magicCost || cooldowns.magic > 0;
+	  if (cooldowns.magic > 0) magBtn.textContent = 'Recharging...';
+	  restBtn.disabled = cooldowns.rest > 0;
+	  if (cooldowns.rest > 0) restBtn.textContent = 'Not Tired';
+	  healBtn.disabled = player.energy < player.healCost || cooldowns.heal > 0;
+	  if (cooldowns.heal > 0) healBtn.textContent = 'Recharging...';
     }
 
     atkBtn.addEventListener('click', () => {
+	  usageStreaks.magic = 0;
+	  usageStreaks.rest  = 0;
+	  usageStreaks.heal  = 0;
       [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
       player.energy -= player.attackCost;
       if (Math.random() < 0.10) {
-        log('Previous Hero dodged your attack!');
+        const dodgeMsg = rand(1, 2) === 1
+		? "Previous Hero dodged your attack!"
+		: "Previous Hero blocked your attack!";
+		log(dodgeMsg);
       } else {
         let dmg = rand(player.minDmg, player.maxDmg);
         if (Math.random() < 0.05) { dmg*=2; log('Critical Hit! You attacked and dealt ' + dmg + ' damage.'); }
         else                  { log('You attack for ' + dmg + ' damage.'); }
         boss.hp -= dmg;
+		if (Math.random() < 0.10) {
+			counterNext   = true;
+			counterDamage = dmg * 2;
+		}
       }
       updateUI();
-      if (checkEnd()) return;
       setTimeout(() => {
-        if (boss.hp > 0 && Math.random() < 0.10) {
-          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
-          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
-          updateUI();
-          if (checkEnd()) return;
-          turn++;
-          setTimeout(startTurn, 500);
-        } else {
           bossAction();
-        }
       }, 500);
     });
 
     magBtn.addEventListener('click', () => {
+	  usageStreaks.magic++;
+	  usageStreaks.rest  = 0;
+	  usageStreaks.heal  = 0;
+	  if (usageStreaks.magic >= 5) {
+		cooldowns.magic      = 2;
+		usageStreaks.magic   = 0;
+	  }
       [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
       player.energy -= player.magicCost;
-      if (Math.random() < 0.25) {
-        log('Previous Hero dodged your attack!');
+      if (Math.random() < 0.2) {
+        const dodgeMsg = rand(1, 2) === 1
+		? "Previous Hero dodged your attack!"
+		: "Previous Hero blocked your attack!";
+		log(dodgeMsg);
       } else {
         const base = rand(player.minDmg, player.maxDmg),
               mult = rand(130,200)/100,
@@ -298,42 +362,143 @@
         boss.hp -= dmg;
       }
       updateUI();
-      if (checkEnd()) return;
       setTimeout(() => {
-        if (boss.hp > 0 && Math.random() < 0.10) {
-          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
-          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
-          updateUI();
-          if (checkEnd()) return;
-          turn++;
-          setTimeout(startTurn, 500);
-        } else {
           bossAction();
-        }
       }, 500);
     });
 
     restBtn.addEventListener('click', () => {
+	  usageStreaks.rest++;
+	  usageStreaks.magic = 0;
+	  usageStreaks.heal  = 0;
+	  if (usageStreaks.rest >= 3) {
+		cooldowns.rest    = 2;
+		usageStreaks.rest = 0;
+	  }
       [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
       const eng = rand(19,30);
       player.energy = Math.min(player.maxEnergy, player.energy+eng);
       log('You rest and recover ' + eng + ' energy.');
       updateUI();
-      if (checkEnd()) return;
       setTimeout(bossAction, 500);
     });
 
     healBtn.addEventListener('click', () => {
+	  usageStreaks.heal++;
+	  usageStreaks.magic = 0;
+	  usageStreaks.rest  = 0;
+	  if (usageStreaks.heal >= 2) {
+		cooldowns.heal    = 1;
+		usageStreaks.heal = 0;
+	  }
       [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
       player.energy -= player.healCost;
       const amt = rand(player.healMin, player.healMax);
       player.hp = Math.min(player.maxHp, player.hp+amt);
       log('You cast a healing spell and healed ' + amt + ' HP.');
       updateUI();
-      if (checkEnd()) return;
       setTimeout(bossAction, 500);
     });
+	
+	function bossAction() {
+	if (boss.hp <= 0) {
+		alert("You defeated the Previous Hero!");
+		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
+		alert("''Congratulations, kid.''");
+		window.location.href = "index.html";
+		return true;
+	}
+      if (Math.random() > 0.9) {
+        const playerDodgeMessage = rand(1, 2) === 1
+		? "The Previous Hero attacked but you dodged!"
+		: "The Previous Hero attacked missed!";
+		log(playerDodgeMessage);
+      } else if (boss.hp > 0 && Math.random() > 0.8) {
+          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
+          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+          updateUI();
+          turn++;
+	  } else {
+		if (counterNext) {
+			player.hp -= counterDamage;
+			log(`The Previous Hero countered your attack and dealt ${counterDamage} damage!`);
+			counterNext = false;
+			updateUI();
+		} else {
+			let bossdmg = rand(boss.minDmg, boss.maxDmg);
+			rageDamage = Math.ceil(bossdmg * 1.5);
+			if (Math.random() < 0.05) {
+				if (enraged) {
+					critDamage = Math.floor(bossdmg * 2);
+				} else {
+					critDamage = Math.floor(rageDamage * 2);
+				}
+				player.hp -= critDamage;
+				log(`Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.`);
+			} else {
+				if (enraged) {
+					player.hp -= rageDamage;
+				} else {
+					player.hp -= bossdmg;
+				}
+				if (enraged) {
+					log(`The Previous Hero attacked and dealt ${rageDamage} damage!`);
+				} else {
+					log(`The Previous Hero attacked and dealt ${bossdmg} damage!`);
+				}
+			}
+		}
+	  }
+      updateUI();
+      turn++;
+      setTimeout(startTurn, 500);
+    }
+	
+  function triggerEnrageSequence() {
+    if (discoInterval !== null) {
+      clearInterval(discoInterval);
+      discoInterval = null;
+    }
+    [atkBtn, magBtn, restBtn, healBtn].forEach(b => b.disabled = true);
+    const shakeKeyframes = `
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        20% { transform: translate(-1px, -2px) rotate(-1deg); }
+        40% { transform: translate(-3px, 0px) rotate(1deg); }
+        60% { transform: translate(3px, 2px) rotate(0deg); }
+        80% { transform: translate(1px, -1px) rotate(1deg); }
+        100% { transform: translate(-1px, 2px) rotate(-1deg); }
+      }
+      .shake { animation: shake 0.1s infinite; }
+    `;
+    const style = document.createElement('style');
+    style.textContent = shakeKeyframes;
+    document.head.appendChild(style);
+    document.body.style.transition = 'background-color 2s ease';
+    document.body.style.backgroundColor = 'black';
+
+    setTimeout(() => {
+      alert('...');
+      setTimeout(() => {
+        document.body.style.transition = 'background-color 1s ease';
+        document.body.style.backgroundColor = 'white';
+		document.body.classList.add('shake');
+        setTimeout(() => {
+          alert('The Previous Hero unleashes his full power!');
+          enraged = true;
+          document.body.style.transition = 'background-color 3s ease';
+          setTimeout(() => {
+            document.body.classList.remove('shake');
+			document.body.style.transition = 'none';
+			runDiscoMode();
+            updateUI();
+            startTurn();
+          }, 1500);
+        }, 2000);
+      }, 1500);
+    }, 2000);
+  }
   </script>
 </body>
 </html>
