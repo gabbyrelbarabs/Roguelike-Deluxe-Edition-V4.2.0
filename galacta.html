@@ -104,8 +104,13 @@
     justify-content: center;
     z-index: 9999;
     padding: 2rem;
+	opacity: 0;
+    transition: opacity 10ms ease-in;
     box-sizing: border-box;
     text-align: center;
+	}
+	#deathMenu.active {
+	 opacity: 1;
 	}
 	#deathMenu h2 { margin-bottom: .5rem; }
 	#deathMenu .stats { margin: 1rem 0; }
@@ -125,6 +130,9 @@
       pointer-events:none;
       transition: opacity 1s ease-in;
       z-index:9998;
+	}
+	#quickScreenFade {
+	
 	}
 	#screenFade.active { opacity:1; pointer-events:auto; }
   </style>
@@ -193,6 +201,7 @@
   const clickable     = document.getElementById('clickable');
   const bgm           = new Audio("galacta.mp3");
   bgm.loop = true;
+  bgm.volume = 1;
   bgm.currentTime = 0;
   let   discoInterval = null;
 
@@ -215,7 +224,7 @@
       return "Roguelike! Infinity Alpha V";
     } else if (num >= 10006 && num <= 10600) {
       return "Adventure Game Beta Version";
-    } else if (num >= 10000 && num <= 10005) {
+    } else if (num >= 10000 && num <= 10006) {
       return "Bossfight Simulator";
     } else {
       return "";
@@ -293,12 +302,18 @@
 				<em>Press to continue...</em>`;
 			versionSplash.id = 'clickable';
 			versionSplash.addEventListener('click', () => {
+				const fadeDur = 10, steps = 5;
+				bgm.volume = 0;
+				bgm.loop = true;
 				bgm.play();
+				for (let i = 1; i <= steps; i++) {
+					setTimeout(() => { bgm.volume = i/steps; }, (fadeDur/steps)*i);
+				}
 				versionSplash.classList.add('fade-out');
 				versionSplash.addEventListener('transitionend', () => {
 					setTimeout(() => {
 						runDiscoMode();
-					}, 5900);
+					}, 5850);
 
 					versionSplash.remove();
 					log('The battle with the Previous Hero begins!');
@@ -323,7 +338,7 @@
       maxEnergy: 100, energy: 100,
       healCost: 15, attackCost: 2, magicCost: 10
     };
-    const boss = { maxHp: 1000, hp: 1000, minDmg: 8, maxDmg: 13 };
+    const boss = { maxHp: 1000, hp: 1000, minDmg: 7, maxDmg: 13 };
 	boss.maxHp = boss.hp;
     let turn = 1;
 	let counterNext     = false;
@@ -365,9 +380,8 @@
     }
     function checkEnd() {
       if (player.hp <= 0) {
-		fadeOutAudio(bgm, 2000, showDeathMenu);
 		alert("You were defeated... as the Previous Hero prevails once more.");
-		showDeathMenu();
+		fadeOutAudio(bgm, 2000, showDeathMenu);
 		return true;
 	  }
 
@@ -650,7 +664,6 @@
 	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Try again next time.''",
 	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Better luck next time, kid.''",
 	"''I'm literally gonna lessen my chances of winning here, but be cautious with your Attacks and Magic attacks, the more damage you deal, the harder I'll hit when I MIGHT counter you... just saying.''",
-	"''''",
 	"''Heal, you idiot. The creators added that button for a reason.''",
   ];
   const okayMessages = [
@@ -690,12 +703,16 @@
 
   function showDeathMenu() {
     btnRetry.disabled = false;
+	document.body.style.backgroundColor = "#222";
     const now = Date.now();
 	if (discoInterval !== null) {
       clearInterval(discoInterval);
       discoInterval = null;
     }
-	bgm.pause();
+	screenFade.classList.add("active");
+	deathMenu.style.display = "flex";
+	setTimeout(() => deathMenu.classList.add("active"), 10);
+	
     const durationMs = now - battleStartTime;
     dmDuration.textContent = formatDuration(durationMs);
 
@@ -716,31 +733,29 @@
 		pool = loserMessages;
 	}
 
-  // Choose one at random and display it
 	const idx = Math.floor(Math.random() * pool.length);
 	dmMessage.textContent = pool[idx];
-
-    screenFade.classList.add("active");
-    deathMenu.style.display = "flex";
+	fadeOutAudio(bgm, 2000, bgm.pause);
   }
 
   btnRetry.addEventListener("click", () => {
     screenFade.classList.add("active");
-	totalDamageDealt = 0;
+	bgm.volume = 1;
+	bgm.currentTime = 0;
+	bgm.play();
     setTimeout(() => {
-	  bgm.currentTime = 0;
-	  bgm.play();
 	  setTimeout(() => {
 			runDiscoMode();
-	  }, 5900);
-	  
+	  }, 6500);
+	  totalDamageDealt = 0;
+	  battleStartTime = Date.now();
       enraged = false;
 	  enrageTriggered = false;
 	  usageStreaks.magic = 0;
 	  usageStreaks.rest  = 0;
 	  usageStreaks.heal  = 0;
 	  logEl.innerHTML = "";
-      log("The battle with the Previous Hero begins!\n");
+      log("The battle with the Previous Hero starts again!\n");
       turn = 1;
 
       player.hp = player.maxHp;
