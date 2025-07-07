@@ -1675,28 +1675,10 @@
     <button id="wishFameBtn">Fame</button>
   </div>
 </div>
+
+<div id="tooltip"></div>
 	
     <!-- Link to external JavaScript -->
     <script src="roguelike.js"></script>
-	
-    <script>
-      // Simple title screen functionality
-      document.getElementById("playButton").addEventListener("click", function () {
-  document.getElementById("titleScreen").style.display = "none";
-  document.getElementById("difficultyMenu").style.display = "block";
-  document.getElementById("abilityMenu").style.display   = "none";
-  battleTint.style.display = "block";
-});
-
-	 function toggleCredits() {
-      var guide = document.getElementById("creditsCredits");
-      if (guide.style.display === "none" || guide.style.display === "") {
-        guide.style.display = "block";
-      } else {
-        guide.style.display = "none";
-      }
-    }
-    </script>
-  <div id="tooltip"></div>
   </body>
 </html>

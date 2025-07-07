@@ -46,19 +46,24 @@
       margin: 1rem 0;
       width: 300px;
       background: #444;
-      border: 2px solid #222;
       border-radius: 5px;
       position: relative;
     }
-    .bar-fill {
+	.bar-fill {
       height: 25px;
       width: 100%;
       border-radius: 3px;
       transition: width 0.3s ease;
     }
-    #player-bar .bar-fill { background: green; }
-    #energy-bar .bar-fill { background: blue; }
-    #boss-bar .bar-fill   { background: red; }
+    #player-bar .bar-fill {
+	  background: green;
+	}
+    #energy-bar .bar-fill {
+	  background: blue;
+	}
+    #boss-bar .bar-fill   {
+	  background: red;
+	}
     .bar-label {
       position: absolute;
       width: 100%;
@@ -86,13 +91,65 @@
       opacity: 0.5;
       cursor: default;
     }
+	
+	#deathMenu {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 2rem;
+    box-sizing: border-box;
+    text-align: center;
+	}
+	#deathMenu h2 { margin-bottom: .5rem; }
+	#deathMenu .stats { margin: 1rem 0; }
+	#deathMenu button {
+      margin: .5rem;
+      padding: .75rem 1.5rem;
+      font-size: 1rem;
+	  cursor: pointer;
+	}
+	/* simple fade‑to‑black */
+	#screenFade {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 1s ease-in;
+      z-index:9998;
+	}
+	#screenFade.active { opacity:1; pointer-events:auto; }
   </style>
 </head>
 <body>
+  <div id="screenFade"></div>
+<div id="deathMenu">
+  <h2>You Died</h2>
+  <div class="stats">
+    <div>Battle Duration: <span id="dm-duration"></span></div>
+    <div>Damage Dealt: <span id="dm-damage-dealt"></span></div>
+    <div>Boss Remaining HP: <span id="dm-boss-percent"></span></div>
+  </div>
+  <hr style="width:80%; border-color: #555; margin:1rem 0;">
+  <p id="dm-message"></p>
+  <div>
+    <button id="dm-retry">Retry</button>
+    <button id="dm-quit">Quit</button>
+  </div>
+</div>
 
   <!-- Version splash (unclickable) -->
   <div id="versionSplash" class="splash">
-    Roguelike! Deluxe Edition V<span id="versionText">5.0.0</span>
+    <span id="versionName">Roguelike! Deluxe Edition V</span>
+	<span id="versionText">5.0.0</span>
   </div>
 
   <h1>The Final Battle</h1>
@@ -122,37 +179,66 @@
   <div id="log"></div>
 
   <script>
+  const deathMenu   = document.getElementById("deathMenu");
+  const screenFade  = document.getElementById("screenFade");
+  const dmDuration      = document.getElementById("dm-duration");
+  const dmDamageDealt   = document.getElementById("dm-damage-dealt");
+  let totalDamageDealt = 0;
+  const dmBossPercent   = document.getElementById("dm-boss-percent");
+  const dmMessage       = document.getElementById("dm-message");
+  const btnRetry        = document.getElementById("dm-retry");
+  const btnQuit         = document.getElementById("dm-quit");
+  const versionSplash = document.getElementById('versionSplash');
+  const versionText   = document.getElementById('versionText');
+  const clickable     = document.getElementById('clickable');
+  const bgm           = new Audio("galacta.mp3");
+  bgm.loop = true;
+  bgm.currentTime = 0;
+  let   discoInterval = null;
+
     // Helper: step version triple down by one patch
     function prevVersion([M, m, p]) {
       if (p > 0) return [M, m, p - 1];
       if (m > 0) return [M, m - 1, 9];
       return [M - 1, 9, 9];
     }
+	
+	function getTitleName([M, m, p]) {
+    const num = M * 10000 + m * 100 + p;
+    if (num >= 40201 && num <= 50000) {
+      return "Roguelike! Deluxe Edition V";
+    } else if (num === 40200) {
+      return "Roguelike! Single File";
+    } else if (num >= 30601 && num <= 40109) {
+      return "Roguelike! Infinity V";
+    } else if (num >= 10601 && num <= 30600) {
+      return "Roguelike! Infinity Alpha V";
+    } else if (num >= 10006 && num <= 10600) {
+      return "Adventure Game Beta Version";
+    } else if (num >= 10000 && num <= 10005) {
+      return "Bossfight Simulator";
+    } else {
+      return "";
+    }
+  }
 
     // Your exact getDelay function
     function getDelay([M, m, p], isInitial) {
-      if (isInitial) return 1500;                             // hold 5.0.0
-      if (M === 4 && m === 9 && p === 7) return 500;          // 4.9.9
-      if (M === 4 && m === 9 && p >= 0) return 350;           // 4.9.8→4.9.0
-      if (M === 4 && m === 8 && p >= 0) return 200;           // 4.8.x
-      if (M === 4 && m >= 7 && p >= 0) return 100;            // 4.7.x
-      if (M === 4 && m >= 5 && p >= 0) return 50;             // 4.5.x
-      if (M === 1 && m >= 2) return 10;                       // 1.9.x→1.5.x
-      if (M === 1 && m === 2 && p === 0) return 20;           // 1.5.0
-      if (M === 1 && (m > 0 || p > 5)) return 100;            // 1.4.x→1.0.6
-      if (M === 1 && m === 0 && p <= 5 && p > 0) return 500;  // 1.0.5→1.0.1
-      if (M === 1 && m === 0 && p === 0) return 1500;         // hold 1.0.0
-      return 10;                                              // fallback
+      if (isInitial) return 1500;
+      if (M === 4 && m === 9 && p === 7) return 500;
+      if (M === 4 && m === 9 && p >= 0) return 350;
+      if (M === 4 && m === 8 && p >= 0) return 200;
+      if (M === 4 && m >= 7 && p >= 0) return 100;
+      if (M === 4 && m >= 5 && p >= 0) return 50;
+      if (M === 1 && m >= 2) return 10;
+      if (M === 1 && m === 2 && p === 0) return 20;
+      if (M === 1 && (m > 0 || p > 5)) return 100;
+      if (M === 1 && m === 0 && p <= 5 && p > 0) return 500;
+      if (M === 1 && m === 0 && p === 0) return 1500;
+      return 10;
     }
 
-    const versionSplash = document.getElementById('versionSplash');
-    const versionText   = document.getElementById('versionText');
-    const clickable     = document.getElementById('clickable');
-    const bgm           = document.getElementById('bgm');
-	let   discoInterval = null;
-
   function runDiscoMode() {
-    // if there’s already a disco running, don’t start a second one
     if (discoInterval !== null) return;
     document.body.style.transition = 'none';
 
@@ -166,7 +252,6 @@
     discoInterval = setInterval(() => {
       const bg = window.getComputedStyle(document.body).backgroundColor;
       if (bg === 'rgb(0, 0, 0)') {
-        return; // paused on pure black/white
       }
       let next;
       do {
@@ -177,19 +262,28 @@
     }, 330);
   }
 
-    // Run through versions 5.0.0 → 1.0.0
     (function runVersionSplash() {
-      let ver = [5,0,0];
+      const versionName = document.getElementById("versionName");
+	  const versionText = document.getElementById("versionText");
+      let ver = [5, 0, 0];
       let initial = true;
 
       function step() {
         const delay = getDelay(ver, initial);
+		 let title = getTitleName(ver);
+		if (
+			title === "Roguelike! Single File" ||
+			title === "Adventure Game Beta Version" ||
+			title === "Bossfight Simulator"
+		) {
+			title += '\u00A0';
+		}
+		versionName.textContent = title;
         versionText.textContent = ver.join('.');
         initial = false;
 
         setTimeout(() => {
           if (ver[0] === 1 && ver[1] === 0 && ver[2] === 0) {
-            // Fade out version splash, then show clickable
             versionSplash.innerHTML =
 			`<div style="text-align: center;">
 				Your true fate shall be decided in this final battle... are you ready?
@@ -202,12 +296,10 @@
 				bgm.play();
 				versionSplash.classList.add('fade-out');
 				versionSplash.addEventListener('transitionend', () => {
-					// —————— Schedule disco mode 7s after click ——————
 					setTimeout(() => {
 						runDiscoMode();
 					}, 5900);
 
-					// —————— Now remove splash & start the fight ——————
 					versionSplash.remove();
 					log('The battle with the Previous Hero begins!');
 					startTurn();
@@ -273,8 +365,9 @@
     }
     function checkEnd() {
       if (player.hp <= 0) {
+		fadeOutAudio(bgm, 2000, showDeathMenu);
 		alert("You were defeated... as the Previous Hero prevails once more.");
-		window.location.href = "index.html";
+		showDeathMenu();
 		return true;
 	  }
 
@@ -288,7 +381,7 @@
       return false;
     }
     function startTurn() {
-      log('--------------------------Turn ' + turn + '--------------------------');
+      log('\n-------------------------Turn ' + turn + '-------------------------\n');
       updateUI();
 	  if (!enrageTriggered && boss.hp <= boss.maxHp / 2) {
 		enrageTriggered = true;
@@ -307,7 +400,8 @@
 	  magBtn.disabled  = player.energy < player.magicCost || cooldowns.magic > 0;
 	  if (cooldowns.magic > 0) magBtn.textContent = 'Recharging...';
 	  restBtn.disabled = cooldowns.rest > 0;
-	  if (cooldowns.rest > 0) restBtn.textContent = 'Not Tired';
+	  restBtn.disabled = player.energy >= player.maxEnergy;
+	  if (cooldowns.rest > 0 || player.energy >= player.maxEnergy) restBtn.textContent = 'Not Tired';
 	  healBtn.disabled = player.energy < player.healCost || cooldowns.heal > 0;
 	  if (cooldowns.heal > 0) healBtn.textContent = 'Recharging...';
     }
@@ -328,6 +422,7 @@
         if (Math.random() < 0.05) { dmg*=2; log('Critical Hit! You attacked and dealt ' + dmg + ' damage.'); }
         else                  { log('You attack for ' + dmg + ' damage.'); }
         boss.hp -= dmg;
+		totalDamageDealt += dmg;
 		if (Math.random() < 0.10) {
 			counterNext   = true;
 			counterDamage = dmg * 2;
@@ -360,6 +455,7 @@
               dmg  = Math.floor(base*mult);
         log('You cast Magic and dealt ' + dmg + ' damage.');
         boss.hp -= dmg;
+		totalDamageDealt += dmg;
       }
       updateUI();
       setTimeout(() => {
@@ -413,15 +509,53 @@
 		? "The Previous Hero attacked but you dodged!"
 		: "The Previous Hero attacked missed!";
 		log(playerDodgeMessage);
-      } else if (boss.hp > 0 && Math.random() > 0.8) {
-          const pct = rand(1,5)/100, healAmt = Math.floor(boss.maxHp*pct);
-          boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-          log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+      } else if (boss.hp > 0 && boss.hp < 900 && Math.random() > 0.8) {
+          let pct = 0;
+		  if (enraged) {
+		    if (Math.random() > 0.7) {
+				pct = rand(1.0,3.0)/100, healAmt = Math.floor(boss.maxHp*pct);
+				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+			} else {
+				let bossdmg = rand(boss.minDmg, boss.maxDmg);
+				rageDamage = Math.ceil(bossdmg * 1.5);
+				if (Math.random() < 0.05) {
+					if (enraged) {
+						critDamage = Math.floor(bossdmg * 2);
+					} else {
+						critDamage = Math.floor(rageDamage * 2);
+					}
+					player.hp -= critDamage;
+					flashHealthbar();
+					const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} damage!`;
+					log(heroCritMessage);
+				} else {
+					if (enraged) {
+						player.hp -= rageDamage;
+					} else {
+						player.hp -= bossdmg;
+					}
+					if (enraged) {
+						log(`The Previous Hero attacked and dealt ${rageDamage} damage!`);
+					} else {
+						log(`The Previous Hero attacked and dealt ${bossdmg} damage!`);
+					}
+				}
+			}
+		  } else {
+		    if (Math.random() > 0.33) {
+				pct = rand(1.0,4.0)/100, healAmt = Math.floor(boss.maxHp*pct);
+				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+			} else {
+				log('Previous Hero got tired and took a break.');
+			}
+		  }
           updateUI();
-          turn++;
 	  } else {
 		if (counterNext) {
 			player.hp -= counterDamage;
+			flashHealthbar();
 			log(`The Previous Hero countered your attack and dealt ${counterDamage} damage!`);
 			counterNext = false;
 			updateUI();
@@ -435,7 +569,9 @@
 					critDamage = Math.floor(rageDamage * 2);
 				}
 				player.hp -= critDamage;
-				log(`Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.`);
+				flashHealthbar();
+				const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} damage!`;
+				log(heroCritMessage);
 			} else {
 				if (enraged) {
 					player.hp -= rageDamage;
@@ -499,6 +635,150 @@
       }, 1500);
     }, 2000);
   }
+  
+  let battleStartTime = null;
+
+  bgm.addEventListener("play", () => {
+	battleStartTime = Date.now();
+  });
+
+  const loserMessages = [
+    "''Pro Tip: Using Magic may be more powerful, but it costs you a lot of energy and may miss a LOT more. You can't land crits either. Better luck next time, kid.''",
+	"''Pro Tip: Using Magic may be more powerful, but it costs you a lot of energy and may miss a LOT more. You can't land crits either. Try again next time.''",
+    "''Try attacking more, your god-high stats that once were don't apply here. We're on equal grounds. Plus, you can land critical hits with it. Try again next time.''",
+	"''Try attacking more, your god-high stats that once were don't apply here. We're on equal grounds. Plus, you can land critical hits with it. Better luck next time, kid.''",
+	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Try again next time.''",
+	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Better luck next time, kid.''",
+	"''I'm literally gonna lessen my chances of winning here, but be cautious with your Attacks and Magic attacks, the more damage you deal, the harder I'll hit when I MIGHT counter you... just saying.''",
+	"''''",
+	"''Heal, you idiot. The creators added that button for a reason.''",
+  ];
+  const okayMessages = [
+    "''That was a great battle, warrior. Try a little harder next time, though...''",
+    "''Impressive. But not good enough, try again next time.''",
+    "''Heh... that wasn't actually that bad! Thought you'd be a little tougher, but, that was a good fight, kid.''",
+    "''Whew, you did well there, kid. Better luck next time.''",
+  ];
+  const greatMessages = [
+    "''You were magnificent, warrior! I shall never forget you for as long as I live.''",
+	"''You were magnificent, warrior! I shall never forget you for as long as I live. I shall await our next fight!''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle.''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I'll be waiting in your next life.''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I shall await our next fight.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought!''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I shall await our next fight, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I'll be waiting in your next life, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn!''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! I shall await our next battle, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! I'll be waiting in your next life, warrior.''",
+	"''Stand proud, you're strong, warrior. Though you've fallen, that doesn't mean you failed. I'll be waiting in your next life, warrior.''",
+	"''Stand proud, you're strong, warrior. Though you've fallen, that doesn't mean you failed. I shall await our next fight, warrior.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior. I'll be waiting in your next life.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior. I shall await our next fight!''",
+	"''*pants* I win... *pants* You lose... *pants* Try again next time...''",
+  ];
+
+  function formatDuration(ms) {
+    let totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    totalSec %= 3600;
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${h}h ${m}m ${s}s`;
+  }
+
+  function showDeathMenu() {
+    btnRetry.disabled = false;
+    const now = Date.now();
+	if (discoInterval !== null) {
+      clearInterval(discoInterval);
+      discoInterval = null;
+    }
+	bgm.pause();
+    const durationMs = now - battleStartTime;
+    dmDuration.textContent = formatDuration(durationMs);
+
+    const damage = totalDamageDealt;
+    dmDamageDealt.textContent = damage;
+
+    const percent = (boss.hp / boss.maxHp * 100).toFixed(1) + "%";
+    dmBossPercent.textContent = percent;
+
+    const didFail    = totalDamageDealt < 150 && durationMs < 30000;
+	const bossHalf   = boss.hp / boss.maxHp <= 0.5;
+	let pool;
+	if (bossHalf && !didFail) {
+		pool = greatMessages;
+	} else if (!didFail) {
+		pool = okayMessages;
+	} else {
+		pool = loserMessages;
+	}
+
+  // Choose one at random and display it
+	const idx = Math.floor(Math.random() * pool.length);
+	dmMessage.textContent = pool[idx];
+
+    screenFade.classList.add("active");
+    deathMenu.style.display = "flex";
+  }
+
+  btnRetry.addEventListener("click", () => {
+    screenFade.classList.add("active");
+	totalDamageDealt = 0;
+    setTimeout(() => {
+	  bgm.currentTime = 0;
+	  bgm.play();
+	  setTimeout(() => {
+			runDiscoMode();
+	  }, 5900);
+	  
+      enraged = false;
+	  enrageTriggered = false;
+	  usageStreaks.magic = 0;
+	  usageStreaks.rest  = 0;
+	  usageStreaks.heal  = 0;
+	  logEl.innerHTML = "";
+      log("The battle with the Previous Hero begins!\n");
+      turn = 1;
+
+      player.hp = player.maxHp;
+	  player.energy = player.maxEnergy;
+      boss.hp   = boss.maxHp;
+	  startTurn();
+
+      deathMenu.style.display = "none";
+      screenFade.classList.remove("active");
+    }, 10);
+	btnRetry.disabled = true;
+  });
+
+  btnQuit.addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+  
+function flashHealthbar() {
+  const fill = document.querySelector('#player-bar .bar-fill');
+  const orig = window.getComputedStyle(fill).backgroundColor;
+  fill.style.backgroundColor = 'red';
+  setTimeout(() => (fill.style.backgroundColor = orig), 300);
+}
+
+// — helper to fade out audio (used later) —
+function fadeOutAudio(audio, duration = 2000, onComplete) {
+  const stepTime = 100;
+  const step = audio.volume / (duration / stepTime);
+  const fade = setInterval(() => {
+    if (audio.volume > step) {
+      audio.volume = Math.max(0, audio.volume - step);
+    } else {
+      clearInterval(fade);
+      audio.volume = 0;
+      if (onComplete) onComplete();
+    }
+  }, stepTime);
+}
   </script>
 </body>
 </html>

@@ -1,3 +1,47 @@
+// Simple title screen functionality
+  document.getElementById("playButton").addEventListener("click", function () {
+  document.getElementById("titleScreen").style.display = "none";
+  document.getElementById("difficultyMenu").style.display = "block";
+  document.getElementById("abilityMenu").style.display   = "none";
+  battleTint.style.display = "block";
+});
+
+	 function toggleCredits() {
+      var guide = document.getElementById("creditsCredits");
+      if (guide.style.display === "none" || guide.style.display === "") {
+        guide.style.display = "block";
+      } else {
+        guide.style.display = "none";
+      }
+    }
+	
+	(function() {
+      const finalBattleMessages = [
+        "''Alright... let's do this.''",
+        "''Alright, let's do this.''",
+        "''Okay... let's do this.''",
+        "''Okay, let's do this.''",
+        "''Let's get this over with...''",
+        "''Let's try this again, shall we?''",
+        "''Shall we?''",
+        "''Let's try this again...''",
+        "''Let's get this over with.''",
+		"''Let's dance!''",
+		"''Come on!''",
+      ];
+      const finalbtn = document.getElementById("finalBattleBtn");
+      if (!finalbtn) return;
+      const original = finalbtn.onclick;
+      finalbtn.onclick = function(e) {
+        const idx = Math.floor(Math.random() * finalBattleMessages.length);
+        alert(finalBattleMessages[idx]);
+        if (typeof original === "function") {
+          original.call(this, e);
+        }
+		alert("*snaps*");
+      };
+    })();
+
 /*******************
        * GAME VARIABLES
        *******************/
