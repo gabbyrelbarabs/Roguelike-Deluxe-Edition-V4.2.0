@@ -91,7 +91,6 @@
       opacity: 0.5;
       cursor: default;
     }
-	
 	#deathMenu {
     position: fixed;
     top: 0; left: 0;
@@ -346,6 +345,9 @@
 	let enrageTriggered = false;
 	let enraged         = false;
 	let rageDamage      = 0;
+	let idleTimeout = null;
+	let randomLineAttackInterval = null;
+	let randomLineAttackRunning = false;
 
     const pFill   = document.querySelector('#player-bar .bar-fill');
     const pLabel  = document.querySelector('#player-bar .bar-label');
@@ -420,12 +422,34 @@
 	  if (cooldowns.rest > 0 || player.energy >= player.maxEnergy) restBtn.textContent = 'Not Tired';
 	  healBtn.disabled = player.energy < player.healCost || cooldowns.heal > 0;
 	  if (cooldowns.heal > 0) healBtn.textContent = 'Recharging...';
+	  
+	  if (idleTimeout) clearTimeout(idleTimeout);
+	  idleTimeout = setTimeout(() => {
+		const bossImpatient = rand(1, 2) === 1
+		? "The Previous Hero caught you off guard and attacked!"
+		: "The Previous Hero got tired of waiting and attacked!";
+		log(bossImpatient);
+		bossAction();
+	  }, rand(25000, 45000));
+	  if (!randomLineAttackInterval) {
+		randomLineAttackInterval = setInterval(() => {
+		if (!randomLineAttackRunning && Math.random() < 0.02) {
+			log("The Previous Hero caught you off guard and began attacking you relentlessly!");
+			randomLineAttackRunning = true;
+			bossRandomLineAttack(() => {
+				log("The Previous Hero finally stopped his barrage of attacks.");
+				randomLineAttackRunning = false;
+			});
+		  }
+		}, 1000);
+	  }
     }
 
     atkBtn.addEventListener('click', () => {
 	  usageStreaks.magic = 0;
 	  usageStreaks.rest  = 0;
 	  usageStreaks.heal  = 0;
+	  if (idleTimeout) clearTimeout(idleTimeout);
       [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
       player.energy -= player.attackCost;
       if (Math.random() < 0.10) {
@@ -454,6 +478,7 @@
 	  usageStreaks.magic++;
 	  usageStreaks.rest  = 0;
 	  usageStreaks.heal  = 0;
+	  if (idleTimeout) clearTimeout(idleTimeout);
 	  if (usageStreaks.magic >= 5) {
 		cooldowns.magic      = 2;
 		usageStreaks.magic   = 0;
@@ -483,6 +508,7 @@
 	  usageStreaks.rest++;
 	  usageStreaks.magic = 0;
 	  usageStreaks.heal  = 0;
+	  if (idleTimeout) clearTimeout(idleTimeout);
 	  if (usageStreaks.rest >= 3) {
 		cooldowns.rest    = 2;
 		usageStreaks.rest = 0;
@@ -499,6 +525,7 @@
 	  usageStreaks.heal++;
 	  usageStreaks.magic = 0;
 	  usageStreaks.rest  = 0;
+	  if (idleTimeout) clearTimeout(idleTimeout);
 	  if (usageStreaks.heal >= 2) {
 		cooldowns.heal    = 1;
 		usageStreaks.heal = 0;
@@ -513,6 +540,7 @@
     });
 	
 	function bossAction() {
+	if (idleTimeout) clearTimeout(idleTimeout);
 	if (boss.hp <= 0) {
 		alert("You defeated the Previous Hero!");
 		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
@@ -568,14 +596,25 @@
 			}
 		  }
           updateUI();
-	  } else {
-		if (counterNext) {
+	  } else if (counterNext) {
 			player.hp -= counterDamage;
 			flashHealthbar();
 			log(`The Previous Hero countered your attack and dealt ${counterDamage} damage!`);
 			counterNext = false;
 			updateUI();
-		} else {
+	  } else if (enraged && Math.random() > 0.7) {
+			log("The Previous Hero began to charge up some powerful attacks!");
+			return bossCrosshairAttack(3, () => {
+				turn++;
+				startTurn();
+			});
+	  } else if (enraged && Math.random() > 0.65) {
+			log("The Previous Hero began to charge up a barrage of attacks!");
+			return bossCrosshairWaveAttack(4, () => {
+				turn++;
+				startTurn();
+			});
+	  } else {
 			let bossdmg = rand(boss.minDmg, boss.maxDmg);
 			rageDamage = Math.ceil(bossdmg * 1.5);
 			if (Math.random() < 0.05) {
@@ -601,12 +640,305 @@
 				}
 			}
 		}
-	  }
       updateUI();
       turn++;
       setTimeout(startTurn, 500);
+}
+
+let cx = 0, cy = 0, frozen = false;
+
+// create vertical line (hidden by default)
+const vLine = document.createElement('div');
+Object.assign(vLine.style, {
+  position: 'absolute', top: '0', width: '2px', height: '100%',
+  background: 'rgba(255,0,0,0.5)', pointerEvents: 'none',
+  transition: 'background 0.1s, width 0.1s, height 0.1s',
+  display: 'none'
+});
+document.body.appendChild(vLine);
+
+// create horizontal line (hidden by default)
+const hLine = document.createElement('div');
+Object.assign(hLine.style, {
+  position: 'absolute', left: '0', height: '2px', width: '100%',
+  background: 'rgba(255,0,0,0.5)', pointerEvents: 'none',
+  transition: 'background 0.1s, width 0.1s, height 0.1s',
+  display: 'none'
+});
+document.body.appendChild(hLine);
+
+// track mouse
+document.addEventListener('mousemove', e => {
+  cx = e.clientX;
+  cy = e.clientY;
+  if (!frozen && vLine.style.display === 'block') {
+    vLine.style.left = (cx - vLine.offsetWidth/2) + 'px';
+    hLine.style.top  = (cy - hLine.offsetHeight/2) + 'px';
+  }
+});
+
+
+// ——— BLINK→RAMP→FREEZE→FLASH ———
+function runCycle(onComplete) {
+  // show crosshair
+  vLine.style.display = 'block';
+  hLine.style.display = 'block';
+
+  frozen = false;
+  vLine.style.width = '2px';
+  hLine.style.height = '2px';
+  vLine.style.background = hLine.style.background = 'rgba(255,0,0,0.5)';
+
+  const start = performance.now();
+  let interval = 500, nextToggle = start + interval;
+  let visibleRed = true;
+
+  function tick(now) {
+    if (now >= nextToggle) {
+      visibleRed = !visibleRed;
+      const col = visibleRed ? 'rgba(255,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+      vLine.style.background = hLine.style.background = col;
+
+      const elapsed = now - start;
+      if (elapsed < 3000) {
+        const frac = elapsed / 3000;
+        interval = 500 - (400 * frac);
+        nextToggle = now + interval;
+        requestAnimationFrame(tick);
+      } else {
+        frozen = true;
+        vLine.style.left = (cx - vLine.offsetWidth/2) + 'px';
+        hLine.style.top  = (cy - hLine.offsetHeight/2) + 'px';
+        freezeAndFlash(onComplete);
+      }
+    } else {
+      requestAnimationFrame(tick);
     }
-	
+  }
+  requestAnimationFrame(tick);
+}
+
+function freezeAndFlash(done) {
+  vLine.style.background = hLine.style.background = 'rgba(255,255,255,0.5)';
+  setTimeout(() => {
+    vLine.style.width  = '10px';
+    hLine.style.height = '10px';
+    vLine.style.background = hLine.style.background = 'rgba(255,0,0,1)';
+
+    const half = 5;
+    const dx = Math.abs(cx - parseInt(vLine.style.left) - half);
+    const dy = Math.abs(cy - parseInt(hLine.style.top)  - half);
+    if (dx <= half || dy <= half) {
+      player.hp = Math.max(0, player.hp - 15);
+	  log(`You were hit and took 15 damage!`);
+      updateUI();
+    }
+
+    setTimeout(() => {
+      vLine.style.background = hLine.style.background = 'transparent';
+      setTimeout(done, 200);
+    }, 100);
+  }, 500);
+}
+
+
+// ——— NEW bossCrosshairAttack ———
+function bossCrosshairAttack(cycles, onComplete) {
+  let count = 0;
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+
+  function nextCycle() {
+    // disable inputs
+    buttons.forEach(b => b.disabled = true);
+
+    runCycle(() => {
+      count++;
+      if (count < cycles) {
+        frozen = false;
+        nextCycle();
+      } else {
+        // hide crosshair and re-enable inputs
+        vLine.style.display = 'none';
+        hLine.style.display = 'none';
+        buttons.forEach(b => b.disabled = false);
+        onComplete();
+      }
+    });
+  }
+
+  nextCycle();
+}
+
+function bossCrosshairWaveAttack(cycles, onComplete) {
+  const COLORS = ['red','blue','yellow','green','purple','white','pink'];
+  const SPAWN_INTERVAL    = 20;    // ms between translucent-red spawns
+  const SPAWN_DURATION    = 2000;  // total spawning time (ms)
+  const ACTIVATION_DELAY  = 500;  // ms after spawn until thick flash
+  const THICK_PX          = 5;
+  const HALF              = THICK_PX / 2;
+
+  // disable buttons for entire multi-cycle attack
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+  buttons.forEach(b => b.disabled = true);
+
+  let currentCycle = 0;
+
+  function runOneCycle() {
+    if (currentCycle >= cycles) {
+      // all done
+      buttons.forEach(b => b.disabled = false);
+      return onComplete();
+    }
+
+    const spawns = [];
+    // start spawning translucent markers
+    const spawnTimer = setInterval(() => {
+      const x = cx, y = cy;
+      // pick random color for this spawn
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      // clone base lines
+      const elV = vLine.cloneNode();
+      const elH = hLine.cloneNode();
+      Object.assign(elV.style, {
+        display:    'block',
+        left:       `${x - elV.offsetWidth/2}px`,
+        width:      '2px',
+        background: 'rgba(255,0,0,0.5)',
+        opacity:    '1',
+        transition: 'none'
+      });
+      Object.assign(elH.style, {
+        display:    'block',
+        top:        `${y - elH.offsetHeight/2}px`,
+        height:     '2px',
+        background: 'rgba(255,0,0,0.5)',
+        opacity:    '1',
+        transition: 'none'
+      });
+      document.body.append(elV, elH);
+      spawns.push({ x, y, color, elV, elH });
+    }, SPAWN_INTERVAL);
+
+    // after spawn duration, activate each marker
+    setTimeout(() => {
+      clearInterval(spawnTimer);
+
+      if (spawns.length === 0) {
+        currentCycle++;
+        return runOneCycle();
+      }
+
+      let done = 0;
+      spawns.forEach(({ x, y, color, elV, elH }) => {
+        setTimeout(() => {
+          // flash to thick, opaque, spawn-specific color
+          Object.assign(elV.style, {
+            left:       `${x - HALF}px`,
+            width:      `${THICK_PX}px`,
+            background: color
+          });
+          Object.assign(elH.style, {
+            top:        `${y - HALF}px`,
+            height:     `${THICK_PX}px`,
+            background: color
+          });
+
+          // damage check (2 HP)
+          if (Math.abs(cx - x) <= HALF || Math.abs(cy - y) <= HALF) {
+            player.hp = Math.max(0, player.hp - 2);
+			log("You were hit by one of the attacks!");
+            updateUI();
+          }
+
+          // remove after brief flash
+          elV.style.transition = 'opacity 0.5s ease';
+		  elH.style.transition = 'opacity 0.5s ease';
+		  elV.style.opacity = '0';
+		  elH.style.opacity = '0';
+
+		  setTimeout(() => {
+			elV.remove();
+			elH.remove();
+			done++;
+			if (done === spawns.length) {
+			  currentCycle++;
+			  runOneCycle();
+			}
+		  }, 500);
+        }, ACTIVATION_DELAY);
+      });
+    }, SPAWN_DURATION);
+  }
+
+  runOneCycle();
+}
+
+function bossRandomLineAttack(onComplete) {
+  const DURATION_MS = rand(4000, 6000);
+  const DAMAGE_DURATION = 100; // 0.1s
+  const FADE_DURATION = 500;   // 0.5s
+
+  const endTime = Date.now() + DURATION_MS;
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+  buttons.forEach(b => b.disabled = true);
+
+  function spawnLine() {
+    const angle = rand(0, 360); // degrees
+    const length = Math.hypot(window.innerWidth, window.innerHeight) * 1.5;
+    const x = rand(0, window.innerWidth);
+    const y = rand(0, window.innerHeight);
+	const thickness = rand(2, 5);
+
+    const line = document.createElement('div');
+    Object.assign(line.style, {
+      position: 'fixed',
+      left: `${x}px`,
+      top: `${y}px`,
+      width: `${length}px`,
+      height: `${thickness}px`,
+      background: 'red',
+      transform: `rotate(${angle}deg) translateX(-50%)`,
+      transformOrigin: 'left center',
+      pointerEvents: 'none',
+      zIndex: 9999,
+      opacity: '1',
+      transition: `opacity ${FADE_DURATION}ms ease`
+    });
+
+    document.body.appendChild(line);
+
+    // Damage detection
+    const damageTimer = setTimeout(() => {
+      const rect = line.getBoundingClientRect();
+      const dx = cx - rect.left;
+      const dy = cy - rect.top;
+      const distanceToLine = Math.abs(dy * Math.cos(angle * Math.PI / 180) - dx * Math.sin(angle * Math.PI / 180));
+      if (distanceToLine <= 2) {
+        player.hp = Math.max(0, player.hp - 10);
+        updateUI();
+        flashHealthbar();
+      }
+    }, DAMAGE_DURATION);
+
+    // Fade and remove
+    setTimeout(() => {
+      line.style.opacity = '0';
+      setTimeout(() => line.remove(), FADE_DURATION);
+    }, DAMAGE_DURATION);
+  }
+
+  function attackLoop() {
+    if (Date.now() >= endTime) {
+      buttons.forEach(b => b.disabled = false);
+      onComplete();
+      return;
+    }
+    spawnLine();
+    setTimeout(attackLoop, rand(200, 500));
+  }
+  attackLoop();
+}
+
   function triggerEnrageSequence() {
     if (discoInterval !== null) {
       clearInterval(discoInterval);
