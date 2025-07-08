@@ -395,7 +395,9 @@
       return false;
     }
     function startTurn() {
-      log('\n-------------------------Turn ' + turn + '-------------------------\n');
+	  log("");
+      log('-------------------------Turn ' + turn + '-------------------------');
+	  log("");
       updateUI();
 	  if (!enrageTriggered && boss.hp <= boss.maxHp / 2) {
 		enrageTriggered = true;
