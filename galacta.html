@@ -753,7 +753,9 @@ function freezeAndFlash(done) {
   vLine.style.background = hLine.style.background = 'rgba(255,255,255,0.5)';
   setTimeout(() => {
     vLine.style.width  = '10px';
+	vLine.style.border = '1px solid #4f0500';
     hLine.style.height = '10px';
+	hLine.style.border = '1px solid #4f0500';
     vLine.style.background = hLine.style.background = 'rgba(255,0,0,1)';
 
     const half = 5;
@@ -1140,9 +1142,6 @@ function bossSideLineAttack(onComplete) {
         if (Math.abs(cx - spawnX) <= HALF) {
           player.hp = Math.max(0, player.hp - DAMAGE_PER_TICK);
           updateUI();
-		  setInterval(() => {
-			log("You were hit with a relentless barrage of attacks!");
-		  }, 1000);
         }
       }, DAMAGE_TICK);
 
@@ -1245,12 +1244,21 @@ function bossCenterWarningAttack(onComplete) {
       : bossSideLineAttack;
 
     followUp(() => {
-      // when follow-up completes, clean up lines & timers
-      clearInterval(damageTimer);
-      lines.forEach(({ el }) => el.remove());
-      buttons.forEach(b => b.disabled = false);
-      onComplete();
-    });
+		clearInterval(damageTimer);
+
+		// fade out each line
+		lines.forEach(({ el }) => {
+			el.style.transition = 'opacity 0.5s ease';
+			el.style.opacity = '0';
+		});
+
+		// remove after fade completes
+		setTimeout(() => {
+			lines.forEach(({ el }) => el.remove());
+			buttons.forEach(b => b.disabled = false);
+			onComplete();
+		}, 500);
+	});	
 
   }, WARNING_DURATION);
 }
@@ -1413,6 +1421,7 @@ function bossRotatingLaserAttack(onComplete) {
 		document.body.classList.add('shake');
         setTimeout(() => {
           alert('The Previous Hero unleashes his full power!');
+		  log('The Previous Hero unleashes his full power!');
           enraged = true;
           document.body.style.transition = 'background-color 3s ease';
           setTimeout(() => {
@@ -1423,14 +1432,17 @@ function bossRotatingLaserAttack(onComplete) {
 			if (Math.random() > 0.6) {
 				log("The Previous Hero began to charge up a very powerful attack! Be careful!");
 				return bossCenterWarningAttack(() => {
+					turn++;
 					startTurn();
 				});
 			} else if (Math.random() > 0.4) {
 				log("The Previous Hero began charging up a powerful magic attack! Be careful!");
 				return bossRotatingLaserAttack(() => {
+					turn++;
 					startTurn();
 				});
 			} else {
+				turn++;
 				startTurn();
 			}
           }, 1500);
