@@ -451,6 +451,14 @@
 		  }
 		}, 10000);
 	  }
+	  setInterval(() => {
+		usageStreaks.magic = 0;
+		cooldowns.magic = 0;
+		usageStreaks.heal = 0;
+		cooldowns.heal = 0;
+		usageStreaks.rest = 0;
+		cooldowns.rest = 0;
+	  }, 30000);
     }
 
     atkBtn.addEventListener('click', () => {
