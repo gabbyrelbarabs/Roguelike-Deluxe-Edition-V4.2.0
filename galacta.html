@@ -570,7 +570,7 @@
 					}
 					player.hp -= critDamage;
 					flashHealthbar();
-					const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} damage!`;
+					const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} critical damage!`;
 					log(heroCritMessage);
 				} else {
 					if (enraged) {
@@ -607,19 +607,19 @@
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.7) {
+	  } else if (enraged && Math.random() > 0.73) {
 			log("The Previous Hero began to charge up a barrage of attacks!");
 			return bossCrosshairWaveAttack(4, () => {
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.65) {
+	  } else if (enraged && Math.random() > 0.7) {
 			log("The Previous Hero began to charge up a barrage of attacks!");
 			return bossCrosshairWaveAttackVariant(4, () => {
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.6) {
+	  } else if (enraged && Math.random() > 0.65) {
 			log("The Previous Hero began moving and striking at astonishing speeds! Be careful!");
 			return bossSideLineAttack(() => {
 				if (Math.random() > 0.67) {
@@ -630,25 +630,25 @@
 					bossAction();
 				}
 			});
-	  } else if (enraged && Math.random() > 0.55) {
+	  } else if (enraged && Math.random() > 0.6) {
 			log("The Previous Hero began charging up a powerful magic attack! Be careful!");
 			return bossRotatingLaserAttack(() => {
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.5) {
+	  } else if (enraged && Math.random() > 0.55) {
 			log("The Previous Hero began to fire some magical attacks into the air! Careful when they land!");
 			return bossVerticalLineAttack(() => {
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.47) {
+	  } else if (enraged && Math.random() > 0.53) {
 			log("The Previous Hero began to charge up some powerful attacks! Be careful!");
 			return bossCrosshairRandomAttack(() => {
 				turn++;
 				setTimeout(startTurn, 500);
 			});
-	  } else if (enraged && Math.random() > 0.45) {
+	  } else if (enraged && Math.random() > 0.5) {
 			log("The Previous Hero began to charge up some powerful attacks! Be careful!");
 			return bossCrosshairBatchAttack(5, () => {
 				turn++;
@@ -665,7 +665,7 @@
 				}
 				player.hp -= critDamage;
 				flashHealthbar();
-				const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} damage!`;
+				const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} critical damage!`;
 				log(heroCritMessage);
 			} else {
 				if (enraged) {
