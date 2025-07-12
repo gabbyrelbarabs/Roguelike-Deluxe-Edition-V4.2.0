@@ -473,7 +473,6 @@ casinoMusic.loop = true;
       let shopCooldown = 0;
       let allowedMoves = [];
       let floorCount = 1;
-	  const bossInterval = 3;
       let roomMoves = 0;
       let roomsThisFloor = 0;
 	  let trapCount = 0;
@@ -541,9 +540,9 @@ casinoMusic.loop = true;
   },
   // "True" base stats (permanent upgrades are stored here)
   baseStats: {
-    attack:    2,
-    defense:   2,
-    magic:     2,
+    attack:    200,
+    defense:   200,
+    magic:     200,
     maxHp:    100,
 	maxArmor: 20,
     maxMana:  10,
@@ -568,12 +567,44 @@ casinoMusic.loop = true;
 	name: "None",
 	usedThisBattle: false
   },
-};  
+}; 
+
+const EQUIP_GRADES = [
+  { name: "Broken",  weight: 10,  multiplier: 0.5   },
+  { name: "Nongraded",  weight: 44,  multiplier: 1   },
+  { name: "Advanced‑grade", weight: 25,  multiplier: 1.2 },
+  { name: "Rare‑grade",    weight: 10,  multiplier: 1.5 },
+  { name: "Skillful‑grade",    weight: 5,  multiplier: 1.6 },
+  { name: "Great‑grade",    weight: 4,  multiplier: 2},
+  { name: "Ultra‑grade",    weight: 1,  multiplier: 2.5 },
+  { name: "Supreme‑grade",  weight: 0.99,   multiplier: 3   },
+  { name: "Divine‑grade",  weight: 0.01,   multiplier: 5   },
+];
+
+const FIXED_EQUIP_GRADES = {
+  "Excalibur": "Supreme‑grade",
+  "Grand Knight's Armor": "Supreme‑grade",
+  "Dragon's Fang": "Supreme‑grade",
+  "Sorceress' Staff": "Supreme‑grade",
+  "Gun": "Broken",
+  "Mech Arms": "Broken",
+  "Mech Armor": "Broken",
+  "Crucible": "Divine‑grade",
+  "Titan's Fang": "Supreme‑grade",
+  "BFG9000": "Supreme‑grade",
+  "BFG10000": "Divine-grade",
+  "Praetor Suit": "Divine‑grade",
+  "Dark Ages Mantle": "Supreme-grade",
+};
 	  
 	  const equipmentEffects = {
   // Weapons
   "Sword":      p => {
 	p.attack = Math.ceil(p.attack * 1.5);
+  },
+  "Bow": p => {
+    p.attack = Math.ceil(p.attack * 1.3);
+	p.perception = Math.ceil(p.perception * 2);
   },
   "Gauntlets":      p => {
 	p.attack = Math.ceil(p.attack * 1.3);
@@ -606,7 +637,7 @@ casinoMusic.loop = true;
   "Dagger":     p => {
     p.attack = Math.ceil(p.attack * 1.33);
     p.agility = Math.ceil(p.agility * 1.5);
-    p.perception *= 2;
+    p.perception = Math.ceil(p.perception * 2);
   },
   "Spear":      p => {
     p.attack = p.attack * 2;
@@ -1835,24 +1866,24 @@ const bossQueues = {
 		if (gameDifficulty === "doom") {
    // Every 50 floors you hit a boss; cycle through these seven
    const bosses = [
-     { name: "Behemoth",            hp: 10000,  damageRange: [40, 90],  expReward: [100, 100], moneyReward: [100, 100], },
-	 { name: "Baron of Hell",            hp: 18000,  damageRange: [60, 100],  expReward: [200, 200], moneyReward: [100, 100], },
-     { name: "Fallen Angel",        hp: 20000,  damageRange: [70, 120], expReward: [300, 300], moneyReward: [200, 150], },
-     { name: "Hell Guard", hp: 35000, damageRange: [80, 110], expReward: [750, 750], moneyReward: [500, 500], },
-     { name: "Tyrant Cyberdemon",          hp: 60000, damageRange: [100, 120], expReward: [1000, 1000], moneyReward: [800, 800], },
-	 { name: "Spider Mastermind",          hp: 80000, damageRange: [90, 130], expReward: [1500, 1500], moneyReward: [800, 800], },
-	 { name: "Hell Titan",          hp: 100000, damageRange: [80, 110], expReward: [2000, 2000], moneyReward: [800, 800], },
-	 { name: "Guardian of Hell, Cerberus.", hp: 100000, damageRange: [120, 140], expReward: [2400, 2400], moneyReward: [1000, 1000], },
-     { name: "Demon King.",          hp: 120000, damageRange: [100, 150],expReward: [2700, 2700], moneyReward: [1500, 1500], },
-	 { name: "Doom Hunter",          hp: 125000, damageRange: [90, 120],expReward: [2500, 2500], moneyReward: [1000, 1000], },
-	 { name: "Death Marauder",          hp: 150000, damageRange: [100, 130],expReward: [2700, 2700], moneyReward: [1000, 1000], },
-	 { name: "The Gladiator",          hp: 180000, damageRange: [110, 140],expReward: [2800, 2800], moneyReward: [1200, 1200], },
-     { name: "Dreadnought, the Ancient Hell Titan",  hp: 250000, damageRange: [90, 130],expReward: [3000, 3000], moneyReward: [1500, 1500], },
-	 { name: "Khan Maykr",          hp: 150000, damageRange: [130, 160],expReward: [3200, 3200], moneyReward: [1500, 1000], },
-	 { name: "The Icon of Sin",          hp: 300000, damageRange: [120, 130],expReward: [3500, 3500], moneyReward: [1500, 1500], },
-	 { name: "Viscount Hellbreaker",          hp: 250000, damageRange: [100, 150],expReward: [3600, 3600], moneyReward: [1500, 1500], },
-	 { name: "Maligog, Protector of the Gods",  hp: 500000, damageRange: [100, 120],expReward: [3800, 3800], moneyReward: [1500, 1500], },
-     { name: "The Dark Lord, Davoth",           hp: 350000, damageRange: [120, 160],expReward: [4000, 4000], moneyReward: [2000, 2000], },
+     { name: "Behemoth",            hp: 3000,  damageRange: [15, 20],  expReward: [100, 100], moneyReward: [100, 100], },
+	 { name: "Baron of Hell",            hp: 10000,  damageRange: [20, 30],  expReward: [200, 200], moneyReward: [100, 100], },
+     { name: "Fallen Angel",        hp: 15000,  damageRange: [30, 35], expReward: [300, 300], moneyReward: [200, 150], },
+     { name: "Hell Guard", hp: 25000, damageRange: [25, 30], expReward: [750, 750], moneyReward: [500, 500], },
+     { name: "Tyrant Cyberdemon",          hp: 35000, damageRange: [30, 40], expReward: [1000, 1000], moneyReward: [800, 800], },
+	 { name: "Spider Mastermind",          hp: 45000, damageRange: [35, 45], expReward: [1500, 1500], moneyReward: [800, 800], },
+	 { name: "Hell Titan",          hp: 65000, damageRange: [30, 50], expReward: [2000, 2000], moneyReward: [800, 800], },
+	 { name: "Guardian of Hell, Cerberus.", hp: 60000, damageRange: [40, 45], expReward: [2400, 2400], moneyReward: [1000, 1000], },
+     { name: "Demon King.",          hp: 75000, damageRange: [45, 55],expReward: [2700, 2700], moneyReward: [1500, 1500], },
+	 { name: "Doom Hunter",          hp: 70000, damageRange: [50, 60],expReward: [2500, 2500], moneyReward: [1000, 1000], },
+	 { name: "Death Marauder",          hp: 80000, damageRange: [60, 70],expReward: [2700, 2700], moneyReward: [1000, 1000], },
+	 { name: "The Gladiator",          hp: 100000, damageRange: [55, 65],expReward: [2800, 2800], moneyReward: [1200, 1200], },
+     { name: "Dreadnought, the Ancient Hell Titan",  hp: 130000, damageRange: [50, 70],expReward: [3000, 3000], moneyReward: [1500, 1500], },
+	 { name: "Khan Maykr",          hp: 115000, damageRange: [65, 75],expReward: [3200, 3200], moneyReward: [1500, 1000], },
+	 { name: "The Icon of Sin",          hp: 180000, damageRange: [70, 80],expReward: [3500, 3500], moneyReward: [1500, 1500], },
+	 { name: "Viscount Hellbreaker",          hp: 145000, damageRange: [80, 90],expReward: [3600, 3600], moneyReward: [1500, 1500], },
+	 { name: "Maligog, Protector of the Gods",  hp: 210000, damageRange: [70, 85],expReward: [3800, 3800], moneyReward: [1500, 1500], },
+     { name: "The Dark Lord, Davoth",           hp: 300000, damageRange: [85, 100],expReward: [4000, 4000], moneyReward: [2000, 2000], },
    ];
    const idx = Math.min(Math.ceil(floor/50)-1, bosses.length-1);
    return bosses[idx];
@@ -3189,7 +3220,7 @@ let shopItemsList = [
     usableInBattle: false,
     usableOutOfBattle: false,
     usageScope: "passive",
-	description: "A simple ring.",
+	description: "A simple piece of jewelry for the wearer.",
   },
   {
     name: "Glasses",
@@ -3199,7 +3230,7 @@ let shopItemsList = [
     usableInBattle: false,
     usableOutOfBattle: false,
     usageScope: "passive",
-	description: "Simple glasses, helps visually-impaired warriors see better.",
+	description: "A simple pair of glasses, helps visually-impaired warriors see better.",
   },
   {
     name: "Dice",
@@ -3220,6 +3251,46 @@ let shopItemsList = [
     usableOutOfBattle: false,
     usageScope: "passive",
 	description: "Allows warriors to sharpen their melee equipment, allowing for more efficient kills.",
+  },
+  {
+    name:        "Flame Arrow",
+    cost:        250,
+    type:        "equipment",
+    category:    "accessory",
+    usableInBattle:    false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+    description: "An arrow with gasolined tips to be set on fire.",
+  },
+  {
+    name:        "Poison Arrow",
+    cost:        250,
+    type:        "equipment",
+    category:    "accessory",
+    usableInBattle:    false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+    description: "An arrow with a poisoned tip to poison targets.",
+  },
+  {
+    name:        "Frost Arrow",
+    cost:        350,
+    type:        "equipment",
+    category:    "accessory",
+    usableInBattle:    false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+    description: "A magical arrow, enchanted to freeze targets on impact.",
+  },
+  {
+    name:        "Lightning Arrow",
+    cost:        350,
+    type:        "equipment",
+    category:    "accessory",
+    usableInBattle:    false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+    description: "A magical arrow, enchanted to shock targets when hit.",
   },
 
   // ─ Armors ─
@@ -3263,7 +3334,17 @@ let shopItemsList = [
     usableInBattle: false,
     usableOutOfBattle: false,
     usageScope: "passive",
-	description: "The starter weapon for a beginner or greater melee-type warrior. Sharp and efficient, it allows you to cut down foes with ease.",
+	description: "The generic starter weapon for a beginner or greater melee-type warrior. Sharp and efficient, it allows you to cut down foes with ease.",
+  },
+  {
+    name:        "Bow",
+    cost:        360,
+    type:        "equipment",
+    category:    "weapon",
+    usableInBattle:    false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+    description: "The generic starter weapon for beginner warriors who wish to fight from afar. Precise and efficient, it allows you to shoot and hunt down foes with ease.",
   },
   {
     name: "Gauntlets",
@@ -3537,7 +3618,7 @@ shopItemsList = [
 	description: "Releases powerful, electromagnetic pulses when thrown, shocking and paralyzing anything in the vicinity.",
   },
   {
-    name: "Armor+",
+    name: "Mega Armor",
     cost: 250,
     type: "iron",
     category: "consumable",
@@ -3948,7 +4029,6 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
  CLASS SELECTION MENU
  *********************/
 function showClassSelectionMenu() {
-  player.organization = "Guild";
   const menu = document.getElementById("classSelectionMenu");
   if (!menu) return console.error("No #classSelectionMenu in HTML!");
   console.log("📢 Opening Class Selection Menu");
@@ -4303,6 +4383,12 @@ function resumeWorldMusicAfterBattle() {
       /*******************
        * ROOM FUNCTIONS
        *******************/
+	function getBossInterval() {
+		if (gameDifficulty === "doom")     return 50;
+		if (gameDifficulty === "bossRush") return BOSS_RUSH_INTERVAL;
+		return 20;
+	}
+
       function createRoom(x, y, type, options = {}) {
     const { disguised = false } = options;
     const key = x + "_" + y;
@@ -4324,18 +4410,18 @@ function resumeWorldMusicAfterBattle() {
     // 1% before first discovery, then 5% thereafter
     const guildChance = guildEncounteredBefore ? 0.1 : 0.05;
 	const cultChance = cultEncounteredBefore ? 0.05 : 0.025;
-	if (gameDifficulty !== "doom") {
-		if (Math.random() < guildChance && floorCount % bossInterval === 0) {
-			guildEncounteredBefore = true;
-			type = ROOM_TYPES.GUILD;
-			roomDiv.dataset.type = type;
-		}
-		if (Math.random() < cultChance && floorCount % bossInterval === 0) {
-			cultEncounteredBefore = true;
-			type = ROOM_TYPES.CULT;
-			roomDiv.dataset.type = type;
-		}
-	}
+	if (gameDifficulty !== "doom" && type !== ROOM_TYPES.BOSS) {
+    if (Math.random() < guildChance) {
+      guildEncounteredBefore = true;
+      type = ROOM_TYPES.GUILD;
+      roomDiv.dataset.type = type;
+    }
+    if (Math.random() < cultChance) {
+      cultEncounteredBefore = true;
+      type = ROOM_TYPES.CULT;
+      roomDiv.dataset.type = type;
+    }
+  }
 
 	// if it’s a special room, slap the icon on it
 	if ((type === ROOM_TYPES.TRAP && !disguised) || [ ROOM_TYPES.BATTLE, ROOM_TYPES.HEALING, ROOM_TYPES.SHOP, ROOM_TYPES.BOSS, ROOM_TYPES.ALTAR, ROOM_TYPES.CASINO, ROOM_TYPES.LOOT, ROOM_TYPES.GUILD, ROOM_TYPES.CULT ].includes(type)) {
@@ -4384,6 +4470,16 @@ function getBadAmbushChance() {
   return Math.max(0, AMBUSH_SPAWN_RATE_BASE - player.luck * 0.001);
 }
 
+const DOOM_ALLOWED_ROOMS = [
+  ROOM_TYPES.BATTLE,
+  ROOM_TYPES.TRAP,
+  ROOM_TYPES.HEALING,
+  ROOM_TYPES.ALTAR,
+  ROOM_TYPES.SHOP,
+  ROOM_TYPES.LOOT,
+  ROOM_TYPES.EMPTY,
+];
+
 // === Updated Room Generation ===
 function generateAdjacentRooms(cx, cy) {
   allowedMoves = [];
@@ -4395,7 +4491,7 @@ function generateAdjacentRooms(cx, cy) {
   
   // === Boss Rush mode: only Altars, Shops, Loots & Bosses ===
   if (gameDifficulty === "bossRush") {
-    if (floorCount % bossInterval === 0 && !bossRoomGenerated) {
+    if (floorCount % getBossInterval() === 0 && !bossRoomGenerated) {
       // spawn the boss room straight ahead
       const bossPos = { x: cx, y: cy - 1 };
       createRoom(bossPos.x, bossPos.y, ROOM_TYPES.BOSS);
@@ -4416,9 +4512,7 @@ function generateAdjacentRooms(cx, cy) {
     return; // skip the default generator
   }
 
-  // Boss every N floors (20 normally, 50 in Doom)
-  const bossInterval = (gameDifficulty === "doom" ? 50 : gameDifficulty === "bossrush" ? BOSS_RUSH_INTERVAL : 20);
-  if (floorCount % bossInterval === 0 && !bossRoomGenerated) {
+  if (floorCount % getBossInterval() === 0 && !bossRoomGenerated) {
     const bossPos = { x: cx, y: cy - 1 };
     createRoom(bossPos.x, bossPos.y, ROOM_TYPES.BOSS);
     allowedMoves.push(`${bossPos.x}_${bossPos.y}`);
@@ -4506,12 +4600,33 @@ function generateAdjacentRooms(cx, cy) {
     }
 
     // ——— Doom override: force-forbid Casino, Guild, Warrior ———
-    if (gameDifficulty === "doom"
-        && [ROOM_TYPES.CASINO, ROOM_TYPES.GUILD, ROOM_TYPES.CULT, ROOM_TYPES.WARRIOR]
-            .includes(type)) {
-      type = ROOM_TYPES.EMPTY;
-	  disguised = false;
-    }
+    if (gameDifficulty === "doom") {
+    // — Guaranteed 1 Battle room, plus weighted picks for the others ——
+    // 1) clone positions and pick one at random for Battle
+    const doomPositions = positions.slice();
+    const battleIndex = Math.floor(Math.random() * doomPositions.length);
+
+    doomPositions.forEach((pos, i) => {
+      let type;
+      if (i === battleIndex) {
+        // force one Battle room
+        type = ROOM_TYPES.BATTLE;
+      } else {
+        const r = Math.random();
+        if (r < 0.30)             type = ROOM_TYPES.BATTLE;
+        else if (r < 0.45)        type = ROOM_TYPES.HEALING;
+        else if (r < 0.6)         type = ROOM_TYPES.SHOP;
+        else if (r < 0.7)         type = ROOM_TYPES.LOOT;
+        else if (r < 0.8)         type = ROOM_TYPES.TRAP;
+        else if (r < 0.85)        type = ROOM_TYPES.ALTAR;
+		else                      type = ROOM_TYPES.EMPTY;
+      }
+
+      createRoom(pos.x, pos.y, type);
+      allowedMoves.push(`${pos.x}_${pos.y}`);
+    });
+    return;
+  }
 
     // Finally, create it
     createRoom(pos.x, pos.y, type, { disguised });
@@ -4564,6 +4679,16 @@ const mimicTemplate = {
   boss: false
 };
 
+function rollEquipGrade() {
+  const total = EQUIP_GRADES.reduce((sum, g) => sum + g.weight, 0);
+  let r = Math.random() * total;
+  for (let g of EQUIP_GRADES) {
+    if (r < g.weight) return g;
+    r -= g.weight;
+  }
+  return EQUIP_GRADES[0];
+}
+
 	  const baseItemChance = 0.5;
 	  const itemChance = Math.min(0.9, baseItemChance + player.luck * 0.001);
 
@@ -4597,7 +4722,7 @@ if (gameDifficulty !== "doom") {
         name:     "DragonBall",
         type:     "misc",
         category: "dragonball",
-		description: "Legends say collecting 7 Dragon Balls grants the owner 1 wish.",
+		description: "Dragon Ball: Legends say collecting 7 Dragon Balls grants the owner 1 wish.",
       };
       updateStats();
       updateManaDisplay();
@@ -4618,7 +4743,7 @@ if (gameDifficulty !== "doom") {
         name:     "Mech Arms",
         type:     "equipment",
         category: "weapon",
-		description: "Ancient technology from the post-modern era built as titans to fight against the gods. These are the limbs of the titans of war.",
+		description: "Mech Arms: Ancient technology from the post-modern era built as titans to fight against the gods. These are the limbs of the titans of war.",
       };
       updateStats();
       updateManaDisplay();
@@ -4638,7 +4763,7 @@ if (gameDifficulty !== "doom") {
         name:     "Mech Armor",
         type:     "equipment",
         category: "armor",
-		description: "Ancient technology from the post-modern era built as titans to fight against the gods. These are the plates that protect the titans of war.",
+		description: "Mech Armor: Ancient technology from the post-modern era built as titans to fight against the gods. These are the plates that protect the titans of war.",
       };
       updateStats();
       updateManaDisplay();
@@ -4658,7 +4783,7 @@ if (gameDifficulty !== "doom") {
         name:     "Nuclear Reactor",
         type:     "equipment",
         category: "accessory",
-		description: "Ancient technology from the post-modern era built as titans to fight against the gods. This is the energy source to power up the titans of war.",
+		description: "Nuclear Reactor: Ancient technology from the post-modern era built as titans to fight against the gods. This is the energy source to power up the titans of war.",
       };
       updateStats();
       updateManaDisplay();
@@ -4678,7 +4803,7 @@ if (gameDifficulty !== "doom") {
         name:     "Excalibur",
         type:     "equipment",
         category: "weapon",
-		description: "The Legendary Sword from myth! True to its name, it truly is a powerful, magical sword.",
+		description: "Excalibur: The Legendary Sword from myth! True to its name, it truly is a powerful, magical sword.",
       };
       updateStats();
       updateManaDisplay();
@@ -4698,7 +4823,7 @@ if (gameDifficulty !== "doom") {
         name:     "Dragon's Fang",
         type:     "equipment",
         category: "dual-wieldable",
-		description: "A dragon's old tooth reforged into a deadly weapon.",
+		description: "Dragon's Fang: A dragon's old tooth reforged into a deadly weapon.",
       };
       updateStats();
       updateManaDisplay();
@@ -4718,7 +4843,7 @@ if (gameDifficulty !== "doom") {
         name:     "Sorceress' Staff",
         type:     "equipment",
         category: "weapon",
-		description: "One of the Grand Sorceress' old staves, still filled to the brim with arcane magic.",
+		description: "Sorceress' Staff: One of the Grand Sorceress' old staves, still filled to the brim with arcane magic.",
       };
       updateStats();
 	  updateManaDisplay();
@@ -4738,7 +4863,7 @@ if (gameDifficulty !== "doom") {
         name:     "Gun",
         type:     "equipment",
         category: "weapon",
-		description: "A .44 magnum.",
+		description: "Gun: A .44 magnum.",
       };
       alert("You found a firearm! (Epic)");
     } else {
@@ -4757,7 +4882,7 @@ if (gameDifficulty !== "doom") {
         name:     "Ammo Box",
         type:     "equipment",
         category: "accessory",
-		description: "Allows you to reload the Gun.",
+		description: "Ammo Box: Allows you to reload the Gun.",
       };
       alert("You found a mysterious box with strange metallic objects inside...! (Epic)");
     } else {
@@ -4776,7 +4901,7 @@ if (gameDifficulty !== "doom") {
         name:     "Nike Black Air Force",
         type:     "equipment",
         category: "accessory",
-		description: "They say that this unlocks a warrior's true strength.",
+		description: "Nike Black Air Force: They say that this unlocks a warrior's true strength.",
       };
       alert("You found a pair of Nike Black Air Force shoes! (LEGENDARY)");
     } else {
@@ -4795,7 +4920,7 @@ if (gameDifficulty !== "doom") {
         name:     "Grand Knight's Armor",
         type:     "equipment",
         category: "armor",
-		description: "The Grand Knight's actual armor. Indestructible, impenetrable, built to defend even from the attacks of GOD.",
+		description: "Grand Knight's Armor: The Grand Knight's actual armor. Indestructible, impenetrable, built to defend even from the attacks of GOD.",
       };
       alert("You found the Grand Knight's Armor! (LEGENDARY)");
     } else {
@@ -4815,7 +4940,7 @@ if (gameDifficulty !== "doom") {
         name:     "Previous Hero's Cape",
         type:     "equipment",
         category: "accessory",
-		description: "An old ragged cape... with aura.",
+		description: "Previous Hero's Cape: An old ragged cape... with aura.",
       };
       alert("You found a mysterious cape...! (LEGENDARY)");
     } else {
@@ -4835,7 +4960,7 @@ if (gameDifficulty !== "doom") {
         name:     "DragonBall",
         type:     "misc",
         category: "dragonball",
-		description: "Legends say collecting 7 Dragon Balls grants the owner 1 wish.",
+		description: "Dragon Ball: Legends say collecting 7 Dragon Balls grants the owner 1 wish.",
       };
       updateStats();
       updateManaDisplay();
@@ -4856,7 +4981,7 @@ if (gameDifficulty !== "doom") {
         name:     "Crucible",
         type:     "equipment",
         category: "weapon",
-		description: "A godlike weapon forged in the depths of hell, powered with Argent energy, enough of it to power an entire planet for nearly a year.",
+		description: "Crucible: A godlike weapon forged in the depths of hell, powered with Argent energy, enough of it to power an entire planet for nearly a year.",
       };
       updateStats();
       updateManaDisplay();
@@ -4876,7 +5001,7 @@ if (gameDifficulty !== "doom") {
         name:     "Titan's Fang",
         type:     "equipment",
         category: "dual-wieldable",
-		description: "A Hell Titan's old tooth, reforged into a powerful weapon.",
+		description: "Titan's Fang: A Hell Titan's old tooth, reforged into a powerful weapon.",
       };
       updateStats();
       updateManaDisplay();
@@ -4896,7 +5021,7 @@ if (gameDifficulty !== "doom") {
         name:     "BFG10000",
         type:     "equipment",
         category: "weapon",
-		description: "An amplifier for the BFG9000, but now reinvented as its own weapon.",
+		description: "BFG10000: An amplifier for the BFG9000, but now reinvented as its own weapon.",
       };
       updateStats();
 	  updateManaDisplay();
@@ -4916,7 +5041,7 @@ if (gameDifficulty !== "doom") {
         name:     "BFG9000",
         type:     "equipment",
         category: "weapon",
-		description: "The Big Fucking Gun. Requires at least one form of Argent Energy to activate.",
+		description: "BFG9000: The Big Fucking Gun. Requires at least one form of Argent Energy to activate.",
       };
       alert("You found a big fucking gun! (Epic)");
     } else {
@@ -4935,7 +5060,7 @@ if (gameDifficulty !== "doom") {
         name:     "Delta V-Jump Boots",
         type:     "equipment",
         category: "accessory",
-		description: "Powerful boots left for the slayer to allow easy movement, agility, and even flight.",
+		description: "Delta V-Jump Boots: Powerful boots left for the slayer to allow easy movement, agility, and even flight.",
       };
       alert("You found a pair of Delta V-Jump Boots! (LEGENDARY)");
     } else {
@@ -4954,7 +5079,7 @@ if (gameDifficulty !== "doom") {
         name:     "Praetor Suit",
         type:     "equipment",
         category: "armor",
-		description: "An ancient suit of armor, yet is the most technologically-advanced one in all of existence. Built to adapt to any condition, it is indestructible, even to its creator.",
+		description: "Praetor Suit: An ancient suit of armor, yet is the most technologically-advanced one in all of existence. Built to adapt to any condition, it is indestructible, even to its creator.",
       };
       alert("You found the Praetor Suit! (LEGENDARY)");
     } else {
@@ -4974,7 +5099,7 @@ if (gameDifficulty !== "doom") {
         name:     "Dark Ages Mantle",
         type:     "equipment",
         category: "accessory",
-		description: "An ancient, furry cape filled with demonic aura that allows the Slayer to handle weapons more efficiently.",
+		description: "Dark Ages Mantle: An ancient, furry cape filled with demonic aura that allows the Slayer to handle weapons more efficiently.",
       };
       alert("You found an epic looking cape...! (LEGENDARY)");
     } else {
@@ -4994,7 +5119,7 @@ if (gameDifficulty !== "doom") {
         name:     "Infinity Rune",
         type:     "equipment",
         category: "accessory",
-		description: "Allows the Slayer to have unlimited ammo when active.",
+		description: "Infinity Rune: Allows the Slayer to have unlimited ammo when active.",
       };
       alert("You found a powerful stone-looking object...! (Epic)");
     } else {
@@ -5013,7 +5138,7 @@ if (gameDifficulty !== "doom") {
         name:     "Argent Energy Storage",
         type:     "equipment",
         category: "accessory",
-		description: "Allows use of the BFG9000.",
+		description: "Argent Energy Storage: Allows use of the BFG9000.",
       };
       alert("You found a mysterious case with powerful energy surging inside...! (Epic)");
     } else {
@@ -5031,7 +5156,20 @@ if (gameDifficulty !== "doom") {
     if (droppedItem) {
       const freeIndex = player.inventory.findIndex(slot => slot === null);
       if (freeIndex !== -1) {
-        player.inventory[freeIndex] = { ...droppedItem };
+        const inst = { ...droppedItem };
+        if (inst.type === "equipment"  && (inst.category === "weapon" || inst.category === "armor")) {
+          const fixed = FIXED_EQUIP_GRADES[inst.name];
+          if (fixed) {
+            inst.grade      = fixed;
+            inst.multiplier = 1;
+          } else {
+            // otherwise roll as usual
+            const grade = rollEquipGrade();
+            inst.grade      = grade.name;
+            inst.multiplier = grade.multiplier;
+          }
+        }
+		player.inventory[freeIndex] = inst;
         if (droppedItem.type === "equipment") {
           if (droppedItem.name === "Gun" || droppedItem.name === "Ammo Box") {
             alert(`You found a ${droppedItem.name}! (Epic!)`);
@@ -5231,7 +5369,6 @@ function applyPlayerStatus(type, duration = null) {
     player.cultMissionStage = 0;
     showCultMainMenu();
 	finalizeRoom(key);
-    return;
 	  } else {
     alert("I'm sorry, but you are not worthy. Maybe in another universe, my boy.");
     finalizeRoom(key);
@@ -5251,10 +5388,11 @@ function applyPlayerStatus(type, duration = null) {
     ambushCompleteCallback = () => {
       alert("You have defeated the Mimic!");
       handleLootRoom();
+	  finalizeRoom(key);
     };
     // kick off the fight
     startNextAmbush();
-    return;
+    finalizeRoom(key);
   } else {
     handleLootRoom();
   }
@@ -5370,6 +5508,7 @@ function forceCultAmbush(key) {
   };
   // Kick off the first wave
   startNextAmbush();
+  finalizeRoom(key);
 }
 
 /**
@@ -5409,6 +5548,7 @@ function forceGuildAmbush(key) {
     generateAdjacentRooms(player.x, player.y);
   };
   startNextAmbush();
+  finalizeRoom(key);
 }
 
 function startNextAmbush() {
@@ -5897,6 +6037,7 @@ if (gameDifficulty === "normal") {
 		startWarriorBattle(alias);
 	} else {
 		finalizeRoom(key);
+		ambushCompleteCallback = null;
 	}
   }
   
@@ -5905,12 +6046,14 @@ if (gameDifficulty === "normal") {
 	  if (player.organization==="Cult") {
 		alert(`You have defeated the ${alias}! You report to the Cult about your achievement.`);
 		finalizeRoom(key);
+		ambushCompleteCallback = null;
       } else {
 		if (spare) {
 			if (Math.random() < 0.33) {
 				alert("They join you as a mercenary!");
 				player.mercenaries.push(createMercenary());
 				finalizeRoom(key);
+				ambushCompleteCallback = null;
 			} else {
 				alert("They thank you and leave.");
 				finalizeRoom(key);
@@ -6730,6 +6873,31 @@ function getEnemyByName(enemyName) {
           const multiplier = Math.random() * (1.5 - 1) + 1;
           baseDamage = Math.floor(multiplier * player.magic * (1 + extra.damage + fsBonus));
         }
+		
+		if (moveType === "attack" && player.equipment.weapon?.name === "Bow" && player.equipment.accessory) {
+			const acc = player.equipment.accessory.name;
+
+			if (acc === "Flame Arrow" && Math.random() < 0.5) {
+				currentEnemy.burned = true;
+				logBattle(`You fired a Flame Arrow and burned ${currentEnemy.name}!`);
+			} else if (acc === "Poison Arrow") {
+				if (Math.random() < 0.25) {
+					currentEnemy.poison = true;
+					logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}!`);
+				} else if (Math.random() < 0.25) {
+					currentEnemy.asleep = Math.floor(Math.random() * 3) + 2;
+					logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}, putting it to sleep!`);
+				}
+			} else if (acc === "Frost Arrow" && Math.random() < 0.5) {
+				currentEnemy.frozen = Math.floor(Math.random() * 3) + 2;
+				logBattle(`You fired a Frost Arrow and froze${currentEnemy.name}!`);
+			} else if (acc === "Lightning Arrow" && Math.random() < 0.6) {
+				currentEnemy.paralyzed = true;
+				logBattle(`You fired a Lightning Arrow and paralyzed ${currentEnemy.name}!`);
+			}
+			
+			updateEnemyInfo();
+		}
         let damage = Math.round(baseDamage);
         if (damage < 1) damage = 1;
         let resisted = false;
@@ -6979,7 +7147,7 @@ statusInflictConfig.forEach(cfg => {
   const [minD, maxD] = currentEnemy.damageRange;
   let enemyDamage = Math.round(Math.random() * (maxD - minD + 1)) + minD;
   enemyDamage -= Math.round(enemyDamage * (player.defense / 200));
-  if (enemyDamage < 0) enemyDamage = 1;
+  if (enemyDamage <= 0) enemyDamage = 1;
   enemyDamage = Math.ceil(enemyDamage / 2);
 
   // Critical hit?
@@ -8792,7 +8960,7 @@ document.addEventListener("keydown", e => {
 			updateEnemyInfo();
 			break;
 	    
-	    case "Armor+":
+	    case "Mega Armor":
             case "Iron Potion":
               player.iron = true;
 			  player.armor += 20;
@@ -8800,7 +8968,7 @@ document.addEventListener("keydown", e => {
 	    if (gameDifficulty !== "doom") {
               logBattle("You used an Iron Potion. Enemy damage halved this battle!");
 	    } else {
- 	      logBattle("You activated your Armor+ and boosted your defenses!");
+ 	      logBattle("You activated your Mega Armor and boosted your defenses!");
 	    }
               updateStats();
 			  updateEnemyInfo();
@@ -8877,14 +9045,30 @@ document.addEventListener("keydown", e => {
           alert("Inventory full! Cannot buy more items.");
           return;
         }
-        if (player.money < item.cost) {
-          alert("Not enough money!");
-          return;
-        }
-        player.money -= item.cost;
-        player.inventory[freeIndex] = {
-          ...item
-        };
+        let finalCost = item.cost;
+		const base = { ...item };
+	  if (item.type === "equipment" && (item.category === "weapon" || item.category === "armor")) {
+		let grade;
+		const fixed = FIXED_EQUIP_GRADES[item.name];
+		if (fixed) {
+			grade = EQUIP_GRADES.find(g => g.name === fixed);
+			base.grade      = grade.name;
+			base.multiplier = 1;
+		} else {
+			grade = rollEquipGrade();
+			base.grade      = grade.name;
+			base.multiplier = grade.multiplier;
+		}
+		finalCost = Math.ceil(item.cost * base.multiplier);
+      }
+
+		// — Check & deduct based on finalCost —
+		if (player.money < finalCost) {
+			alert("Not enough money!");
+			return;
+		}
+		player.money -= finalCost;
+		player.inventory[freeIndex] = base;
         updateStats();
 		updateInventoryDisplay();
         alert(`${item.name} purchased!`);
@@ -8938,6 +9122,13 @@ sellBtn.addEventListener("click", () => {
       const shopDef = shopItemsList.find(si => si.name === item.name);
       sellPrice = shopDef ? Math.floor(shopDef.cost / 2) : 0;
     }
+	
+	if (item.multiplier) {
+		const fixedGrade = FIXED_EQUIP_GRADES[item.name];
+		if (!fixedGrade) {
+			sellPrice = Math.ceil(sellPrice * item.multiplier);
+		}
+	}
 
     // --- build button ---
     const btn = document.createElement("button");
@@ -9630,8 +9821,13 @@ function updateInventoryDisplay() {
     const item = player.inventory[i];
     if (item) {
 	  const cat = item.category.charAt(0).toUpperCase() + item.category.slice(1);
-	  slot.dataset.tooltip = `${cat}-type <br>"${item.description}"`;
-      // 1. Show only the first word of the item name
+	  let displayGrade = item.grade;
+      if (item.type === "equipment") {
+        const fixed = FIXED_EQUIP_GRADES[item.name];
+        if (fixed) displayGrade = fixed;
+      }
+      const gradeTag = displayGrade ? ` (${displayGrade})` : "";
+	  slot.dataset.tooltip = `${item.name}${gradeTag}<br><em>${cat}-type</em><br>"${item.description}"`;
       const firstWord = item.name.split(" ")[0];
       const nameEl = document.createElement("span");
       nameEl.textContent = firstWord;
@@ -9692,11 +9888,34 @@ function applyEquipmentEffects() {
   player.autoWinCasino = false;
 
   // 2) Apply each equipped item's effects on top
+  // 2) For each equipped item, apply base effect *and* grade multiplier
   Object.values(player.equipment).forEach(item => {
-    if (item && equipmentEffects[item.name]) {
-      equipmentEffects[item.name](player);
+  if (!item) return;
+
+  // — Base effect (as before) —
+  if (equipmentEffects[item.name]) {
+    equipmentEffects[item.name](player);
+  }
+
+    // — Grade multiplier —
+  if (item.grade) {
+    // look up the grade object
+    const gradeObj = EQUIP_GRADES.find(g => g.name === item.grade);
+    if (gradeObj && gradeObj.multiplier > 1) {
+      // multiply all core numeric stats by grade.multiplier
+      [
+        'attack','defense','magic',
+        'maxHp','maxArmor','maxMana',
+        'agility','perception',
+        'potential','luck','fortune'
+      ].forEach(stat => {
+        if (typeof player[stat] === 'number') {
+          player[stat] = Math.ceil(player[stat] * gradeObj.multiplier);
+        }
+      });
     }
-  });
+  }
+});
   
   const wpn = player.equipment.weapon && player.equipment.weapon.name;
   const skillName = weaponSkillMap[wpn] || "None";
@@ -9729,8 +9948,9 @@ closeEquipmentBtn.addEventListener("click", () => {
 function updateEquipmentUI() {
   document.querySelectorAll(".equipmentSlot").forEach(el => {
     const slot = el.dataset.slot;
-    el.querySelector(".slot-item").textContent =
-      player.equipment[slot]?.name || "Empty";
+    const itm = player.equipment[slot];
+ 	const nameWithGrade = itm ? `${itm.name}${itm.grade ? ` (${itm.grade})` : ""}` : "Empty";
+	el.querySelector(".slot-item").textContent = nameWithGrade;
   });
 }
 // Call this once on load to show “Empty” everywhere:
@@ -9760,7 +9980,8 @@ function showEquipmentInventory(category) {
 
     any = true;
     const btn = document.createElement("button");
-    btn.textContent = item.name;
+    const gradeTag = item.grade ? ` (${item.grade})` : "";
+    btn.textContent = `${item.name}${gradeTag}`;
     btn.addEventListener("click", () => {
       equipItem(category, idx);
       inventoryMenu.style.display = "none";
