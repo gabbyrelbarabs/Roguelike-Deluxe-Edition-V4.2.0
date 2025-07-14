@@ -885,6 +885,34 @@ const FIXED_EQUIP_GRADES = {
   },
 };
 
+const EQUIP_AFFECTED_STATS = {
+  "Sword": ["attack"],
+  "Bow": ["attack","perception"],
+  "Gauntlets": ["attack"],
+  "Greatsword": ["attack","defense","maxArmor","agility"],
+  "Warhammer": ["attack","defense","maxArmor","agility"],
+  "Battle Axe": ["attack"],
+  "Mace": ["attack","defense","agility"],
+  "Ball & Chain": ["attack","defense","agility"],
+  "Dagger": ["attack","agility","perception"],
+  "Spear": ["attack","perception","agility"],
+  "Wand": ["attack","magic","maxMana"],
+  "Staff": ["attack","magic","maxMana","agility"],
+  "Shield": ["attack","defense","maxArmor"],
+  "Armor": ["defense","maxArmor"],
+  "Cloak": ["defense","agility","maxArmor"],
+  "Robe": ["defense","magic","maxMana","maxArmor"],
+  "Mantle": ["defense","magic","maxMana","maxArmor"],
+  "Chainsaw": ["attack"],
+  "Energy Spear": ["attack", "perception"],
+  "Sentinel Hammer": ["attack", "defense", "maxArmor"],
+  "Combat Shotgun": ["attack", "magic", "maxMana"],
+  "Unmaykr": ["attack", "magic", "maxMana"],
+  "Doomblade Arm Upgrade": ["attack", "agility", "perception"],
+  "Chainshield": ["attack", "defense", "maxArmor"],
+  
+};
+
 const weaponSkillMap = {
   "Dagger": "Assassinate",
   "Shield": "Bash",
@@ -6138,7 +6166,7 @@ function handleBossRoom(key) {
 	alert("''And you be ready as well, warrior! For I... your predecessor, challenge you, to a duel!''");
 	alert("''But first... all these newgen things are really not my style... I mean, what are ''potions'' or ''skills'' or ''Innates''. Blegh.''");
 	alert("''Let's do this, the old fashioned way...''");
-	window.location.href = "galacta.html";
+	window.location.href = "aeon.html";
     return;
   }
 
@@ -9903,12 +9931,8 @@ function applyEquipmentEffects() {
     const gradeObj = EQUIP_GRADES.find(g => g.name === item.grade);
     if (gradeObj && gradeObj.multiplier > 1) {
       // multiply all core numeric stats by grade.multiplier
-      [
-        'attack','defense','magic',
-        'maxHp','maxArmor','maxMana',
-        'agility','perception',
-        'potential','luck','fortune'
-      ].forEach(stat => {
+      const stats = EQUIP_AFFECTED_STATS[item.name] || [];
+      stats.forEach(stat => {
         if (typeof player[stat] === 'number') {
           player[stat] = Math.ceil(player[stat] * gradeObj.multiplier);
         }
