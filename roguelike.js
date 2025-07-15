@@ -6169,6 +6169,36 @@ function handleBossRoom(key) {
 	window.location.href = "aeon.html";
     return;
   }
+  if (gameDifficulty !== "doom" && gameDifficulty !== "ultimate" && floor > 1460) {
+	alert("You sense a powerful presence... however, it's a bit off...");
+	alert("''Greetings warrior! You might not be expecting this... in fact, you might not have expected me here at all.''");
+	alert("''But that's not what matters...''");
+	alert("''I've been watching you from up here, warrior. And I'm impressed.''");
+	alert("''You actually managed to take down the gods!''");
+	alert("''Congratulations on that achievement, warrior.''");
+	alert("''Anyway...''");
+	alert("''My point is... I'm shocked that you didn't actually take the opportunity to become one of them.''");
+	alert("''If I were you, I would've taken it, no questions asked, haha.''");
+	alert("''But you rejected it... you're one special guy to have done that so casually, huh, and you even killed the one and only God!''");
+	alert("''Like damn, dude...''");
+	alert("''But anyway! I'm not here to just blabber on glazing you and all that...''");
+	alert("''I've been watching you.''");
+	alert("''I've watched you from the very start.''");
+	alert("''All of your struggles, your near death experiences, and your easy kills with that extremely overpowered, one-shot magic spell.''");
+	alert("''Heh... you reminded me of the old days...''");
+	alert("''I was like you once. However, when I faced Him, I failed to take him down... but you did!''");
+	alert("''After that, I wanted to go straight down to you and face you immediately, but...''");
+	alert("''I realized I'd just be killing myself if I did... even as the already dead man that I am! Because uhh, killing spirits and ghosts seemed to be an everyday thing for you.''");
+	alert("''But whatever... I decided I didn't want to... yet, at least.''");
+	alert("''I decided to let you train and get stronger first, and myself as well.''");
+	alert("''Though to you, its only a few days, years, etc.! But to me... here in this heavenscape, it's been eons! It only doesn't feel like it when I observe the land of the living below, since the dimensions basically connect.''");
+	alert("''And so I spent those days training, honing and re-perfecting the techniques I already did when I was alive. And now... I'm ready.''");
+	alert("''And you be ready as well, warrior! For I... your predecessor, challenge you, to a duel!''");
+	alert("''But first... all these newgen things are really not my style... I mean, what are ''potions'' or ''skills'' or ''Innates''. Blegh.''");
+	alert("''Let's do this, the old fashioned way...''");
+	window.location.href = "galacta.html";
+    return;
+  }
 
   // === 2) SKIP AMBUSH on special floors 820, 920, 940 ===
   const skipAmbushFloors = [820, 920, 940];
