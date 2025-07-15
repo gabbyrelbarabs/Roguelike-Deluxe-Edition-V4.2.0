@@ -40,7 +40,6 @@ body {
 #difficultyMenu button {
   font-weight: bold;
   padding: 0.5em 1em;
-  border: 1px solid white;
   border-radius: 4px;
   margin: 0.25em;
   cursor: pointer;
@@ -49,52 +48,62 @@ body {
 #normalBtn {
   background-color: gray;
   color: #ffffff;
+  border: 1px solid white;
 }
 
 #hardBtn {
   background-color: orange;
   color: #ffffff;
+  border: 1px solid white;
 }
 
 #extremeBtn {
   background-color: red;
   color: #ffffff;
+  border: 1px solid white;
 }
 
 #insaneBtn {
   background-color: #700000;
   color: #000000;
+  border: 1px solid gray;
 }
 
 #calamityBtn {
   background-color: black;
   color: #ff0000;
+  border: 1px solid #ff0000;
 }
 
 #bossRushBtn {
   background-color: blue;
   color: #ffffff;
+  border: 1px solid white;
 }
 
 #doomBtn {
   background-color: #2e0000;
   color: white;
+  border: 1px solid white;
   width: 50px;
 }
 
 #ultimateBtn {
   background-color: #f4ff57;
   color: #e6b800;
+  border: 1px solid #e6b800;
 }
 
 #finalBattleBtn {
   background-color: #e8e8e8;
   color: black;
+  border: 1px solid black;
 }
 
 #trueFinalBattleBtn {
   background-color: #fff;
   color: yellow;
+  border: 1px solid yellow;
 }
 
 /* Hover states to brighten them up */
