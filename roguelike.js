@@ -639,6 +639,10 @@ const FIXED_EQUIP_GRADES = {
     p.agility = Math.ceil(p.agility * 1.5);
     p.perception = Math.ceil(p.perception * 2);
   },
+  "Hatchets":     p => {
+    p.attack = Math.ceil(p.attack * 1.4);
+    p.perception = Math.ceil(p.perception * 1.67);
+  },
   "Spear":      p => {
     p.attack = p.attack * 2;
     p.perception = Math.ceil(p.perception * 1.5);
@@ -3365,11 +3369,11 @@ let shopItemsList = [
 	description: "The generic starter weapon for a beginner or greater melee-type warrior. Sharp and efficient, it allows you to cut down foes with ease.",
   },
   {
-    name:        "Bow",
-    cost:        360,
-    type:        "equipment",
-    category:    "weapon",
-    usableInBattle:    false,
+    name: "Bow",
+    cost: 360,
+    type: "equipment",
+    category: "weapon",
+    usableInBattle: false,
     usableOutOfBattle: false,
     usageScope: "passive",
     description: "The generic starter weapon for beginner warriors who wish to fight from afar. Precise and efficient, it allows you to shoot and hunt down foes with ease.",
@@ -3403,6 +3407,16 @@ let shopItemsList = [
     usableOutOfBattle: false,
     usageScope: "passive",
 	description: "A lightweight, efficient weapon that can be dual-wielded. Great for fast kills.",
+  },
+  {
+    name: "Hatchets",
+    cost: 360,
+    type: "equipment",
+    category: "dual-wieldable",
+    usableInBattle: false,
+    usableOutOfBattle: false,
+    usageScope: "passive",
+	description: "A small, light, throwable axe used for maximum range and damage. May be a bit difficult to handle.",
   },
   {
     name: "Greatsword",
@@ -4082,14 +4096,9 @@ function selectClass(cls) {
 
 function applyClassEffects(cls) {
 	const swordNames = ["Sword", "Greatsword", "Excalibur"];
-	const greatSwordName = ["Greatsword"];
-	const daggerNames    = ["Dagger"];
-	const hammerNames    = ["Warhammer"];
-	const spearNames     = ["Spear"];
-	const ballNames      = ["Ball & Chain"];
-	const axeNames       = ["Battle Axe"];
-	const maceNames      = ["Mace"];
-	const gauntletNames  = ["Gauntlets"];
+	const heavyNames = ["Greatsword", "Warhammer", "Spear", "Ball & Chain", "Battle Axe", "Mace"];
+	const assassinNames = ["Dagger", "Hatchets"];
+	const gauntletNames = ["Gauntlets"];
 	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
 	
   switch (cls) {
@@ -4104,7 +4113,7 @@ function applyClassEffects(cls) {
       break;
 
     case "Assassin":
-      if (w && daggerNames.includes(w)) {
+      if (w && assassinNames.includes(w)) {
         // +20% with daggers
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.20);
       }
@@ -4114,7 +4123,7 @@ function applyClassEffects(cls) {
       break;
 
     case "Heavy Knight":
-      if (w && (hammerNames.includes(w) || greatSwordName.includes(w) || spearNames.includes(w) || maceNames.includes(w) || axeNames.includes(w) || ballNames.includes(w))) {
+      if (w && heavyNames.includes(w)) {
         // +10% with warhammer, greatsword, spear
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
@@ -4129,7 +4138,7 @@ function applyClassEffects(cls) {
       if (!w) {
         // +25% with no weapon
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.25);
-      } else if (gauntletNames.includes(w)) {
+      } else if (w && gauntletNames.includes(w)) {
         // +15% with gauntlets
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.375);
       } else {
