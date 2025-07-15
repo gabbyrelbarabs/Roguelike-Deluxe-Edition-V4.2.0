@@ -41,8 +41,35 @@
 		alert("*snaps*");
       };
     })();
+	
+	(function() {
+      const trueFinalBattleMessages = [
+        "''Alright... let's do this.''",
+        "''Alright, let's do this.''",
+        "''Okay... let's do this.''",
+        "''Okay, let's do this.''",
+        "''Let's get this over with...''",
+        "''Let's try this again, shall we?''",
+        "''Shall we?''",
+        "''Let's try this again...''",
+        "''Let's get this over with.''",
+		"''Let's dance!''",
+		"''Come on!''",
+      ];
+      const trueFinalbtn = document.getElementById("trueFinalBattleBtn");
+      if (!trueFinalbtn) return;
+      const og = trueFinalbtn.onclick;
+      trueFinalbtn.onclick = function(e) {
+        const idx = Math.floor(Math.random() * trueFinalBattleMessages.length);
+        alert(trueFinalBattleMessages[idx]);
+        if (typeof og === "function") {
+          og.call(this, e);
+        }
+		alert("*snaps*");
+      };
+    })();
 
-/*******************
+	  /*******************
        * GAME VARIABLES
        *******************/
       const roomSize = 110;
@@ -3328,7 +3355,7 @@ let shopItemsList = [
   // ─ Armors ─
   {
     name: "Armor",
-    cost: 300,
+    cost: 320,
     type: "equipment",
     category: "armor",
     usableInBattle: false,
@@ -3338,7 +3365,7 @@ let shopItemsList = [
   },
   {
     name: "Cloak",
-    cost: 280,
+    cost: 300,
     type: "equipment",
     category: "armor",
     usableInBattle: false,
@@ -3348,7 +3375,7 @@ let shopItemsList = [
   },
   {
     name: "Robe",
-    cost: 320,
+    cost: 360,
     type: "equipment",
     category: "armor",
     usableInBattle: false,
@@ -3420,7 +3447,7 @@ let shopItemsList = [
   },
   {
     name: "Greatsword",
-    cost: 360,
+    cost: 420,
     type: "equipment",
     category: "weapon",
     usableInBattle: false,
@@ -3470,7 +3497,7 @@ let shopItemsList = [
   },
   {
     name: "Spear",
-    cost: 360,
+    cost: 450,
     type: "equipment",
     category: "weapon",
     usableInBattle: false,
@@ -3480,7 +3507,7 @@ let shopItemsList = [
   },
   {
     name: "Wand",
-    cost: 320,
+    cost: 420,
     type: "equipment",
     category: "weapon",
     usableInBattle: false,
@@ -3490,7 +3517,7 @@ let shopItemsList = [
   },
   {
     name: "Staff",
-    cost: 360,
+    cost: 600,
     type: "equipment",
     category: "weapon",
     usableInBattle: false,
