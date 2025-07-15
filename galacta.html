@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Final Battle</title>
+  <link rel="shortcut icon" type="x-icon" href="galacta.ico" />
+  <style>
+    /* --- Fullscreen overlays --- */
+    .splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 1.5rem;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+    .splash.fade-out {
+      opacity: 0;
+	  transition: opacity 1s ease;
+    }
+	.fade-out {
+	  opacity: 0;
+	  transition: opacity 1s ease;
+	}
+
+    /* --- Game UI --- */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #222;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .bar-container {
+      margin: 1rem 0;
+      width: 300px;
+      background: #444;
+      border-radius: 5px;
+      position: relative;
+    }
+	.bar-fill {
+      height: 25px;
+      width: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    #player-bar .bar-fill {
+	  background: green;
+	}
+    #energy-bar .bar-fill {
+	  background: blue;
+	}
+    #boss-bar .bar-fill   {
+	  background: red;
+	}
+    .bar-label {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      line-height: 25px;
+      font-weight: bold;
+    }
+    #log {
+      width: 300px;
+      height: 150px;
+      background: #111;
+      border: 1px solid #333;
+      padding: 0.5rem;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+    button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+	#deathMenu {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 2rem;
+	opacity: 0;
+    transition: opacity 10ms ease-in;
+    box-sizing: border-box;
+    text-align: center;
+	}
+	#deathMenu.active {
+	 opacity: 1;
+	}
+	#deathMenu h2 { margin-bottom: .5rem; }
+	#deathMenu .stats { margin: 1rem 0; }
+	#deathMenu button {
+      margin: .5rem;
+      padding: .75rem 1.5rem;
+      font-size: 1rem;
+	  cursor: pointer;
+	}
+	/* simple fade‑to‑black */
+	#screenFade {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 1s ease-in;
+      z-index:9998;
+	}
+	#quickScreenFade {
+	
+	}
+	#screenFade.active { opacity:1; pointer-events:auto; }
+  </style>
+</head>
+<body>
+  <div id="screenFade"></div>
+<div id="deathMenu">
+  <h2>You Died</h2>
+  <div class="stats">
+    <div>Battle Duration: <span id="dm-duration"></span></div>
+    <div>Damage Dealt: <span id="dm-damage-dealt"></span></div>
+    <div>Boss Remaining HP: <span id="dm-boss-percent"></span></div>
+  </div>
+  <hr style="width:80%; border-color: #555; margin:1rem 0;">
+  <p id="dm-message"></p>
+  <div>
+    <button id="dm-retry">Retry</button>
+    <button id="dm-quit">Quit</button>
+  </div>
+</div>
+
+  <!-- Version splash (unclickable) -->
+  <div id="versionSplash" class="splash">
+    <span id="versionName">Roguelike! Deluxe Edition V</span>
+	<span id="versionText">5.0.0</span>
+  </div>
+
+  <h1>The Final Battle</h1>
+  <audio id="bgm" src="aeon.mp3" loop></audio>
+
+  <!-- Bars -->
+  <div id="player-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Player: 100 / 100</div>
+  </div>
+  <div id="energy-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Energy: 100 / 100</div>
+  </div>
+  <div id="boss-bar" class="bar-container">
+    <div class="bar-fill"></div>
+    <div class="bar-label">Previous Hero: 500 / 500</div>
+  </div>
+
+  <!-- Controls -->
+  <div>
+    <button id="attack-btn">Attack</button>
+    <button id="magic-btn">Magic</button>
+    <button id="rest-btn">Rest</button>
+    <button id="heal-btn">Heal</button>
+  </div>
+  <div id="log"></div>
+
+  <script>
+  const deathMenu   = document.getElementById("deathMenu");
+  const screenFade  = document.getElementById("screenFade");
+  const dmDuration      = document.getElementById("dm-duration");
+  const dmDamageDealt   = document.getElementById("dm-damage-dealt");
+  let totalDamageDealt = 0;
+  const dmBossPercent   = document.getElementById("dm-boss-percent");
+  const dmMessage       = document.getElementById("dm-message");
+  const btnRetry        = document.getElementById("dm-retry");
+  const btnQuit         = document.getElementById("dm-quit");
+  const versionSplash = document.getElementById('versionSplash');
+  const versionText   = document.getElementById('versionText');
+  const clickable     = document.getElementById('clickable');
+  const bgm           = new Audio("galacta.mp3");
+  bgm.loop = true;
+  bgm.volume = 1;
+  bgm.currentTime = 0;
+  let   discoInterval = null;
+
+    // Helper: step version triple down by one patch
+    function prevVersion([M, m, p]) {
+      if (p > 0) return [M, m, p - 1];
+      if (m > 0) return [M, m - 1, 9];
+      return [M - 1, 9, 9];
+    }
+	
+	function getTitleName([M, m, p]) {
+    const num = M * 10000 + m * 100 + p;
+    if (num >= 40201 && num <= 50000) {
+      return "Roguelike! Deluxe Edition V";
+    } else if (num === 40200) {
+      return "Roguelike! Single File";
+    } else if (num >= 30601 && num <= 40109) {
+      return "Roguelike! Infinity V";
+    } else if (num >= 10601 && num <= 30600) {
+      return "Roguelike! Infinity Alpha V";
+    } else if (num >= 10006 && num <= 10600) {
+      return "Adventure Game Beta Version";
+    } else if (num >= 10000 && num <= 10006) {
+      return "Bossfight Simulator";
+    } else {
+      return "";
+    }
+  }
+
+    // Your exact getDelay function
+    function getDelay([M, m, p], isInitial) {
+      if (isInitial) return 1500;
+      if (M === 4 && m === 9 && p === 7) return 500;
+      if (M === 4 && m === 9 && p >= 0) return 350;
+      if (M === 4 && m === 8 && p >= 0) return 200;
+      if (M === 4 && m >= 7 && p >= 0) return 100;
+      if (M === 4 && m >= 5 && p >= 0) return 50;
+      if (M === 1 && m >= 2) return 10;
+      if (M === 1 && m === 2 && p === 0) return 20;
+      if (M === 1 && (m > 0 || p > 5)) return 100;
+      if (M === 1 && m === 0 && p <= 5 && p > 0) return 500;
+      if (M === 1 && m === 0 && p === 0) return 1500;
+      return 10;
+    }
+
+  function runDiscoMode() {
+    if (discoInterval !== null) return;
+    document.body.style.transition = 'none';
+
+    const discoColors = [
+      '#446643', '#664343', '#5d6643',
+      '#664360', '#436665', '#434466',
+      '#665643'
+    ];
+    let lastColor = null;
+
+    discoInterval = setInterval(() => {
+      const bg = window.getComputedStyle(document.body).backgroundColor;
+      if (bg === 'rgb(0, 0, 0)') {
+      }
+      let next;
+      do {
+        next = discoColors[Math.floor(Math.random() * discoColors.length)];
+      } while (next === lastColor);
+      lastColor = next;
+      document.body.style.backgroundColor = next;
+    }, 330);
+  }
+
+    (function runVersionSplash() {
+      const versionName = document.getElementById("versionName");
+	  const versionText = document.getElementById("versionText");
+      let ver = [5, 0, 0];
+      let initial = true;
+
+      function step() {
+        const delay = getDelay(ver, initial);
+		 let title = getTitleName(ver);
+		if (
+			title === "Roguelike! Single File" ||
+			title === "Adventure Game Beta Version" ||
+			title === "Bossfight Simulator"
+		) {
+			title += '\u00A0';
+		}
+		versionName.textContent = title;
+        versionText.textContent = ver.join('.');
+        initial = false;
+
+        setTimeout(() => {
+          if (ver[0] === 1 && ver[1] === 0 && ver[2] === 0) {
+            versionSplash.innerHTML =
+			`<div style="text-align: center;">
+				Your true fate shall be decided in this final battle... are you ready?
+				<br>
+				<br>
+				<br>
+				<em>Press to continue...</em>`;
+			versionSplash.id = 'clickable';
+			versionSplash.addEventListener('click', () => {
+				const fadeDur = 10, steps = 5;
+				bgm.volume = 0;
+				bgm.loop = true;
+				bgm.play();
+				for (let i = 1; i <= steps; i++) {
+					setTimeout(() => { bgm.volume = i/steps; }, (fadeDur/steps)*i);
+				}
+				versionSplash.classList.add('fade-out');
+				versionSplash.addEventListener('transitionend', () => {
+					setTimeout(() => {
+						runDiscoMode();
+					}, 5850);
+
+					versionSplash.remove();
+					const startMessage = rand(1, 2) === 1 ? "The battle with the Previous Hero begins!" : "The Previous Hero challenges you!";
+					log(startMessage);
+					startTurn();
+				});
+			});
+
+			return;
+          }
+          ver = prevVersion(ver);
+          step();
+        }, delay);
+      }
+
+      step();
+    })();
+
+    const player = {
+      maxHp: 100, hp: 100,
+      minDmg: 8, maxDmg: 15,
+      healMin: 15, healMax: 30,
+      maxEnergy: 100, energy: 100,
+      healCost: 15, attackCost: 2, magicCost: 10
+    };
+    const boss = { maxHp: 500, hp: 500, minDmg: 6, maxDmg: 12 };
+	boss.maxHp = boss.hp;
+    let turn = 1;
+	let counterNext     = false;
+	let counterDamage   = 0;
+	let enrageTriggered = false;
+	let enraged         = false;
+	let rageDamage      = 0;
+	let idleTimeout = null;
+
+    const pFill   = document.querySelector('#player-bar .bar-fill');
+    const pLabel  = document.querySelector('#player-bar .bar-label');
+    const eFill   = document.querySelector('#energy-bar .bar-fill');
+    const eLabel  = document.querySelector('#energy-bar .bar-label');
+    const bFill   = document.querySelector('#boss-bar .bar-fill');
+    const bLabel  = document.querySelector('#boss-bar .bar-label');
+    const atkBtn  = document.getElementById('attack-btn');
+    const magBtn  = document.getElementById('magic-btn');
+    const restBtn = document.getElementById('rest-btn');
+    const healBtn = document.getElementById('heal-btn');
+    const logEl   = document.getElementById('log');
+	const usageStreaks = { magic: 0, rest: 0, heal: 0 };
+	const cooldowns    = { magic: 0, rest: 0, heal: 0 };
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function updateUI() {
+      pFill.style.width = `${Math.max(0, player.hp/player.maxHp*100)}%`;
+      pLabel.textContent = `Player: ${Math.max(0, player.hp)} / ${player.maxHp}`;
+      eFill.style.width = `${player.energy/player.maxEnergy*100}%`;
+      eLabel.textContent = `Energy: ${player.energy} / ${player.maxEnergy}`;
+      bFill.style.width = `${Math.max(0, boss.hp/boss.maxHp*100)}%`;
+      bLabel.textContent = `Previous Hero: ${Math.max(0, boss.hp)} / ${boss.maxHp}`;
+    }
+    function log(msg) {
+      const p = document.createElement('p');
+      p.textContent = msg;
+      logEl.appendChild(p);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function checkEnd() {
+      if (player.hp <= 0) {
+		alert("You were defeated... as the Previous Hero prevails once more.");
+		fadeOutAudio(bgm, 1000, showDeathMenu);
+		return true;
+	  }
+
+	  if (boss.hp <= 0) {
+		alert("You defeated the Previous Hero!");
+		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
+		alert("''Congratulations, kid.''");
+		window.location.href = "index.html";
+		return true;
+	  }
+      return false;
+    }
+    function startTurn() {
+	  log("");
+      log('-------------------------Turn ' + turn + '-------------------------');
+	  log("");
+      updateUI();
+	  if (!enrageTriggered && boss.hp <= boss.maxHp / 2) {
+		enrageTriggered = true;
+		return triggerEnrageSequence();
+      }
+	  if (checkEnd()) return;
+	  for (let action of ['magic','rest','heal']) {
+		if (cooldowns[action] > 0) cooldowns[action]--;
+	  }
+	  if (cooldowns.magic === 0) magBtn.textContent  = 'Magic';
+	  if (cooldowns.rest  === 0) restBtn.textContent = 'Rest';
+	  if (cooldowns.heal  === 0) healBtn.textContent = 'Heal';
+      atkBtn.disabled  = player.energy < player.attackCost;
+      magBtn.disabled  = player.energy < player.magicCost;
+      healBtn.disabled = player.energy < player.healCost;
+	  magBtn.disabled  = player.energy < player.magicCost || cooldowns.magic > 0;
+	  if (cooldowns.magic > 0) magBtn.textContent = 'Recharging...';
+	  restBtn.disabled = cooldowns.rest > 0;
+	  if (cooldowns.rest > 0 || player.energy >= player.maxEnergy) restBtn.textContent = 'Not Tired', restBtn.disabled = true;
+	  healBtn.disabled = player.energy < player.healCost || cooldowns.heal > 0;
+	  if (cooldowns.heal > 0) healBtn.textContent = 'Recharging...';
+	  
+	  if (idleTimeout) clearTimeout(idleTimeout);
+	  idleTimeout = setTimeout(() => {
+		const bossImpatient = rand(1, 2) === 1
+		? "The Previous Hero caught you off guard and attacked!"
+		: "The Previous Hero got tired of waiting and attacked!";
+		log(bossImpatient);
+		bossAction();
+	  }, rand(25000, 45000));
+	  setInterval(() => {
+		usageStreaks.magic = 0;
+		cooldowns.magic = 0;
+		usageStreaks.heal = 0;
+		cooldowns.heal = 0;
+		usageStreaks.rest = 0;
+		cooldowns.rest = 0;
+	  }, 30000);
+    }
+
+    atkBtn.addEventListener('click', () => {
+	  if (idleTimeout) clearTimeout(idleTimeout);
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.attackCost;
+      if (Math.random() < 0.10) {
+        const dodgeMsg = rand(1, 2) === 1
+		? "Previous Hero dodged your attack!"
+		: "Previous Hero blocked your attack!";
+		log(dodgeMsg);
+      } else {
+        let dmg = rand(player.minDmg, player.maxDmg);
+        if (Math.random() < 0.05) { dmg*=2; log('Critical Hit! You attacked and dealt ' + dmg + ' damage.'); }
+        else                  { log('You attack for ' + dmg + ' damage.'); }
+        boss.hp -= dmg;
+		totalDamageDealt += dmg;
+		if (Math.random() < 0.10) {
+			counterNext   = true;
+			counterDamage = dmg * 2;
+		}
+      }
+      updateUI();
+      setTimeout(() => {
+          bossAction();
+      }, 500);
+    });
+
+    magBtn.addEventListener('click', () => {
+	  usageStreaks.magic++;
+	  if (idleTimeout) clearTimeout(idleTimeout);
+	  if (usageStreaks.magic >= 5) {
+		cooldowns.magic      = 2;
+		usageStreaks.magic   = 0;
+	  }
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.magicCost;
+      if (Math.random() < 0.2) {
+        const dodgeMsg = rand(1, 2) === 1
+		? "Previous Hero dodged your attack!"
+		: "Previous Hero blocked your attack!";
+		log(dodgeMsg);
+      } else {
+        const base = rand(player.minDmg, player.maxDmg),
+              mult = rand(130,200)/100,
+              dmg  = Math.floor(base*mult);
+        log('You cast Magic and dealt ' + dmg + ' damage.');
+        boss.hp -= dmg;
+		totalDamageDealt += dmg;
+      }
+      updateUI();
+      setTimeout(() => {
+          bossAction();
+      }, 500);
+    });
+
+    restBtn.addEventListener('click', () => {
+	  usageStreaks.rest++;
+	  if (idleTimeout) clearTimeout(idleTimeout);
+	  if (usageStreaks.rest >= 3) {
+		cooldowns.rest    = 2;
+		usageStreaks.rest = 0;
+	  }
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      const eng = rand(19,30);
+      player.energy = Math.min(player.maxEnergy, player.energy+eng);
+      log('You rest and recover ' + eng + ' energy.');
+      updateUI();
+      setTimeout(bossAction, 500);
+    });
+
+    healBtn.addEventListener('click', () => {
+	  usageStreaks.heal++;
+	  if (idleTimeout) clearTimeout(idleTimeout);
+	  if (usageStreaks.heal >= 2) {
+		cooldowns.heal    = 1;
+		usageStreaks.heal = 0;
+	  }
+      [atkBtn, magBtn, restBtn, healBtn].forEach(b=>b.disabled=true);
+      player.energy -= player.healCost;
+      const amt = rand(player.healMin, player.healMax);
+      player.hp = Math.min(player.maxHp, player.hp+amt);
+      log('You cast a healing spell and healed ' + amt + ' HP.');
+      updateUI();
+      setTimeout(bossAction, 500);
+    });
+	
+	function bossAction() {
+	if (idleTimeout) clearTimeout(idleTimeout);
+	if (boss.hp <= 0) {
+		alert("You defeated the Previous Hero!");
+		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
+		alert("''Congratulations, kid.''");
+		window.location.href = "index.html";
+		return true;
+	}
+      if (Math.random() > 0.9) {
+        const playerDodgeMessage = rand(1, 2) === 1
+		? "The Previous Hero attacked but you dodged!"
+		: "The Previous Hero attacked missed!";
+		log(playerDodgeMessage);
+      } else if (boss.hp > 0 && boss.hp < 900 && Math.random() > 0.8) {
+          let pct = 0;
+		  if (enraged) {
+		    if (Math.random() > 0.7) {
+				pct = rand(1.0,3.0)/100, healAmt = Math.floor(boss.maxHp*pct);
+				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+			} else {
+				let bossdmg = rand(boss.minDmg, boss.maxDmg);
+				rageDamage = Math.ceil(bossdmg * 1.5);
+				if (Math.random() < 0.05) {
+					if (enraged) {
+						critDamage = Math.floor(bossdmg * 2);
+					} else {
+						critDamage = Math.floor(rageDamage * 2);
+					}
+					player.hp -= critDamage;
+					flashHealthbar();
+					const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} critical damage!`;
+					log(heroCritMessage);
+				} else {
+					if (enraged) {
+						player.hp -= rageDamage;
+					} else {
+						player.hp -= bossdmg;
+					}
+					if (enraged) {
+						log(`The Previous Hero attacked and dealt ${rageDamage} damage!`);
+					} else {
+						log(`The Previous Hero attacked and dealt ${bossdmg} damage!`);
+					}
+				}
+			}
+		  } else {
+		    if (Math.random() > 0.33) {
+				pct = rand(1.0,4.0)/100, healAmt = Math.floor(boss.maxHp*pct);
+				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
+				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+			} else {
+				log('Previous Hero got tired and took a break.');
+			}
+		  }
+          updateUI();
+	  } else if (counterNext) {
+			player.hp -= counterDamage;
+			flashHealthbar();
+			log(`The Previous Hero countered your attack and dealt ${counterDamage} damage!`);
+			counterNext = false;
+			updateUI();
+	  } else {
+			let bossdmg = rand(boss.minDmg, boss.maxDmg);
+			rageDamage = Math.ceil(bossdmg * 1.5);
+			if (Math.random() < 0.05) {
+				if (enraged) {
+					critDamage = Math.floor(bossdmg * 2);
+				} else {
+					critDamage = Math.floor(rageDamage * 2);
+				}
+				player.hp -= critDamage;
+				flashHealthbar();
+				const heroCritMessage = rand(1, 2) === 1 ? `Critical Hit! The Previous Hero attacked and dealt ${critDamage} damage.` : `The Previous Hero caught you off guard and dealt ${critDamage} critical damage!`;
+				log(heroCritMessage);
+			} else {
+				if (enraged) {
+					player.hp -= rageDamage;
+				} else {
+					player.hp -= bossdmg;
+				}
+				if (enraged) {
+					log(`The Previous Hero attacked and dealt ${rageDamage} damage!`);
+				} else {
+					log(`The Previous Hero attacked and dealt ${bossdmg} damage!`);
+				}
+			}
+		}
+      updateUI();
+	  turn++;
+      setTimeout(startTurn, 500);
+}
+
+let cx = 0, cy = 0, frozen = false;
+
+// create vertical line (hidden by default)
+const vLine = document.createElement('div');
+Object.assign(vLine.style, {
+  position: 'absolute', top: '0', width: '2px', height: '100%',
+  background: 'rgba(255,0,0,0.5)', pointerEvents: 'none',
+  transition: 'background 0.1s, width 0.1s, height 0.1s',
+  display: 'none'
+});
+document.body.appendChild(vLine);
+
+// create horizontal line (hidden by default)
+const hLine = document.createElement('div');
+Object.assign(hLine.style, {
+  position: 'absolute', left: '0', height: '2px', width: '100%',
+  background: 'rgba(255,0,0,0.5)', pointerEvents: 'none',
+  transition: 'background 0.1s, width 0.1s, height 0.1s',
+  display: 'none'
+});
+document.body.appendChild(hLine);
+
+// track mouse
+document.addEventListener('mousemove', e => {
+  cx = e.clientX;
+  cy = e.clientY;
+  if (!frozen && vLine.style.display === 'block') {
+    vLine.style.left = (cx - vLine.offsetWidth/2) + 'px';
+    hLine.style.top  = (cy - hLine.offsetHeight/2) + 'px';
+  }
+});
+
+function bossRandomLineAttack(onComplete) {
+  const DURATION_MS = rand(4000, 6000);
+  const DAMAGE_DURATION = 100; // 0.1s
+  const FADE_DURATION = 500;   // 0.5s
+
+  const endTime = Date.now() + DURATION_MS;
+
+  function spawnLine() {
+    const angle = rand(0, 360); // degrees
+    const length = Math.hypot(window.innerWidth, window.innerHeight) * 1.5;
+    const x = rand(0, window.innerWidth);
+    const y = rand(0, window.innerHeight);
+	const thickness = rand(2, 5);
+
+    const line = document.createElement('div');
+    Object.assign(line.style, {
+      position: 'fixed',
+      left: `${x}px`,
+      top: `${y}px`,
+      width: `${length}px`,
+      height: `${thickness}px`,
+      background: 'red',
+      transform: `rotate(${angle}deg) translateX(-50%)`,
+      transformOrigin: 'left center',
+      pointerEvents: 'none',
+      zIndex: 9999,
+      opacity: '1',
+      transition: `opacity ${FADE_DURATION}ms ease`
+    });
+
+    document.body.appendChild(line);
+
+    // Damage detection
+    const damageTimer = setTimeout(() => {
+      const rect = line.getBoundingClientRect();
+      const dx = cx - rect.left;
+      const dy = cy - rect.top;
+      const distanceToLine = Math.abs(dy * Math.cos(angle * Math.PI / 180) - dx * Math.sin(angle * Math.PI / 180));
+      if (distanceToLine <= 2) {
+        player.hp = Math.max(0, player.hp - 10);
+        updateUI();
+        flashHealthbar();
+      }
+    }, DAMAGE_DURATION);
+
+    // Fade and remove
+    setTimeout(() => {
+      line.style.opacity = '0';
+      setTimeout(() => line.remove(), FADE_DURATION);
+    }, DAMAGE_DURATION);
+  }
+
+  function attackLoop() {
+    if (Date.now() >= endTime) {
+      onComplete();
+      return;
+    }
+    spawnLine();
+    setTimeout(attackLoop, rand(200, 500));
+  }
+  attackLoop();
+}
+
+function bossSideLineAttack(onComplete) {
+  const SPAWN_DELAY    = 20;      // ms between spawns
+  const BASE_DET_DELAY = 1000;    // ms after spawn → first detonation
+  const DET_INCREMENT  = 20;      // extra ms per subsequent line
+  const THICK_PX       = 15;
+  const HALF           = THICK_PX / 2;
+  const FADE_DURATION  = 500;     // ms fade-out time after detonation
+  const DAMAGE_TICK    = 15;      // ms per damage tick
+  const DAMAGE_PER_TICK= 1;       // hp lost per tick
+
+  // pick spawn side (left or right)
+  const fromLeft = Math.random() < 0.5;
+  let x = fromLeft ? 0 : window.innerWidth;
+
+  // disable player inputs
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+  buttons.forEach(b => b.disabled = true);
+
+  let spawning   = true;
+  let spawnCount = 0;
+  let doneCount  = 0;
+
+  function spawnLine() {
+    if (!spawning) return;
+
+    spawnCount++;
+    const idx    = spawnCount - 1;           // zero-based
+    const spawnX = x;                        // capture this line’s X
+
+    // create thin, translucent marker
+    const el = vLine.cloneNode();
+    Object.assign(el.style, {
+      display:    'block',
+      top:        '0',
+      left:       `${spawnX - 1}px`,
+      width:      '2px',
+      height:     '100%',
+      background: 'rgba(255,0,0,0.5)',
+      opacity:    '1',
+      transition: 'none'
+    });
+    document.body.append(el);
+
+    // compute when this line detonates
+    const detDelay = BASE_DET_DELAY + (idx * DET_INCREMENT);
+
+    // schedule detonation
+    setTimeout(() => {
+      // thicken & solidify
+      Object.assign(el.style, {
+        width:      `${THICK_PX}px`,
+        left:       `${spawnX - HALF}px`,
+        background: 'rgba(255,0,0,1)',
+		border:     '1px solid #4f0500',
+      });
+
+      // start continuous damage ticks while the line remains
+      const damageInterval = setInterval(() => {
+        if (Math.abs(cx - spawnX) <= HALF) {
+          player.hp = Math.max(0, player.hp - DAMAGE_PER_TICK);
+          updateUI();
+        }
+      }, DAMAGE_TICK);
+
+      // fade out over FADE_DURATION, then remove & cleanup
+      el.style.transition = `opacity ${FADE_DURATION}ms ease`;
+      el.style.opacity    = '0';
+      setTimeout(() => {
+        clearInterval(damageInterval);
+        el.remove();
+        doneCount++;
+        // once spawning has ended and all lines are removed, finish
+        if (!spawning && doneCount === spawnCount) {
+          buttons.forEach(b => b.disabled = false);
+          onComplete();
+        }
+      }, FADE_DURATION);
+    }, detDelay);
+
+    // queue next spawn
+    x += fromLeft ? 20 : -20;
+    if (x >= 0 && x <= window.innerWidth) {
+      setTimeout(spawnLine, SPAWN_DELAY);
+    } else {
+      spawning = false;
+    }
+  }
+
+  // start the spawning sequence
+  spawnLine();
+}
+
+function bossCenterWarningAttack(onComplete) {
+  const SPACING            = 15;     // px between warning lines
+  const BLINK_INTERVAL     = 500;    // ms blink rate
+  const WARNING_DURATION   = 2000;   // ms of blinking before detonation
+  const THICK_PX           = 10;     // px thickness after detonation
+  const HALF_THICK         = THICK_PX / 2;
+  const DAMAGE_INTERVAL    = 1000;     // ms between damage ticks
+
+  // compute the middle third of the screen
+  const screenWidth  = window.innerWidth;
+  const startX       = screenWidth  / 3;
+  const endX         = (screenWidth * 2) / 3;
+  
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+  buttons.forEach(b => b.disabled = true);
+
+  // create warning lines
+  const lines = [];
+  for (let x = startX; x <= endX; x += SPACING) {
+    const line = vLine.cloneNode();
+    Object.assign(line.style, {
+      display:    'block',
+      left:       `${x - 1}px`,
+      width:      '2px',
+      height:     '100%',
+      background: 'rgba(255,0,0,0.5)', // original warning color
+      transition: 'background 0.1s'
+    });
+    document.body.append(line);
+    lines.push({ el: line, x });
+  }
+
+  // blink between white and original for WARNING_DURATION
+  let showWhite = false;
+  const blinkTimer = setInterval(() => {
+    showWhite = !showWhite;
+    lines.forEach(({ el }) => {
+      el.style.background = showWhite 
+        ? 'rgba(255,255,255,0.5)' 
+        : 'rgba(255,0,0,0.5)';
+    });
+  }, BLINK_INTERVAL);
+
+  // after WARNING_DURATION, detonate
+  setTimeout(() => {
+    clearInterval(blinkTimer);
+
+    // thicken lines and make solid red
+    lines.forEach(({ el, x }) => {
+      Object.assign(el.style, {
+        width:      `${THICK_PX}px`,
+        left:       `${x - HALF_THICK}px`,
+        background: 'rgba(255,0,0,1)',
+        transition: 'none',
+		border:     '1px solid #4f0500',
+      });
+    });
+
+    // start continuous damage check
+    const damageTimer = setInterval(() => {
+      lines.forEach(({ x }) => {
+        if (Math.abs(cx - x) <= HALF_THICK) {
+          player.hp = Math.max(0, player.hp - 15);
+          updateUI();
+        }
+      });
+    }, DAMAGE_INTERVAL);
+
+    log("The Previous Hero followed up with another barrage of attacks! Keep your guard!");
+    const followUp = Math.random() < 0.5 
+      ? bossRandomLineAttack 
+      : bossSideLineAttack;
+
+    followUp(() => {
+		clearInterval(damageTimer);
+
+		// fade out each line
+		lines.forEach(({ el }) => {
+			el.style.transition = 'opacity 0.5s ease';
+			el.style.opacity = '0';
+		});
+
+		// remove after fade completes
+		setTimeout(() => {
+			lines.forEach(({ el }) => el.remove());
+			buttons.forEach(b => b.disabled = false);
+			onComplete();
+		}, 500);
+	});	
+
+  }, WARNING_DURATION);
+}
+
+function bossRotatingLaserAttack(onComplete) {
+  const THICK_PX         = 20;
+  const HALF_THICK       = THICK_PX / 2;
+  const DOT_SIZE         = THICK_PX * 2;
+  const BLINK_INTERVAL   = 250;
+  const WARNING_DURATION = 1000;
+  const DAMAGE_INTERVAL  = 5;
+  const DAMAGE_PER_TICK  = 2;
+  const START_SPEED      = 0.05;
+  const MAX_SPEED_FACTOR = 5;
+  const END_SLOWDOWN_DEG = 30;
+  const TOTAL_ANGLE      = 660;
+  const ACCEL_ANGLE      = 180 ;
+  const FADE_DURATION    = 500;
+
+  const cx0 = window.innerWidth  / 2;
+  const cy0 = window.innerHeight / 2;
+
+  const buttons = Array.from(document.querySelectorAll('.action-button'));
+  buttons.forEach(b => b.disabled = true);
+
+  const dot = document.createElement('div');
+  Object.assign(dot.style, {
+    position:       'absolute',
+    width:          `${DOT_SIZE}px`,
+    height:         `${DOT_SIZE}px`,
+    borderRadius:   '50%',
+    border:         '2px solid #4f0500',
+    background:     'red',
+    left:           `${cx0 - DOT_SIZE / 2}px`,
+    top:            `${cy0 - DOT_SIZE / 2}px`,
+    pointerEvents:  'none',
+    zIndex:         '1001',
+    transition:     'background 0.1s, width 0.3s ease, height 0.3s ease, left 0.3s ease, top 0.3s ease'
+  });
+  document.body.append(dot);
+
+  let showRed = true;
+  const blinkTimer = setInterval(() => {
+    dot.style.background = showRed ? 'white' : 'red';
+    showRed = !showRed;
+  }, BLINK_INTERVAL);
+
+  setTimeout(() => {
+    clearInterval(blinkTimer);
+    Object.assign(dot.style, {
+      width:        `${THICK_PX}px`,
+      height:       `${THICK_PX}px`,
+      left:         `${cx0 - HALF_THICK}px`,
+      top:          `${cy0 - HALF_THICK}px`,
+      background:   'red'
+    });
+
+    const beam = document.createElement('div');
+    Object.assign(beam.style, {
+      position:        'absolute',
+      width:           `${THICK_PX}px`,
+      height:          '5000px',
+      background:      'red',
+      border:          '1px solid #4f0500',
+      borderRadius:    `${HALF_THICK}px`,
+      pointerEvents:   'none',
+      transformOrigin: 'center bottom',
+      left:            `${cx0 - HALF_THICK}px`,
+      bottom:          `${cy0}px`,
+      transform:       'rotate(0deg)',
+      zIndex:          '1000',
+      transition:      `opacity ${FADE_DURATION}ms ease`
+    });
+    document.body.append(beam);
+
+    let currentAngle = 0;
+    const direction = Math.random() < 0.5 ? 1 : -1;
+    let lastTime = null;
+
+    const damageTimer = setInterval(() => {
+      const rad = (currentAngle * Math.PI) / 180;
+      const ux = Math.sin(rad), uy = -Math.cos(rad);
+      const vx = cx - cx0, vy = cy - cy0;
+      const perpDist = Math.abs(vx * uy - vy * ux);
+      const fwdDist = vx * ux + vy * uy;
+      if (fwdDist > 0 && perpDist <= HALF_THICK) {
+        player.hp = Math.max(0, player.hp - DAMAGE_PER_TICK);
+        updateUI();
+      }
+    }, DAMAGE_INTERVAL);
+
+    function step(time) {
+      if (lastTime == null) lastTime = time;
+      const dt = time - lastTime;
+      const absAngle = Math.abs(currentAngle);
+
+      // speed ramps up until ACCEL_ANGLE, then down near end
+      let factor = 1;
+      if (absAngle < ACCEL_ANGLE) {
+        factor = 1 + ((MAX_SPEED_FACTOR - 1) * (absAngle / ACCEL_ANGLE));
+      } else if (absAngle > TOTAL_ANGLE - END_SLOWDOWN_DEG) {
+        const slowRatio = (TOTAL_ANGLE - absAngle) / END_SLOWDOWN_DEG;
+        factor = 1 + ((MAX_SPEED_FACTOR - 1) * slowRatio);
+      } else {
+        factor = MAX_SPEED_FACTOR;
+      }
+
+      const speed = START_SPEED * factor;
+      currentAngle += direction * speed * dt;
+      beam.style.transform = `rotate(${currentAngle}deg)`;
+
+      if (Math.abs(currentAngle) < TOTAL_ANGLE) {
+        lastTime = time;
+        requestAnimationFrame(step);
+      } else {
+        // Begin fade-out
+        clearInterval(damageTimer);
+        beam.style.opacity = '0';
+        setTimeout(() => {
+          beam.remove();
+          dot.remove();
+          buttons.forEach(b => b.disabled = false);
+          onComplete();
+        }, FADE_DURATION);
+      }
+    }
+
+    requestAnimationFrame(step);
+  }, WARNING_DURATION);
+}
+
+  function triggerEnrageSequence() {
+    if (discoInterval !== null) {
+      clearInterval(discoInterval);
+      discoInterval = null;
+    }
+    [atkBtn, magBtn, restBtn, healBtn].forEach(b => b.disabled = true);
+    const shakeKeyframes = `
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        20% { transform: translate(-1px, -2px) rotate(-1deg); }
+        40% { transform: translate(-3px, 0px) rotate(1deg); }
+        60% { transform: translate(3px, 2px) rotate(0deg); }
+        80% { transform: translate(1px, -1px) rotate(1deg); }
+        100% { transform: translate(-1px, 2px) rotate(-1deg); }
+      }
+      .shake { animation: shake 0.1s infinite; }
+    `;
+    const style = document.createElement('style');
+    style.textContent = shakeKeyframes;
+    document.head.appendChild(style);
+    document.body.style.transition = 'background-color 2s ease';
+    document.body.style.backgroundColor = 'black';
+
+    setTimeout(() => {
+      alert('...');
+      setTimeout(() => {
+        document.body.style.transition = 'background-color 1s ease';
+        document.body.style.backgroundColor = 'white';
+		document.body.classList.add('shake');
+        setTimeout(() => {
+          alert('The Previous Hero unleashes his full power!');
+		  log('The Previous Hero unleashes his full power!');
+          enraged = true;
+          document.body.style.transition = 'background-color 3s ease';
+          setTimeout(() => {
+            document.body.classList.remove('shake');
+			document.body.style.transition = 'none';
+			runDiscoMode();
+            updateUI();
+			if (Math.random() > 0.6) {
+				log("The Previous Hero began to charge up a very powerful attack! Be careful!");
+				return bossCenterWarningAttack(() => {
+					turn++;
+					startTurn();
+				});
+			} else if (Math.random() > 0.4) {
+				log("The Previous Hero began charging up a powerful magic attack! Be careful!");
+				return bossRotatingLaserAttack(() => {
+					turn++;
+					startTurn();
+				});
+			} else {
+				turn++;
+				startTurn();
+			}
+          }, 1500);
+        }, 2000);
+      }, 1500);
+    }, 2000);
+  }
+  
+  let battleStartTime = null;
+
+  bgm.addEventListener("play", () => {
+	battleStartTime = Date.now();
+  });
+
+  const loserMessages = [
+    "''Pro Tip: Using Magic may be more powerful, but it costs you a lot of energy and may miss a LOT more. You can't land crits either. Better luck next time, kid.''",
+	"''Pro Tip: Using Magic may be more powerful, but it costs you a lot of energy and may miss a LOT more. You can't land crits either. Try again next time.''",
+    "''Try attacking more, your god-high stats that once were don't apply here. We're on equal grounds. Plus, you can land critical hits with it. Try again next time.''",
+	"''Try attacking more, your god-high stats that once were don't apply here. We're on equal grounds. Plus, you can land critical hits with it. Better luck next time, kid.''",
+	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Try again next time.''",
+	"''Try resting when you're tired and low on energy, being a tryhard won't help when I'm about to beat you down. Better luck next time, kid.''",
+	"''I'm literally gonna lessen my chances of winning here, but be cautious with your Attacks and Magic attacks, the more damage you deal, the harder I'll hit when I MIGHT counter you... just saying.''",
+	"''Heal, you idiot. The creators added that button for a reason.''",
+  ];
+  const okayMessages = [
+    "''That was a great battle, warrior. Try a little harder next time, though...''",
+    "''Impressive. But not good enough, try again next time.''",
+    "''Heh... that wasn't actually that bad! Thought you'd be a little tougher, but, that was a good fight, kid.''",
+    "''Whew, you did well there, kid. Better luck next time.''",
+  ];
+  const greatMessages = [
+    "''You were magnificent, warrior! I shall never forget you for as long as I live.''",
+	"''You were magnificent, warrior! I shall never forget you for as long as I live. I shall await our next fight!''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle.''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I'll be waiting in your next life.''",
+	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I shall await our next fight.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought!''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I shall await our next fight, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I'll be waiting in your next life, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn!''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! I shall await our next battle, warrior.''",
+	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! I'll be waiting in your next life, warrior.''",
+	"''Stand proud, you're strong, warrior. Though you've fallen, that doesn't mean you failed. I'll be waiting in your next life, warrior.''",
+	"''Stand proud, you're strong, warrior. Though you've fallen, that doesn't mean you failed. I shall await our next fight, warrior.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior. I'll be waiting in your next life.''",
+	"''Whew... a bit more, and you could've actually beaten me there! Keep trying, warrior. I shall await our next fight!''",
+	"''*pants* I win... *pants* You lose... *pants* Try again next time...''",
+  ];
+
+  function formatDuration(ms) {
+    let totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    totalSec %= 3600;
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${h}h ${m}m ${s}s`;
+  }
+
+  function showDeathMenu() {
+    btnRetry.disabled = false;
+	document.body.style.backgroundColor = "#222";
+    const now = Date.now();
+	if (discoInterval !== null) {
+      clearInterval(discoInterval);
+      discoInterval = null;
+    }
+	screenFade.classList.add("active");
+	deathMenu.style.display = "flex";
+	setTimeout(() => deathMenu.classList.add("active"), 10);
+	
+    const durationMs = now - battleStartTime;
+    dmDuration.textContent = formatDuration(durationMs);
+
+    const damage = totalDamageDealt;
+    dmDamageDealt.textContent = damage;
+
+    const percent = (boss.hp / boss.maxHp * 100).toFixed(1) + "%";
+    dmBossPercent.textContent = percent;
+
+    const didFail    = totalDamageDealt < 150 && durationMs < 30000;
+	const bossHalf   = boss.hp / boss.maxHp <= 0.5;
+	let pool;
+	if (bossHalf && !didFail) {
+		pool = greatMessages;
+	} else if (!didFail) {
+		pool = okayMessages;
+	} else {
+		pool = loserMessages;
+	}
+
+	const idx = Math.floor(Math.random() * pool.length);
+	dmMessage.textContent = pool[idx];
+	fadeOutAudio(bgm, 2000, bgm.pause);
+  }
+
+  btnRetry.addEventListener("click", () => {
+    screenFade.classList.add("active");
+	bgm.volume = 1;
+	bgm.currentTime = 0;
+	bgm.play();
+    setTimeout(() => {
+	  setTimeout(() => {
+			runDiscoMode();
+	  }, 6500);
+	  totalDamageDealt = 0;
+	  battleStartTime = Date.now();
+      enraged = false;
+	  enrageTriggered = false;
+	  usageStreaks.magic = 0;
+	  usageStreaks.rest  = 0;
+	  usageStreaks.heal  = 0;
+	  logEl.innerHTML = "";
+      log("The battle with the Previous Hero starts again!\n");
+      turn = 1;
+
+      player.hp = player.maxHp;
+	  player.energy = player.maxEnergy;
+      boss.hp   = boss.maxHp;
+	  startTurn();
+
+      deathMenu.style.display = "none";
+      screenFade.classList.remove("active");
+    }, 10);
+	btnRetry.disabled = true;
+  });
+
+  btnQuit.addEventListener("click", () => {
+    window.location.href = "index.html";
+  });
+  
+function flashHealthbar() {
+  const fill = document.querySelector('#player-bar .bar-fill');
+  const orig = window.getComputedStyle(fill).backgroundColor;
+  fill.style.backgroundColor = 'red';
+  setTimeout(() => (fill.style.backgroundColor = orig), 300);
+}
+
+// — helper to fade out audio (used later) —
+function fadeOutAudio(audio, duration = 2000, onComplete) {
+  const stepTime = 100;
+  const step = audio.volume / (duration / stepTime);
+  const fade = setInterval(() => {
+    if (audio.volume > step) {
+      audio.volume = Math.max(0, audio.volume - step);
+    } else {
+      clearInterval(fade);
+      audio.volume = 0;
+      if (onComplete) onComplete();
+    }
+  }, stepTime);
+}
+  </script>
+</body>
+</html>
