@@ -333,7 +333,7 @@
 
     const player = {
       maxHp: 100, hp: 100,
-      minDmg: 8, maxDmg: 20,
+      minDmg: 80, maxDmg: 200,
       healMin: 15, healMax: 30,
       maxEnergy: 100, energy: 100,
       healCost: 15, attackCost: 2, magicCost: 10
@@ -434,11 +434,11 @@
 		bossAction();
 	  }, rand(25000, 45000));
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.06 && !centerWarningAttackRunning) {
+		if (enraged && Math.random() < 0.06 && !specialAttackActive) {
 			log("The Previous Hero began to charge up a very powerful attack! Be careful!");
-			centerWarningAttackRunning = true;
+			specialAttackActive = true;
 			return bossCenterWarningAttack(() => {
-				centerWarningAttackRunning = false;
+				specialAttackActive = false;
 			});
 		}
 	  }, 1000);
@@ -1173,7 +1173,6 @@ function bossCrosshairWaveAttackVariant(cycles, onComplete) {
 
   function runOneCycle() {
     if (currentCycle >= cycles) {
-      buttons.forEach(b => b.disabled = false);
       return onComplete();
     }
 
@@ -1346,8 +1345,8 @@ function bossSideLineAttack(onComplete) {
   const THICK_PX       = 15;
   const HALF           = THICK_PX / 2;
   const FADE_DURATION  = 500;     // ms fade-out time after detonation
-  const DAMAGE_TICK    = 333;      // ms per damage tick
-  const DAMAGE_PER_TICK= 5;       // hp lost per tick
+  const DAMAGE_TICK    = 10;      // ms per damage tick
+  const DAMAGE_PER_TICK= 2;       // hp lost per tick
 
   // pick spawn side (left or right)
   const fromLeft = Math.random() < 0.5;
@@ -1398,6 +1397,11 @@ function bossSideLineAttack(onComplete) {
           updateUI();
         }
       }, DAMAGE_TICK);
+	  
+	  if (Math.abs(cx - spawnX) <= HALF) {
+          player.hp = Math.max(0, player.hp - 15);
+          updateUI();
+      }
 
       // fade out over FADE_DURATION, then remove & cleanup
       el.style.transition = `opacity ${FADE_DURATION}ms ease`;
@@ -1699,6 +1703,24 @@ function bossRotatingLaserAttack(onComplete) {
     }, 2000);
   }
   
+  function clearActiveLineAttacks() {
+  document.querySelectorAll('div').forEach(div => {
+    const style = window.getComputedStyle(div);
+    if (style.pointerEvents === 'none' && div !== screenFade) {
+      div.remove();
+    }
+  });
+
+  if (discoInterval !== null) {
+    clearInterval(discoInterval);
+    discoInterval = null;
+  }
+  if (typeof randomLineAttackInterval !== 'undefined' && randomLineAttackInterval) {
+    clearInterval(randomLineAttackInterval);
+    randomLineAttackInterval = null;
+  }
+}
+  
   let battleStartTime = null;
 
   bgm.addEventListener("play", () => {
@@ -1727,6 +1749,24 @@ function bossRotatingLaserAttack(onComplete) {
 	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle.''",
 	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I'll be waiting in your next life.''",
 	"''Damn, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I shall await our next fight.''",
+	"''Heh, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle.''",
+	"''Heh, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I'll be waiting in your next life.''",
+	"''Heh, you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I shall await our next fight.''",
+	"''Heh... you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle.''",
+	"''Heh... you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I'll be waiting in your next life.''",
+	"''Heh... you really cleared my skies, warrior. I've never felt more thrilled in my entire life! Thank you for the battle. I shall await our next fight.''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought!''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I shall await our next fight, warrior.''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I'll be waiting in your next life, warrior.''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn!''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn! I shall await our next battle, warrior.''",
+	"''Damn, I really thought I was gonna lose there, but I managed to pull through last second... Damn! I'll be waiting in your next life, warrior.''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought!''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I shall await our next fight, warrior.''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I'll be waiting in your next life, warrior.''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn!''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn! I shall await our next battle, warrior.''",
+	"''Heh, I really thought I was gonna lose there, but I managed to pull through last second... Damn! I'll be waiting in your next life, warrior.''",
 	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought!''",
 	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I shall await our next fight, warrior.''",
 	"''Heh... I really thought I was gonna lose there, but I managed to pull through last second... Damn! You're truly the strongest I've ever fought! I'll be waiting in your next life, warrior.''",
@@ -1752,6 +1792,8 @@ function bossRotatingLaserAttack(onComplete) {
 
   function showDeathMenu() {
     btnRetry.disabled = false;
+	specialAttackActive = false;
+	clearActiveLineAttacks();
 	document.body.style.backgroundColor = "#222";
     const now = Date.now();
 	if (discoInterval !== null) {
