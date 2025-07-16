@@ -333,7 +333,7 @@
 
     const player = {
       maxHp: 100, hp: 100,
-      minDmg: 80, maxDmg: 200,
+      minDmg: 8, maxDmg: 20,
       healMin: 15, healMax: 30,
       maxEnergy: 100, energy: 100,
       healCost: 15, attackCost: 2, magicCost: 10
@@ -434,77 +434,77 @@
 		bossAction();
 	  }, rand(25000, 45000));
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.06 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.12 && !specialAttackActive) {
 			log("The Previous Hero began to charge up a very powerful attack! Be careful!");
 			specialAttackActive = true;
 			return bossCenterWarningAttack(() => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.055 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.11 && !specialAttackActive) {
 			log("The Previous Hero began to charge up some powerful attacks! Be careful!");
 			specialAttackActive = true;
 			return bossCrosshairAttack(3, () => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.05 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.1 && !specialAttackActive) {
 			log("The Previous Hero began to charge up some powerful attacks! Be careful!");
 			specialAttackActive = true;
 			return bossCrosshairRandomAttack(() => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.045 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.09 && !specialAttackActive) {
 			log("The Previous Hero began to charge up some powerful attacks! Be careful!");
 			specialAttackActive = true;
 			return bossCrosshairBatchAttack(5, () => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.035 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.07 && !specialAttackActive) {
 			log("The Previous Hero began to charge up a barrage of attacks!");
 			specialAttackActive = true;
 			return bossCrosshairWaveAttack(4, () => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.03 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.06 && !specialAttackActive) {
 			log("The Previous Hero began to charge up a barrage of attacks!");
 			specialAttackActive = true;
 			return bossCrosshairWaveAttackVariant(4, () => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.02 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.04 && !specialAttackActive) {
 			log("The Previous Hero began charging up a powerful magic attack! Be careful!");
 			specialAttackActive = true;
 			return bossRotatingLaserAttack(() => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  setInterval(() => {
-		if (enraged && Math.random() < 0.01 && !specialAttackActive) {
+		if (enraged && Math.random() < 0.02 && !specialAttackActive) {
 			log("The Previous Hero began to fire some magical attacks into the air! Careful when they land!");
 			specialAttackActive = true;
 			return bossVerticalLineAttack(() => {
 				specialAttackActive = false;
 			});
 		}
-	  }, 1000);
+	  }, 5000);
 	  if (!randomLineAttackInterval) {
 		randomLineAttackInterval = setInterval(() => {
 		if (!randomLineAttackRunning && Math.random() < 0.02) {
@@ -1436,7 +1436,7 @@ function bossCenterWarningAttack(onComplete) {
   const WARNING_DURATION   = 2000;   // ms of blinking before detonation
   const THICK_PX           = 10;     // px thickness after detonation
   const HALF_THICK         = THICK_PX / 2;
-  const DAMAGE_INTERVAL    = 333;     // ms between damage ticks
+  const DAMAGE_INTERVAL    = 10;     // ms between damage ticks
 
   // compute the middle third of the screen
   const screenWidth  = window.innerWidth;
@@ -1489,7 +1489,7 @@ function bossCenterWarningAttack(onComplete) {
     const damageTimer = setInterval(() => {
       lines.forEach(({ x }) => {
         if (Math.abs(cx - x) <= HALF_THICK) {
-          player.hp = Math.max(0, player.hp - 5);
+          player.hp = Math.max(0, player.hp - 2);
           updateUI();
         }
       });
@@ -1525,8 +1525,8 @@ function bossRotatingLaserAttack(onComplete) {
   const DOT_SIZE         = THICK_PX * 2;
   const BLINK_INTERVAL   = 250;
   const WARNING_DURATION = 1000;
-  const DAMAGE_INTERVAL  = 333;
-  const DAMAGE_PER_TICK  = 5;
+  const DAMAGE_INTERVAL  = 10;
+  const DAMAGE_PER_TICK  = 2;
   const START_SPEED      = 0.05;
   const MAX_SPEED_FACTOR = 5;
   const END_SLOWDOWN_DEG = 30;
