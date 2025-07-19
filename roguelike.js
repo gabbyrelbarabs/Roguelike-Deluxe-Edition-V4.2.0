@@ -4148,6 +4148,18 @@ function applyClassEffects(cls) {
       player.baseStats.dodgeChance = (player.baseStats.dodgeChance || 0) + 0.10;
       player.baseStats.enemyDamageTaken = (player.baseStats.enemyDamageTaken || 1) * 1.10;
       break;
+	
+	case "Hunter":
+      player.baseStats.perception = Math.ceil(player.baseStats.perception * 1.20)
+      player.baseStats.fortune = Math.ceil(player.baseStats.fortune * 1.10);
+      player.baseStats.luck    = Math.ceil(player.baseStats.luck    * 1.10);
+      break;
+	
+	case "Speedster":
+      player.baseStats.agility = Math.ceil(((player.baseStats.agility || 0) + 1) * 3);
+      player.baseStats.dodgeChance = (player.baseStats.dodgeChance || 0) + 0.20;
+      player.baseStats.enemyDamageTaken = (player.baseStats.enemyDamageTaken || 1) * 1.20;
+      break;
 
     case "Heavy Knight":
       if (w && heavyNames.includes(w)) {
