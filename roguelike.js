@@ -463,7 +463,7 @@ document.addEventListener(
   "Even Further Beyond": { audio: new Audio("roadtotheend.mp3"), savedTime: 0 },
   "Realm Of The Gods": { audio: new Audio("bossmusic.mp3"), savedTime: 0 },
 };
-const titleMusicOptions = ["fire.mp3", "tokyo.mp3", "hero.mp3", "special.mp3", "bang.mp3", "level.mp3", "titan.mp3", "rumbling.mp3"];
+const titleMusicOptions = ["fire.mp3", "tokyo.mp3", "hero.mp3", "special.mp3", "bang.mp3", "level.mp3", "titan.mp3", "rumbling.mp3", "pacific.mp3"];
 const titleIndex = Math.floor(Math.random() * titleMusicOptions.length);
 const titleMusic = new Audio(titleMusicOptions[titleIndex]);
 titleMusic.loop = true;
@@ -4277,6 +4277,7 @@ function handleTitleScreenClick() {
   if (src.includes("level.mp3")) titleBox.classList.add("jump-zoom-level");
   if (src.includes("titan.mp3")) titleBox.classList.add("jump-zoom-titan");
   if (src.includes("rumbling.mp3")) titleBox.classList.add("jump-zoom-rumbling");
+  if (src.includes("pacific.mp3")) titleBox.classList.add("jump-zoom-pacific");
   playButton.style.display = "block";
   titleScreen.removeEventListener("click", handleTitleScreenClick);
 }
