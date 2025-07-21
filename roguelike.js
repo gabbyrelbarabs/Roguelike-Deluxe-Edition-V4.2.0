@@ -84,6 +84,19 @@
       const shopMenu = document.getElementById("shopMenu");
       const shopItemsDiv = document.getElementById("shopItems");
       const casinoMenu = document.getElementById("casinoMenu");
+	  const casinoChoiceMenu = document.getElementById("casinoChoiceMenu");
+	  const chooseBlackjackBtn = document.getElementById("chooseBlackjackBtn");
+	  const chooseSlotsBtn     = document.getElementById("chooseSlotsBtn");
+	  const closeCasinoChoice  = document.getElementById("closeCasinoChoice");
+
+	  const slotMenu     = document.getElementById("slotMenu");
+	  const closeSlotBtn = document.getElementById("closeSlotBtn");
+	  const spinSlotsBtn = document.getElementById("spinSlotsBtn");
+	  const slotNumEls   = [
+		document.getElementById("slotNum1"),
+		document.getElementById("slotNum2"),
+		document.getElementById("slotNum3")
+	  ];
       const betInput = document.getElementById("betInput");
       const placeBetBtn = document.getElementById("placeBetBtn");
       const casinoGameArea = document.getElementById("casinoGameArea");
@@ -567,9 +580,9 @@ casinoMusic.loop = true;
   },
   // "True" base stats (permanent upgrades are stored here)
   baseStats: {
-    attack:    200,
-    defense:   200,
-    magic:     200,
+    attack:    2,
+    defense:   2,
+    magic:     2,
     maxHp:    100,
 	maxArmor: 20,
     maxMana:  10,
@@ -4099,15 +4112,12 @@ document.getElementById("confirmAbilitiesButton").addEventListener("click", func
  *********************/
 function showClassSelectionMenu() {
   const menu = document.getElementById("classSelectionMenu");
-  if (!menu) return console.error("No #classSelectionMenu in HTML!");
-  console.log("📢 Opening Class Selection Menu");
   menu.style.display = "flex";
   battleTint.style.display = "block";
 }
 
 // 2) Global inline handler from each button:
 function selectClass(cls) {
-  console.log("📢 selectClass() got:", cls);
   player.playerClass = cls;
   applyClassEffects(cls);
   document.getElementById("classSelectionMenu").style.display = "none";
@@ -4125,6 +4135,7 @@ function applyClassEffects(cls) {
 	const swordNames = ["Sword", "Greatsword", "Excalibur"];
 	const heavyNames = ["Greatsword", "Warhammer", "Spear", "Ball & Chain", "Battle Axe", "Mace"];
 	const assassinNames = ["Dagger", "Hatchets"];
+	const hunterNames = ["Bow", "Hatchets"];
 	const gauntletNames = ["Gauntlets"];
 	const w = player.equipment.weapon ? player.equipment.weapon.name : null;
 	
@@ -4141,7 +4152,6 @@ function applyClassEffects(cls) {
 
     case "Assassin":
       if (w && assassinNames.includes(w)) {
-        // +20% with daggers
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.20);
       }
       player.baseStats.perception = (player.baseStats.perception || 0) + 5;
@@ -4150,6 +4160,9 @@ function applyClassEffects(cls) {
       break;
 	
 	case "Hunter":
+	  if (w && hunterNames.includes(w)) {
+        player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
+      }
       player.baseStats.perception = Math.ceil(player.baseStats.perception * 1.20)
       player.baseStats.fortune = Math.ceil(player.baseStats.fortune * 1.10);
       player.baseStats.luck    = Math.ceil(player.baseStats.luck    * 1.10);
@@ -4191,6 +4204,9 @@ function applyClassEffects(cls) {
       break;
 
     case "Tank":
+	  if (player.equipment.armor) {
+		player.defense = Math.ceil(player.defense * 1.05);
+	  }
       player.baseStats.defense = Math.ceil(player.baseStats.defense * 1.25);
       break;
 
@@ -4217,9 +4233,6 @@ function applyClassEffects(cls) {
         player.baseStats[stat] = Math.ceil(player.baseStats[stat] + 2);
       });
       break;
-
-    default:
-      console.warn("Unknown class:", cls);
   }
 }
 
@@ -5395,8 +5408,15 @@ function applyPlayerStatus(type, duration = null) {
   } else if (map[key].type === ROOM_TYPES.ALTAR) {
     initiateLevelUp(3);
   } else if (map[key].type === ROOM_TYPES.CASINO) {
-    openCasino(() => finalizeRoom(key));
-    return;
+    const casinoKey = key;
+   showCasinoChoice(() => {
+     casinoChoiceMenu.style.display = "none";
+     openCasino(() => {
+       battleTint.style.display = "none";
+       finalizeRoom(casinoKey);
+     });
+   });
+   return;
   } else if (map[key].type === ROOM_TYPES.CULT) {
     const inGuild = player.organization === "Guild";
   const inCult  = player.organization === "Cult";
@@ -5458,27 +5478,35 @@ function applyPlayerStatus(type, duration = null) {
 		return;
   } else if (map[key].type === ROOM_TYPES.LOOT) {
     if (Math.random() < 0.05) {
-    alert("You found some treasure!");
-	alert("But wait... a treasure chest turned out to be a Mimic!");
-    ambushEnemiesQueue = [ JSON.parse(JSON.stringify(mimicTemplate)) ];
-    ambushCompleteCallback = () => {
-      alert("You have defeated the Mimic!");
-      handleLootRoom();
-	  finalizeRoom(key);
-    };
-    // kick off the fight
-    startNextAmbush();
-    finalizeRoom(key);
-  } else {
-    handleLootRoom();
-  }
+		alert("You found some treasure!");
+		alert("But wait... a treasure chest turned out to be a Mimic!");
+		const mimic = JSON.parse(JSON.stringify(mimicTemplate));
+		const minLv = Math.max(player.level - 3, 1);
+		const maxLv = player.level + 5;
+		const enemyLevel = Math.floor(Math.random() * (maxLv - minLv + 1)) + minLv;
+		mimic.level = enemyLevel;
+		const levelDiff = enemyLevel - player.level;
+		const scale = 1 + 0.05 * levelDiff;
+		mimic.hp = mimic.maxHp = Math.max(1, Math.round(mimic.hp * scale));
+		mimic.damageRange = [
+			Math.max(1, Math.round(mimic.damageRange[0] * scale)),
+			Math.max(1, Math.round(mimic.damageRange[1] * scale))
+		];
+		ambushEnemiesQueue = [ mimic ];
+		ambushCompleteCallback = () => {
+			alert("You have defeated the Mimic!");
+			finalizeRoom(key);
+		};
+		startNextAmbush();
+	} else {
+		handleLootRoom();
+	}
   } else if (map[key].type === ROOM_TYPES.TRAP) {
     handleTrapRoom();
   }
   if (player.statuses.poisoned) {
     const dmg = Math.ceil(player.maxHP * 0.02);
     player.currentHP = Math.max(0, player.currentHP - dmg);
-    // optionally: show floating text “–X HP (Poison)”
   }
   if (player.statuses.burned) {
     const dmg = Math.ceil(player.maxHP * 0.02);
@@ -5579,12 +5607,9 @@ function forceCultAmbush(key) {
   }
   ambushCompleteCallback = () => {
     finalizeRoom(key);
-    // regenerate the four neighboring rooms
     generateAdjacentRooms(player.x, player.y);
   };
-  // Kick off the first wave
   startNextAmbush();
-  finalizeRoom(key);
 }
 
 /**
@@ -5620,11 +5645,9 @@ function forceGuildAmbush(key) {
   }
   ambushCompleteCallback = () => {
     finalizeRoom(key);
-    // regenerate the four neighboring rooms
     generateAdjacentRooms(player.x, player.y);
   };
   startNextAmbush();
-  finalizeRoom(key);
 }
 
 function startNextAmbush() {
@@ -9562,6 +9585,101 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
 	  /*******************
        * CASINO FUNCTIONS
        *******************/
+	  function showCasinoChoice(onComplete) {
+  casinoCompleteCallback = onComplete;
+  casinoChoiceMenu.style.display = "block";
+  battleTint.style.display       = "block";
+}
+closeCasinoChoice.onclick = () => {
+  casinoChoiceMenu.style.display = "none";
+  battleTint.style.display       = "none";
+};
+
+chooseBlackjackBtn.onclick = () => {
+  casinoChoiceMenu.style.display = "none";
+  openCasino(() => {
+    battleTint.style.display = "none";
+    if (casinoCompleteCallback) casinoCompleteCallback();
+  });
+};
+
+// Slot Machine path
+chooseSlotsBtn.onclick = () => {
+  casinoChoiceMenu.style.display = "none";
+  slotMenu.style.display         = "block";
+  battleTint.style.display       = "block";
+  casinoMusic.play();
+  stopWorldMusic();
+};
+
+// Close slot menu
+closeSlotBtn.onclick = () => {
+  slotMenu.style.display   = "none";
+  battleTint.style.display = "none";
+  if (casinoCompleteCallback) {
+    casinoCompleteCallback();
+    casinoCompleteCallback = null;
+  }
+  finalizeRoom(casinoKey);
+  resumeWorldMusicAfterBattle();
+  casinoMusic.pause();
+  casinoMusic.currentTime = 0;
+};
+
+spinSlotsBtn.onclick = () => {
+  if (player.money < 100) {
+    alert("Not enough money!");
+    return;
+  }
+  player.money -= 100;
+  spinSlotsBtn.disabled = true;
+  updateStats();
+
+  const startTime    = Date.now();
+  const totalDur     = 7000;   // 7 seconds total
+  const minInterval  = 50;     // start super-fast
+  const maxInterval  = 1000;   // end at one update per second
+
+  function spinStep() {
+    const elapsed = Date.now() - startTime;
+    if (elapsed >= totalDur) {
+      // Time’s up — finalize results
+      const results = slotNumEls.map(_ => Math.floor(Math.random() * 10));
+      slotNumEls.forEach((el, i) => el.textContent = results[i]);
+
+      // Count matches & compute reward
+      const counts = {};
+      results.forEach(n => counts[n] = (counts[n]||0) + 1);
+      let reward = 0;
+      Object.entries(counts).forEach(([num, cnt]) => {
+        if (cnt === 2)      reward = Math.max(reward, num * 10);
+        else if (cnt === 3) reward = (num == 7 ? 1_000_000 : 1_000);
+      });
+
+      if (reward > 0) {
+        player.money += reward;
+        if (reward === 1_000_000) alert("Jackpot!");
+        else                    alert(`You win $${reward}!`);
+      }
+
+      updateStats();
+      spinSlotsBtn.disabled = false;
+      return;
+    }
+
+    // randomize all three while spinning
+    slotNumEls.forEach(el => el.textContent = Math.floor(Math.random() * 10));
+
+    // calculate next delay: ramps from minInterval → maxInterval over 7s
+    const t     = elapsed / totalDur;
+    const delay = minInterval + (maxInterval - minInterval) * t;
+
+    setTimeout(spinStep, delay);
+  }
+
+  // kick off the loop
+  spinStep();
+};
 	  
       let casinoBet = 0;
       let casinoPlayerTotal = 0;
@@ -9573,7 +9691,7 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
   hitButtons.forEach(btn => {
     btn.style.display = "";   // back to whatever your CSS says
   });
-  stopWorldMusic()
+  stopWorldMusic();
   casinoMusic.play();
   casinoPlayerTotal = 0;
   casinoEnemyTotal = 0;
@@ -9584,25 +9702,36 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
   casinoMenu.style.display = "block";
   battleTint.style.display = "block";
 }
+
+placeBetBtn.onclick = () => {
+  const bet = parseInt(betInput.value, 10);
+  if (isNaN(bet) || bet < 1) {
+    alert("Please enter a valid bet amount.");
+    return;
+  }
+  if (bet > player.money) {
+    alert("You cannot bet more than you have!");
+    return;
+  }
+  casinoBet = bet * Math.round(1 + player.fortune * 0.08);
+
+  casinoGameArea.style.display = "block";
+  updateStats();
+};
 	  
-	  function finalizeCasinoRound() {
-  // Calculate the absolute difference from 21 for both player and enemy
+function finalizeCasinoRound() {
   const playerDiff = Math.abs(21 - casinoPlayerTotal);
   const enemyDiff = Math.abs(21 - casinoEnemyTotal);
   let outcome;
-  // Decide outcome based on totals.
-  // If both bust (over 21), choose the one closer to 21.
   if (casinoPlayerTotal >= 21 && casinoEnemyTotal >= 21) {
     outcome = playerDiff < enemyDiff ? "win" : (playerDiff > enemyDiff ? "lose" : "push");
   } 
-  // If only one of them is over 21, then that side loses.
   else if (casinoPlayerTotal >= 21) {
     outcome = "lose";
   } 
   else if (casinoEnemyTotal >= 21) {
     outcome = "win";
   }
-  // If neither busted, compare closeness.
   else {
     outcome = playerDiff < enemyDiff ? "win" : (playerDiff > enemyDiff ? "lose" : "push");
   }
@@ -9628,6 +9757,7 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
   casinoMusic.pause();
   casinoMusic.currentTime = 0;
   resumeWorldMusicAfterBattle();
+  finalizeRoom(casinoKey);
 }
 	  
       placeBetBtn.addEventListener("click", () => {
@@ -9643,6 +9773,7 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
         casinoBet = bet * Math.round(1 + player.fortune * 0.08);
         casinoGameArea.style.display = "block";
       });
+	  
       hitButtons.forEach((btn) => {
   btn.addEventListener("click", function onHit() {
     // Hide this hit button once pressed.
@@ -9656,13 +9787,13 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
     // If player's total exceeds 21 immediately, handle bust.
     if (casinoPlayerTotal >= 21) {
       alert("It's a bust! You lost.");
-      concludeCasinoGame(true);
+      finalizeCasinoRound(true);
       return;
     }
 
 	if (casinoEnemyTotal >= 21) {
         alert("Dealer had a bust! They lost.");
-        concludeCasinoGame();
+        finalizeCasinoRound();
         return;
       }
     
@@ -9675,7 +9806,7 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
       // If the dealer’s total goes over 21 immediately, win for the player.
       if (casinoEnemyTotal >= 21) {
         alert("Dealer had a bust! They lost.");
-        concludeCasinoGame();
+        finalizeCasinoRound();
         return;
       }
     }
@@ -9695,78 +9826,10 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
           casinoEnemyTotal += enemyCard;
         }
         casinoEnemyTotalEl.textContent = casinoEnemyTotal;
-        concludeCasinoGame();
+        finalizeCasinoRound();
       });
-      hitButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          playerHit();
-        });
-      });
-      // Modify the stand button event.
-      standBtn.addEventListener("click", () => {
-        while (casinoEnemyTotal < 17) {
-          const enemyCard = Math.floor(Math.random() * 13) + 1;
-          casinoEnemyTotal += enemyCard;
-        }
-        casinoEnemyTotalEl.textContent = casinoEnemyTotal;
-        concludeCasinoGame();
-      });
-
-      function concludeCasinoGame(forcedLoss = false) {
-        if (casinoPlayerTotal === 0) {
-          alert("Your total is 0 – Penalty!");
-          playerHit();
-          return;
-        }
-        let playerBust = casinoPlayerTotal >= 21;
-        let enemyBust = casinoEnemyTotal >= 21;
-        let outcome;
-        if (forcedLoss || playerBust) {
-          outcome = "lose";
-        } else if (enemyBust) {
-          outcome = "win";
-        } else {
-          let bonus = hasItem("Dice") ? 2 : 0;
-          let effectivePlayerTotal = Math.max(casinoPlayerTotal - bonus, 0);
-          let playerDiff = 21 - effectivePlayerTotal;
-          let enemyDiff = 21 - casinoEnemyTotal;
-          if (playerDiff < 0) playerDiff = Infinity;
-          if (enemyDiff < 0) enemyDiff = Infinity;
-          if (playerDiff < enemyDiff) {
-            outcome = "win";
-          } else if (enemyDiff < playerDiff) {
-            outcome = "lose";
-          } else {
-            outcome = "push";
-          }
-        }
-        if (outcome === "win") {
-          player.money += casinoBet;
-          alert("You win! Gained $" + casinoBet);
-        } else if (outcome === "lose") {
-          player.money -= casinoBet;
-          alert("You lose! Lost $" + casinoBet);
-          if (player.money <= 0) {
-            alert("You have run out of money and must leave the casino.");
-          }
-        } else {
-          alert("Push! No money won or lost.");
-        }
-        updateStats();
-        casinoMenu.style.display = "none";
-		battleTint.style.display = "none";
-		if (casinoCompleteCallback) {
-    const cb = casinoCompleteCallback;
-	casinoMusic.pause();
-	casinoMusic.currentTime = 0;
-    casinoCompleteCallback = null;
-    cb();
-  }
-casinoMusic.pause();
-casinoMusic.currentTime = 0;
-      }
 	  
-	  function handleTrapRoom() {
+function handleTrapRoom() {
   // 67% chance it doesn’t go off
   if (Math.random() < 0.67) {
     alert("You sense something's off… but nothing happens.");

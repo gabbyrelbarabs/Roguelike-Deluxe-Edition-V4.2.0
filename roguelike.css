@@ -942,6 +942,62 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   margin-bottom: 5px;
 }
 
+#casinoChoiceMenu.modal,
+#slotMenu.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid white;
+  padding: 20px;
+  display: none;
+  z-index: 360;
+  text-align: center;
+  width: 300px;
+}
+
+#casinoChoiceMenu .modal-content,
+#slotMenu .modal-content {
+  position: relative;
+}
+
+#casinoChoiceMenu .close-btn,
+#slotMenu .close-btn {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: #444;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  margin: 4px;
+  padding: 5px 8px;
+  cursor: pointer;
+  z-index: 400;
+  border: 1px solid white;
+}
+
+#casinoChoiceMenu button,
+#slotMenu button {
+  margin: 8px;
+  padding: 8px 12px;
+  background: #555;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 400;
+  border: 1px solid white;
+}
+
+#slotNumbers {
+	border: 1px solid white;
+}
+
+#casinoChoiceMenu button:hover,
+#slotMenu button:hover {
+  background: #777;
+  z-index: 401;
+}
+
 #casinoMenu {
   display: none;
   position: fixed;
