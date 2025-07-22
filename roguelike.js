@@ -637,7 +637,7 @@ const FIXED_EQUIP_GRADES = {
   "Dark Ages Mantle": "Supreme-grade",
 };
 	  
-	  const equipmentEffects = {
+const equipmentEffects = {
   // Weapons
   "Sword":      p => {
 	p.attack = Math.ceil(p.attack * 1.5);
@@ -669,7 +669,7 @@ const FIXED_EQUIP_GRADES = {
 	p.defense = Math.ceil(p.defense * 2);
 	p.agility = -999;
   },
-  "Ball & Chain": p => {
+  "Flail": p => {
     p.attack = Math.ceil(p.attack * 2.5);
 	p.defense = Math.ceil(p.defense * 1.2);
     p.agility = p.agility - 10;
@@ -730,14 +730,10 @@ const FIXED_EQUIP_GRADES = {
   },
   
   "Excalibur": p => {
-    // triple attack
     p.attack *= 3;
-    // double agility & perception
     p.agility  = Math.ceil(p.agility * 2);
     p.perception = Math.ceil(p.perception * 2);
-    // increase defense by 1.5×, rounded up
     p.defense = Math.ceil(p.defense * 1.5);
-    // +25 max mana
     p.maxMana += 25;
   },
   "Dragon's Fang": p => {
@@ -800,7 +796,6 @@ const FIXED_EQUIP_GRADES = {
     p.agility  = Math.ceil(p.agility  * 2);
     p.perception = Math.ceil(p.perception * 2);
     p.defense = Math.ceil(p.defense * 1.5);
-    // +25 max mana
     p.maxMana += 25;
   },
   "Titan's Fang": p => {
@@ -937,7 +932,7 @@ const EQUIP_AFFECTED_STATS = {
   "Warhammer": ["attack","defense","maxArmor","agility"],
   "Battle Axe": ["attack"],
   "Mace": ["attack","defense","agility"],
-  "Ball & Chain": ["attack","defense","agility"],
+  "Flail": ["attack","defense","agility"],
   "Dagger": ["attack","agility","perception"],
   "Spear": ["attack","perception","agility"],
   "Wand": ["attack","magic","maxMana"],
@@ -962,11 +957,11 @@ const weaponSkillMap = {
   "Shield": "Bash",
   "Greatsword": "Heavy Slash",
   "Warhammer": "Smash",
+  "Gauntlets": "Pummel",
   "Staff": "Blast Minima",
   "Excalibur": "Execution",
   "Sorceress' Staff": "Rewind",
   "Dragon's Fang": "Outrage",
-  "Gauntlets": "Pummel",
   
   "Doomblade Arm Upgrade": "Glory Slash",
   "Chainshield": "Launch",
@@ -3479,7 +3474,7 @@ let shopItemsList = [
 	description: "Extremely heavy, but very powerful, allowing you to smash foes to bits.",
   },
   {
-    name: "Ball & Chain",
+    name: "Flail",
     cost: 500,
     type: "equipment",
     category: "weapon",
@@ -3857,7 +3852,7 @@ shopItemsList = [
 	description: "A heavy, powerful hammer filled with positive-energy, and is kinetic-energy absorbant, given to the Slayer by the Night Sentinels.",
   },
   {
-    name: "Ball & Chain",
+    name: "Flail",
     cost: 600,
     type: "equipment",
     category: "weapon",
@@ -4133,7 +4128,7 @@ function selectClass(cls) {
 
 function applyClassEffects(cls) {
 	const swordNames = ["Sword", "Greatsword", "Excalibur"];
-	const heavyNames = ["Greatsword", "Warhammer", "Spear", "Ball & Chain", "Battle Axe", "Mace"];
+	const heavyNames = ["Greatsword", "Warhammer", "Spear", "Flail", "Battle Axe", "Mace"];
 	const assassinNames = ["Dagger", "Hatchets"];
 	const hunterNames = ["Bow", "Hatchets"];
 	const gauntletNames = ["Gauntlets"];
