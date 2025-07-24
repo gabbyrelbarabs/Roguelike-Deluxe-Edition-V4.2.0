@@ -391,7 +391,7 @@
 	  }
 
 	  if (boss.hp <= 0) {
-		alert("You defeated the Previous Hero!");
+		alert("You have defeated the Previous Hero!");
 		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
 		alert("''Congratulations, kid.''");
 		window.location.href = "index.html";
@@ -533,8 +533,8 @@
       player.energy -= player.attackCost;
       if (Math.random() < 0.10) {
         const dodgeMsg = rand(1, 2) === 1
-		? "Previous Hero dodged your attack!"
-		: "Previous Hero blocked your attack!";
+		? "The Previous Hero dodged your attack!"
+		: "The Previous Hero blocked your attack!";
 		log(dodgeMsg);
       } else {
         let dmg = rand(player.minDmg, player.maxDmg);
@@ -564,12 +564,12 @@
       player.energy -= player.magicCost;
       if (Math.random() < 0.2) {
         const dodgeMsg = rand(1, 2) === 1
-		? "Previous Hero dodged your attack!"
-		: "Previous Hero blocked your attack!";
+		? "The Previous Hero dodged your attack!"
+		: "The Previous Hero blocked your attack!";
 		log(dodgeMsg);
       } else {
         const base = rand(player.minDmg, player.maxDmg),
-              mult = rand(130,200)/100,
+              mult = rand(1300,2000)/100,
               dmg  = Math.floor(base*mult);
         log('You cast Magic and dealt ' + dmg + ' damage.');
         boss.hp -= dmg;
@@ -615,7 +615,7 @@
 	function bossAction() {
 	if (idleTimeout) clearTimeout(idleTimeout);
 	if (boss.hp <= 0) {
-		alert("You defeated the Previous Hero!");
+		alert("You have defeated the Previous Hero!");
 		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
 		alert("''Congratulations, kid.''");
 		window.location.href = "index.html";
@@ -632,7 +632,7 @@
 		    if (Math.random() > 0.7) {
 				pct = rand(1.0,3.0)/100, healAmt = Math.floor(boss.maxHp*pct);
 				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+				log('The Previous Hero used a potion and healed ' + healAmt + ' HP.');
 			} else {
 				let bossdmg = rand(boss.minDmg, boss.maxDmg);
 				rageDamage = Math.ceil(bossdmg * 1.5);
@@ -663,9 +663,9 @@
 		    if (Math.random() > 0.33) {
 				pct = rand(1.0,4.0)/100, healAmt = Math.floor(boss.maxHp*pct);
 				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+				log('The Previous Hero used a potion and healed ' + healAmt + ' HP.');
 			} else {
-				log('Previous Hero got tired and took a break.');
+				log('The Previous Hero got tired and took a break.');
 			}
 		  }
           updateUI();
@@ -741,6 +741,7 @@ document.addEventListener('mousemove', e => {
 
 // ——— BLINK→RAMP→FREEZE→FLASH ———
 function runCycle(onComplete) {
+  if (checkEnd()) return;
   // show crosshair
   vLine.style.display = 'block';
   hLine.style.display = 'block';
@@ -846,6 +847,7 @@ function bossCrosshairRandomAttack(onComplete) {
     if (cycle >= CYCLES) {
       return onComplete();
     }
+	if (checkEnd()) return;
 
     cycle++;
     let spawned = 0;
@@ -1008,6 +1010,7 @@ function bossCrosshairWaveAttack(cycles, onComplete) {
   let currentCycle = 0;
 
   function runOneCycle() {
+  if (checkEnd()) return;
     if (currentCycle >= cycles) {
       // all done
       return onComplete();
@@ -1104,6 +1107,7 @@ function bossRandomLineAttack(onComplete) {
   const endTime = Date.now() + DURATION_MS;
 
   function spawnLine() {
+	if (checkEnd()) return;
     const angle = rand(0, 360); // degrees
     const length = Math.hypot(window.innerWidth, window.innerHeight) * 1.5;
     const x = rand(0, window.innerWidth);
@@ -1175,6 +1179,7 @@ function bossCrosshairWaveAttackVariant(cycles, onComplete) {
     if (currentCycle >= cycles) {
       return onComplete();
     }
+	if (checkEnd()) return;
 
     let spawnCount = 0;
     let completed  = 0;
@@ -1278,6 +1283,7 @@ function bossVerticalLineAttack(onComplete) {
 
   function spawnOne() {
     if (spawnedCount >= TOTAL_LINES) return;
+	if (checkEnd()) return;
     spawnedCount++;
 
     // pick random X and a random color for this line
@@ -1357,6 +1363,7 @@ function bossSideLineAttack(onComplete) {
   let doneCount  = 0;
 
   function spawnLine() {
+	if (checkEnd()) return;
     if (!spawning) return;
 
     spawnCount++;
@@ -1492,6 +1499,7 @@ function bossCenterWarningAttack(onComplete) {
           player.hp = Math.max(0, player.hp - 2);
           updateUI();
         }
+		if (checkEnd()) return;
       });
     }, DAMAGE_INTERVAL);
 
@@ -1601,6 +1609,7 @@ function bossRotatingLaserAttack(onComplete) {
         player.hp = Math.max(0, player.hp - DAMAGE_PER_TICK);
         updateUI();
       }
+	  if (checkEnd()) return;
     }, DAMAGE_INTERVAL);
 
     function step(time) {
@@ -1703,10 +1712,13 @@ function bossRotatingLaserAttack(onComplete) {
     }, 2000);
   }
   
-  function clearActiveLineAttacks() {
+function clearActiveLineAttacks() {
   document.querySelectorAll('div').forEach(div => {
     const style = window.getComputedStyle(div);
-    if (style.pointerEvents === 'none' && div !== screenFade) {
+    if (
+      (style.pointerEvents === 'none' || style.transition === 'none')
+      && div !== screenFade
+    ) {
       div.remove();
     }
   });
@@ -1831,6 +1843,7 @@ function bossRotatingLaserAttack(onComplete) {
 
   btnRetry.addEventListener("click", () => {
     screenFade.classList.add("active");
+	clearActiveLineAttacks();
 	bgm.volume = 1;
 	bgm.currentTime = 0;
 	bgm.play();
@@ -1857,6 +1870,7 @@ function bossRotatingLaserAttack(onComplete) {
       deathMenu.style.display = "none";
       screenFade.classList.remove("active");
     }, 10);
+	clearActiveLineAttacks();
 	btnRetry.disabled = true;
   });
 

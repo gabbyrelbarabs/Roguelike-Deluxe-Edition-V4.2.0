@@ -387,7 +387,7 @@
 	  }
 
 	  if (boss.hp <= 0) {
-		alert("You defeated the Previous Hero!");
+		alert("You have defeated the Previous Hero!");
 		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
 		alert("''Congratulations, kid.''");
 		window.location.href = "index.html";
@@ -476,8 +476,8 @@
       player.energy -= player.magicCost;
       if (Math.random() < 0.2) {
         const dodgeMsg = rand(1, 2) === 1
-		? "Previous Hero dodged your attack!"
-		: "Previous Hero blocked your attack!";
+		? "The Previous Hero dodged your attack!"
+		: "The Previous Hero blocked your attack!";
 		log(dodgeMsg);
       } else {
         const base = rand(player.minDmg, player.maxDmg),
@@ -527,7 +527,7 @@
 	function bossAction() {
 	if (idleTimeout) clearTimeout(idleTimeout);
 	if (boss.hp <= 0) {
-		alert("You defeated the Previous Hero!");
+		alert("You have defeated the Previous Hero!");
 		alert("''Heh... looks like you win, warrior... I'm not lying if I said I wasn't worried about losing against you but... here I am...''");
 		alert("''Congratulations, kid.''");
 		window.location.href = "index.html";
@@ -575,9 +575,9 @@
 		    if (Math.random() > 0.33) {
 				pct = rand(1.0,4.0)/100, healAmt = Math.floor(boss.maxHp*pct);
 				boss.hp = Math.min(boss.maxHp, boss.hp+healAmt);
-				log('Previous Hero used a potion and healed ' + healAmt + ' HP.');
+				log('The Previous Hero used a potion and healed ' + healAmt + ' HP.');
 			} else {
-				log('Previous Hero got tired and took a break.');
+				log('The Previous Hero got tired and took a break.');
 			}
 		  }
           updateUI();
@@ -658,6 +658,7 @@ function bossRandomLineAttack(onComplete) {
   const endTime = Date.now() + DURATION_MS;
 
   function spawnLine() {
+	if (checkEnd()) return;
     const angle = rand(0, 360); // degrees
     const length = Math.hypot(window.innerWidth, window.innerHeight) * 1.5;
     const x = rand(0, window.innerWidth);
@@ -737,6 +738,7 @@ function bossSideLineAttack(onComplete) {
 
   function spawnLine() {
     if (!spawning) return;
+	if (checkEnd()) return;
 
     spawnCount++;
     const idx    = spawnCount - 1;           // zero-based
@@ -870,6 +872,7 @@ function bossCenterWarningAttack(onComplete) {
           player.hp = Math.max(0, player.hp - 15);
           updateUI();
         }
+		if (checkEnd()) return;
       });
     }, DAMAGE_INTERVAL);
 
@@ -983,6 +986,7 @@ function bossRotatingLaserAttack(onComplete) {
         player.hp = Math.max(0, player.hp - DAMAGE_PER_TICK);
         updateUI();
       }
+	  if (checkEnd()) return;
     }, DAMAGE_INTERVAL);
 
     function step(time) {
