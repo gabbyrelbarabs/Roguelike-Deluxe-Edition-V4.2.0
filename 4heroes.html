@@ -50,7 +50,7 @@
 	  opacity: 0;
 	  transition: opacity 1s ease;
 	}
-    #boss-name { text-align:center; font-weight:bold }
+    #boss-name { text-align:center; font-weight:bold; color: #fcba03; }
     #boss-bar-container {
       width:95%; margin:5px auto; border:2px solid #fff; border-radius:4px; height:24px; position:relative;
     }
@@ -164,9 +164,11 @@
     document.body.style.transition = 'none';
 
     const discoColors = [
-      '#fbffb3', '#ffffff', '#c7c7c7',
-      '#8a8a8a', '#404040', '#000000',
-      '#ffd6d6', '#cfeaff'
+      '#fbffb3', '#ffffff',
+      '#ffd6d6', '#cfeaff',
+	  '#daffcc', '#ebccff',
+	  '#f5dac6', '#c6f5da',
+	  '#f5c6f0'
     ];
     let lastColor = null;
 
@@ -689,7 +691,7 @@
     startTime = Date.now();
 	bgm.play();
     await log('The battle with The Ultimate One begins!');
-    setTimeout(runDiscoMode, 15000);
+    setTimeout(runDiscoMode, 15100);
     nextTurn();
   })();
 }
