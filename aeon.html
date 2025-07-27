@@ -569,7 +569,7 @@
 		log(dodgeMsg);
       } else {
         const base = rand(player.minDmg, player.maxDmg),
-              mult = rand(1300,2000)/100,
+              mult = rand(130,200)/100,
               dmg  = Math.floor(base*mult);
         log('You cast Magic and dealt ' + dmg + ' damage.');
         boss.hp -= dmg;
