@@ -37,6 +37,10 @@ body {
   animation: dotPulse 1s infinite steps(1, end);
 }
 
+#difficultyMenu {
+	z-index: 300;
+}
+
 #difficultyMenu button {
   font-weight: bold;
   padding: 0.5em 1em;
@@ -104,6 +108,12 @@ body {
   background-color: #fff;
   color: yellow;
   border: 1px solid yellow;
+}
+
+#multiplayerBtn {
+  background-color: #cff5ff;
+  color: #52a5ff;
+  border: 1px solid #52a5ff;
 }
 
 /* Hover states to brighten them up */

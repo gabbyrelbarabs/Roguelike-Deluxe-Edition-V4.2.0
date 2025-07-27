@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The 4 Heroes</title>
+  <link rel="shortcut icon" type="x-icon" href="4heroes.ico" />
+  <style>
+    body { font-family: sans-serif; background: #111; color: #eee; margin:0; padding:0 }
+	#start-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+#start-text {
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 2rem;
+  text-align: center;
+  line-height: 1.2;
+}
+    h1 { text-align:center; margin:10px 0 }
+	.splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 1.5rem;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+    .splash.fade-out {
+      opacity: 0;
+	  transition: opacity 1s ease;
+    }
+	.fade-out {
+	  opacity: 0;
+	  transition: opacity 1s ease;
+	}
+    #boss-name { text-align:center; font-weight:bold }
+    #boss-bar-container {
+      width:95%; margin:5px auto; border:2px solid #fff; border-radius:4px; height:24px; position:relative;
+    }
+    #boss-bar {
+      background:red; height:100%; width:100%; border-radius:2px;
+      transition: width 0.5s ease;
+    }
+    #boss-bar-text {
+      position:absolute; top:0; left:0; width:100%; text-align:center;
+      line-height:24px; font-size:14px; color:#fff; z-index:2;
+      text-shadow:1px 1px 2px #000;
+    }
+
+    #log {
+      width:95%; max-width:800px; height:250px; background:#222; border:2px solid #fff; border-radius:4px;
+      margin:20px auto; padding:10px; overflow-y:auto; font-family:monospace; font-size:13px; line-height:1.4;
+      white-space:pre-wrap;
+    }
+    #stats {
+      display:flex; justify-content:space-around; background: black; width:95%; max-width:900px; margin:10px auto;
+    }
+    .char { border:2px solid #444; padding:10px; border-radius:8px; width:23%; position:relative }
+    .bar-container {
+      width:100%; border:2px solid #fff; border-radius:4px; height:24px; position:relative; margin-top:8px;
+    }
+    .hp-bar {
+      background:green; height:100%; width:100%; border-radius:2px;
+      transition: width 0.5s ease, background-color 0.3s ease;
+    }
+    .en-bar {
+      background:blue; height:100%; width:100%; border-radius:2px;
+      transition: width 0.5s ease;
+    }
+    .bar-text {
+      position:absolute; top:0; left:0; width:100%; text-align:center;
+      line-height:24px; font-size:14px; color:#fff; z-index:2;
+      text-shadow:1px 1px 2px #000;
+    }
+    .flash { background-color:red !important; }
+
+    #actions { text-align:center; margin:10px }
+    button { margin:5px; padding:8px 12px; font-size:14px }
+    button:disabled, .disabled { opacity:0.5; pointer-events:none }
+	
+	/* Full‑screen white flash + shake */
+    #cutscene {
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      background:#fff; opacity:0; pointer-events:none;
+      transition:opacity .5s ease;
+    }
+    .shake {
+      animation: shake .5s infinite;
+    }
+    @keyframes shake {
+      0%{transform:translate(0,0)}10%{transform:translate(-5px,5px)}20%{transform:translate(5px,-5px)}
+      30%{transform:translate(-5px,-5px)}40%{transform:translate(5px,5px)}50%{transform:translate(-5px,5px)}
+      60%{transform:translate(5px,-5px)}70%{transform:translate(-5px,-5px)}80%{transform:translate(5px,5px)}
+      90%{transform:translate(-5px,5px)}100%{transform:translate(0,0)}
+    }
+
+    #death-menu {
+      position:absolute; top:0; left:0; width:100%; height:100%; background:#000;
+      display:none; flex-direction:column; align-items:center; justify-content:center; color:#eee;
+    }
+    #death-menu h1 { font-size:2em; margin-bottom:20px; }
+    #death-menu pre { text-align:left; background:#222; padding:10px; border:1px solid #fff; margin-bottom:20px; }
+    #death-menu button { margin:5px; padding:10px 20px; font-size:16px; }
+  </style>
+</head>
+<body>
+  <div id="start-screen">
+  <div id="start-text">
+    Are you ready?<br>
+    Click to continue
+  </div>
+</div>
+  <div id="cutscene"></div>
+  <h1>The Battle of the Beginning and the End</h1>
+  <div id="boss-name">ᴛʜᴇ ᴜʟᴛɪᴍᴀᴛᴇ ᴏɴᴇ</div>
+  <div id="boss-bar-container">
+    <div id="boss-bar"></div>
+    <div id="boss-bar-text">100.0%</div>
+  </div>
+  <div id="log"></div>
+  <div id="stats"></div>
+  <div id="actions"></div>
+  
+  <div id="death-menu">
+    <h1>Your Party has died!</h1>
+	<br>
+    <pre id="death-info"></pre>
+	<br>
+    <button onclick="location.reload()">Retry</button>&nbsp;
+    <button onclick="location.href='index.html'">Quit</button>
+  </div>
+
+  <script>
+    // —— Utilities ——
+	const bgm = new Audio("penultimate.mp3");
+	bgm.loop = true;
+	bgm.volume = 1;
+	bgm.currentTime = 0;
+	let discoInterval = null;
+    const delay = ms => new Promise(r => setTimeout(r, ms));
+    const randInt = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+    const randFloat = (a,b) => (Math.random()*(b-a)+a).toFixed(1);
+    const chance = p => Math.random()*100 < p;
+	
+	function runDiscoMode() {
+    if (discoInterval !== null) return;
+    document.body.style.transition = 'none';
+
+    const discoColors = [
+      '#fbffb3', '#ffffff', '#c7c7c7',
+      '#8a8a8a', '#404040', '#000000',
+      '#ffd6d6', '#cfeaff'
+    ];
+    let lastColor = null;
+
+    discoInterval = setInterval(() => {
+      const bg = window.getComputedStyle(document.body).backgroundColor;
+      if (bg === 'rgb(0, 0, 0)') {
+      }
+      let next;
+      do {
+        next = discoColors[Math.floor(Math.random() * discoColors.length)];
+      } while (next === lastColor);
+      lastColor = next;
+      document.body.style.backgroundColor = next;
+    }, 330);
+  }
+
+    // —— Game State ——
+    const party = [
+      {name:'Warrior',      maxHp:100,  hp:100, maxEn:40,  en:40,  actions:['Strike','Barrage','Block','Rest'], _weakened:false},
+      {name:'Mage',         maxHp:60,   hp:60,  maxEn:60,  en:60,  actions:['Spell','Buff','Weaken','Block','Rest'], buffTarget:null},
+      {name:'Healer',       maxHp:200,  hp:200, maxEn:30,  en:30,  actions:['Attack','Heal','Heal Area','Attract','Rest'], healTarget:null},
+      {name:'Heavy', maxHp:150,  hp:150, maxEn:25,  en:25,  actions:['Smash','Super','Block','Rest'], charging:false}
+    ];
+    const boss = {name:'The Ultimate One', maxHp:1000, hp:1000, attractTarget:null};
+    let turnIndex=0, turnCount=1, pendingAction=null, turnTimer = null;
+	let startTime=0;
+
+    // —— Logging ——  
+    async function log(txt='') {
+      const L = document.getElementById('log');
+      L.innerHTML += txt + '\n\n';
+      L.scrollTop = L.scrollHeight;
+      await delay(500);
+    }
+
+    // —— UI Updates ——  
+    function updateBars(){
+      // Boss
+      const bp = (boss.hp/boss.maxHp*100).toFixed(1);
+      document.getElementById('boss-bar').style.width = bp+'%';
+      document.getElementById('boss-bar-text').textContent = bp+'%';
+      // Party
+      const S = document.getElementById('stats');
+      S.innerHTML = '';
+      party.forEach((c,i) => {
+        const hpPct = (c.hp/c.maxHp*100).toFixed(1),
+              enPct = (c.en/c.maxEn*100).toFixed(1);
+        S.innerHTML += `
+          <div class="char" id="char-${i}">
+            <strong>${c.name}</strong>
+            <div class="bar-container">
+              <div class="hp-bar" style="width:${hpPct}%"></div>
+              <div class="bar-text">${hpPct}%</div>
+            </div>
+            <div class="bar-container">
+              <div class="en-bar" style="width:${enPct}%"></div>
+              <div class="bar-text">${c.en}/${c.maxEn}</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function flashCrit(idx) {
+      const bar = document.querySelector(`#char-${idx} .hp-bar`);
+      bar.classList.add('flash');
+      setTimeout(()=> bar.style.backgroundColor='green', 200);
+      setTimeout(()=> bar.classList.remove('flash'), 500);
+    }
+
+    const costOf = a => ({
+      'Strike':10,'Barrage':12,'Block':5,'Rest':0,
+      'Spell':15,'Buff':10,'Weaken':8,
+      'Attack':8,'Heal':10,'Heal Area':15,'Attract':8,'Super':21
+    }[a]||0);
+
+    function disableAll(){
+      document.querySelectorAll('#actions button').forEach(b=> b.disabled=true);
+    }
+	
+	async function log(txt = '') {
+  const L = document.getElementById('log');
+  L.innerHTML += txt + '\n\n';
+  L.scrollTop = L.scrollHeight;
+  await delay(500);
+
+  // —— Reset the boss‐steal timer if we're in a player turn ——  
+  if (turnTimer !== null && turnIndex < party.length) {
+    clearTimeout(turnTimer);
+    // choose new interval based on phase
+    const interval = boss.phase2
+      ? randInt(15000, 30000)
+      : randInt(25000, 45000);
+    // restart for the same actor
+    const actor = party[turnIndex];
+    turnTimer = setTimeout(() => bossStealsTurn(actor), interval);
+  }
+}
+
+    // —— Endgame Check ——  
+    function endAll(){ document.getElementById('actions').innerHTML=''; }
+    // —— Endgame & Death Menu ——
+    function showDeathMenu(){
+      document.getElementById('death-menu').style.display='flex';
+      const info=document.getElementById('death-info');
+      // duration
+      const d=Date.now()-startTime;
+      const h=String(Math.floor(d/3600000)).padStart(2,'0'),
+            m=String(Math.floor(d%3600000/60000)).padStart(2,'0'),
+            s=String(Math.floor(d%60000/1000)).padStart(2,'0');
+      let txt=`Battle Duration: ${h}:${m}:${s}\n\nDamage Dealt:\n`;
+      party.forEach(c=> txt+=`${c.name}: ${c.dmgDone}\n`);
+      txt+=`\nBoss HP Left: ${(boss.hp/boss.maxHp*100).toFixed(1)}%`;
+      info.textContent=txt;
+    }
+
+    function endGame(){
+      if(party.every(c=>c.hp<=0)){
+        showDeathMenu(); return true;
+      }
+      if(boss.hp<=0){
+        log('You and your Party have finally defeated The Ultimate One!'); disableAll();
+		window.location.href='index.html';
+      }
+      return false;
+    }
+	
+	// —— Cutscene ——  
+    async function phaseTwoCutscene(){
+      disableAll();
+	  await alert("...");
+      await log('...');
+      const cs=document.getElementById('cutscene');
+      cs.style.opacity=1; document.body.classList.add('shake');
+      alert('The Ultimate One unleashes their true power!'); // pause for user OK
+      document.body.classList.remove('shake');
+      await delay(1000);
+      cs.style.opacity=0; document.body.classList.add('shake');
+      await delay(500);
+      document.body.classList.remove('shake');
+      log('The Ultimate One unleashes their true power!');
+      boss.phase2=true;
+      updateBars();
+      showActionButtons(party[turnIndex]);
+    }
+	
+	async function bossStealsTurn(actor){
+      disableAll();
+	  const impatient = rand(1, 2) === 1 ? `${actor.name} took too long! The Ultimate One took the opportunity to make a move!` : "The Ultimate One got impatient and began to make a move!";
+      await log(impatient);
+      // 50% regen vs attack
+      if(chance(10)){
+        const pct=randFloat(boss.phase2?2:1, boss.phase2?6:5),
+              amt=Math.floor(boss.maxHp*pct/100);
+        boss.hp=Math.min(boss.maxHp,boss.hp+amt);
+        await log(`The Ultimate One regenerated ${amt} HP!`);
+      } else {
+        // single boss attack
+        const alive=party.map((c,i)=>c.hp>0?i:null).filter(x=>x!==null);
+        const t=alive[randInt(0,alive.length-1)], T=party[t];
+        if(chance(10)){
+          await log(`The Ultimate One missed their attack on ${T.name}!`);
+        } else {
+          let dmg=randInt(10,16), isCrit=false;
+          if(chance(5)){ dmg*=2; isCrit=true; }
+          await log(isCrit
+            ? `The Ultimate One attacked ${T.name} and dealt ${dmg} critical damage!`
+            : `The Ultimate One attacked ${T.name} and dealt ${dmg} damage!`);
+          if(isCrit) flashCrit(t);
+          if(T._weakened){ dmg=Math.floor(dmg/2); delete T._weakened; }
+          if(T._block){ dmg=Math.floor(dmg*T._block); delete T._block; }
+          T.hp=Math.max(0,T.hp-dmg);
+        }
+      }
+      updateBars();
+      turnIndex++;
+      nextTurn();
+    }
+
+    // —— Turn Loop ——  
+    async function nextTurn(){
+      if(endGame()) return;
+
+      // Start of round: regen + new turn header
+      if(turnIndex===0){
+        party.forEach(c=> c.hp>0 && (c.en = Math.min(c.maxEn, c.en+1)));
+        updateBars();
+        await log(`<b>================================================== TURN ${turnCount} ==================================================</b>`);
+      }
+
+      // Character turn
+      if(turnIndex < party.length){
+		if(!boss.phase2 && boss.hp<=boss.maxHp/2) await phaseTwoCutscene();
+        const A = party[turnIndex];
+        if(A.hp<=0){ turnIndex++; return nextTurn(); }
+
+        await log(`-----------------------------------------------${A.name}'s Turn-----------------------------------------------`);
+        await delay(500);
+
+        // Heavy Knight “Super” release
+        if(A.charging){
+          disableAll();
+          if(chance(50)){
+            const dmg = randInt(30,100);
+            await log(`${A.name} released their attack and dealt ${dmg} devastating damage!`);
+            boss.hp = Math.max(0, boss.hp-dmg);
+          } else {
+            await log(`${A.name} released their attack but missed!`);
+          }
+          A.charging = false;
+          updateBars();
+          turnIndex++;
+          return nextTurn();
+        }
+
+        // Buff or Heal menu trigger
+        if(A.name==='Mage'   && pendingAction==='Buff')   { return showBuffMenu(A); }
+        if(A.name==='Healer' && pendingAction==='Heal')   { return showHealMenu();  }
+
+        // Show action buttons
+        const D = document.getElementById('actions');
+        D.innerHTML = '';
+        A.actions.forEach(act=>{
+          const btn = document.createElement('button');
+          btn.textContent = act;
+          if(A.en < costOf(act)) btn.disabled = true;
+          btn.onclick = ()=> doAction(A, act);
+          D.appendChild(btn);
+        });
+
+      } else {
+        // Boss turn
+        await log(`------------------------------------------------Boss's Turn------------------------------------------------`);
+        await delay(500);
+		const attacks = boss.phase2? 3 : 2;
+        boss.attractTarget = null;
+
+        for(let i=1; i<=attacks; i++){
+          disableAll();
+          await delay(500);
+
+          // Heal only after <90% HP
+          if(boss.hp < boss.maxHp*0.9 && chance(20)){
+            const pct = randFloat(1,5), amt = Math.floor(boss.maxHp*pct/100);
+            boss.hp = Math.min(boss.maxHp, boss.hp+amt);
+            await log(`The Ultimate One regenerated ${amt} HP!`);
+            updateBars();
+            continue;
+          }
+
+          // Attack
+          const alive = party.map((c,i)=>c.hp>0?i:null).filter(x=>x!==null);
+          const t = (boss.attractTarget!==null && i===1)
+                    ? boss.attractTarget
+                    : alive[randInt(0,alive.length-1)];
+          const T = party[t];
+
+          if(chance(10)){
+            const m = Math.random()<0.5
+                    ? `The Ultimate One missed their attack against ${T.name}!`
+                    : `${T.name} dodged The Ultimate One's attack!`;
+            await log(m);
+          } else {
+            let dmg = randInt(10,16), isCrit=false;
+            if(chance(boss.phase2?8:5)){ dmg*=2; isCrit=true; }
+            await log(isCrit
+              ? `The Ultimate One attacked ${T.name} and dealt ${dmg} critical damage!`
+              : `The Ultimate One attacked ${T.name} and dealt ${dmg} damage!`);
+            if(isCrit) flashCrit(t);
+            if(T._weakened){ dmg = Math.floor(dmg/2); delete T._weakened; }
+            if(T._block){ dmg = Math.floor(dmg*T._block); delete T._block; }
+            T.hp = Math.max(0, T.hp-dmg);
+            updateBars();
+          }
+          if(endGame()) return;
+        }
+
+        turnIndex = 0;
+        turnCount++;
+        nextTurn();
+      }
+    }
+
+    // —— Buff Menu ——  
+    function showBuffMenu(actor){
+	  document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
+      const D = document.getElementById('actions');
+      disableAll();
+      D.innerHTML = `<p>Choose buff target:</p>`;
+      [
+        {name:'Warrior', idx:0},
+        {name:'Healer',  idx:2},
+        {name:'Heavy Knight', idx:3}
+      ].forEach(t => {
+        const btn = document.createElement('button');
+        btn.textContent = t.name;
+        btn.onclick = async () => {
+          party[t.idx]._buff = true;
+          await log(`${actor.name} casted Buff and boosted ${t.name}'s abilities!`);
+          pendingAction = null;
+          turnIndex++;
+          updateBars();
+          nextTurn();
+        };
+        D.appendChild(btn);
+      });
+	  const cancel = document.createElement('button');
+	  cancel.textContent = 'Cancel';
+	  cancel.onclick = () => {
+		document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
+		pendingAction = null;
+		showActionButtons(actor);
+	  };
+	  D.appendChild(cancel);
+    }
+
+    // —— Heal Menu ——  
+    function showHealMenu(){
+	  document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
+      const D = document.getElementById('actions');
+      disableAll();
+      D.innerHTML = `<p>Choose heal target:</p>`;
+      [
+        {name:'Warrior', idx:0},
+        {name:'Mage',    idx:1},
+        {name:'Heavy Knight', idx:3}
+      ].forEach(t => {
+        const btn=document.createElement('button');
+        btn.textContent=t.name;
+        btn.onclick=async()=>{
+          const T=party[t.idx];
+          const amt=Math.floor(T.maxHp*randInt(25,33)/100);
+          T.hp=Math.min(T.maxHp,T.hp+amt);
+          let msg=`Healer casted Heal and healed ${T.name} for ${amt} HP!`;
+          if(party[2]._buff){ msg+=' (Buffed)'; delete party[2]._buff; }
+          await log(msg);
+          pendingAction=null; turnIndex++; updateBars(); nextTurn();
+        };
+        D.appendChild(btn);
+      });
+	  const cancel = document.createElement('button');
+	  cancel.textContent = 'Cancel';
+	  cancel.onclick = () => {
+		document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
+		pendingAction = null;
+		showActionButtons(actor);
+	  };
+	  D.appendChild(cancel);
+    }
+
+    // —— Player Action Handler ——  
+    async function doAction(actor, act){
+      // lock buttons immediately
+      document.querySelectorAll('#actions button').forEach(b=> b.disabled=true);
+
+      pendingAction = act;
+      actor.en -= costOf(act);
+      const N = actor.name;
+      let msg = '';
+	  
+	  const counterMoves = {
+        'Strike':()=> randInt(8,15),
+        'Attack':()=> randInt(5,10),
+        'Smash':()=> randInt(15,25)
+      };
+	  
+	  if(counterMoves[act] && (boss.phase2?8:5)){
+        // boss counters
+        const intended = counterMoves[act]();
+        const backDmg = intended*2;
+        await log(`Boss countered your attack and dealt ${backDmg} damage!`);
+        const idx = party.indexOf(actor);
+        actor.hp = Math.max(0, actor.hp - backDmg);
+        flashCrit(idx);
+        updateBars();
+        turnIndex++; return nextTurn();
+      }
+
+      switch(act){
+        case 'Strike':
+          if(chance(8)){
+            msg = Math.random()<0.5
+              ? `${N} missed their attack against The Ultimate One!`
+              : `The Ultimate One dodged ${N}'s attack!`;
+          } else {
+            let dmg=randInt(8,15), crit=false;
+            if(chance(5)){ dmg*=2; crit=true; }
+            msg = crit
+              ? `${N} attacked and dealt ${dmg} critical damage!`
+              : `${N} attacked and dealt ${dmg} damage!`;
+            boss.hp = Math.max(0,boss.hp-dmg);
+          }
+          break;
+
+        case 'Barrage': {
+          let total=0, hits=0, parts=[];
+          for(let i=1;i<=4;i++){
+            const acc = i<=2?100:(i===3?90:85);
+            if(!chance(acc)){ parts.push('miss'); break; }
+            let d=randInt(2,4), c=false;
+            if(chance(5)){ d*=2; c=true; }
+            parts.push(c?`${d}(Critical!)`:d);
+            total += d; hits++;
+          }
+          msg = `${N} attacked ${hits} times and dealt a total of ${total} damage (${parts.join(', ')})!`;
+          boss.hp = Math.max(0,boss.hp-total);
+          break;
+        }
+
+        case 'Block':
+          actor._block = 0.25;
+          msg = `${N} prepared to block the next attack that'll come for them!`;
+          break;
+
+        case 'Rest': {
+          const rec = randInt(10,20);
+          actor.en = Math.min(actor.maxEn, actor.en+rec);
+          msg = `${N} rested and recovered ${rec} energy!`;
+          break;
+        }
+
+        case 'Super':
+          actor.charging = true;
+          msg = `${N} began charging up a powerful attack...`;
+          break;
+
+        case 'Spell':
+          if(chance(15)){
+            msg = Math.random()<0.5
+              ? `The Ultimate One dodged ${N}'s spell!`
+              : `${N} missed their attack against The Ultimate One!`;
+          } else {
+            const dmg = randInt(10,23);
+            msg = `${N} cast a spell and dealt ${dmg} damage!`;
+            boss.hp = Math.max(0,boss.hp-dmg);
+          }
+          break;
+
+        case 'Buff':
+          return showBuffMenu(actor);
+
+        case 'Weaken':
+          const ni = (party.indexOf(actor)+1)%party.length;
+          party[ni]._weakened = true;
+          msg = `${N} cast Weaken and weakened The Ultimate One!`;
+          break;
+
+        case 'Attack':
+          if(chance(8)){
+            msg = Math.random()<0.5
+              ? `The Ultimate One dodged ${N}'s attack!`
+              : `${N} missed their attack against The Ultimate One!`;
+          } else {
+            let dmg=randInt(5,10), crit=false;
+            if(chance(5)){ dmg*=2; crit=true; }
+            msg = crit
+              ? `${N} attacked and dealt ${dmg} critical damage!`
+              : `${N} attacked and dealt ${dmg} damage!`;
+            boss.hp = Math.max(0,boss.hp-dmg);
+          }
+          break;
+		  
+		case 'Smash':
+          if(chance(8)){
+            msg = Math.random()<0.5
+              ? `The Ultimate One dodged ${N}'s attack!`
+              : `${N} missed their attack against The Ultimate One!`;
+          } else {
+            let dmg=randInt(15,25), crit=false;
+            if(chance(5)){ dmg*=2; crit=true; }
+            msg = crit
+              ? `${N} landed a powerful blow and dealt ${dmg} critical damage!`
+              : `${N} landed a powerful blow and dealt ${dmg} damage!`;
+            boss.hp = Math.max(0,boss.hp-dmg);
+          }
+          break;
+
+        case 'Heal':
+          return showHealMenu();
+
+        case 'Heal Area':
+          let tot=0;
+          party.forEach(c=>{
+            if(c.hp>0){
+              const a=Math.floor(c.maxHp*randInt(12,16)/100);
+              c.hp = Math.min(c.maxHp,c.hp+a);
+              tot += a;
+            }
+          });
+          msg = `${N} casted Heal Area and healed everyone for ${tot} HP!`;
+          break;
+
+        case 'Attract':
+          if(chance(67)){
+            boss.attractTarget = party.indexOf(actor);
+            msg = `${N} began taunting the boss!`;
+          } else {
+            msg = `${N} began taunting The Ultimate One but it failed!`;
+          }
+          break;
+      }
+
+      if(actor._buff){
+        msg += ' (Buffed)';
+        delete actor._buff;
+      }
+
+      await log(msg);
+      updateBars();
+      turnIndex++;
+      nextTurn();
+    }
+
+    // —— Kickoff ——  
+    function startGame(){
+  // hide the overlay just in case
+  document.getElementById('start-screen').style.display = 'none';
+
+  // your original boot logic
+  (async()=>{
+    startTime = Date.now();
+	bgm.play();
+    await log('The battle with The Ultimate One begins!');
+    setTimeout(runDiscoMode, 15000);
+    nextTurn();
+  })();
+}
+
+// wait for the user to click to begin
+document.getElementById('start-screen')
+  .addEventListener('click', startGame);
+  </script>
+</body>
+</html>
