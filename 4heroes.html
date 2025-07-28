@@ -5,7 +5,7 @@
   <title>The 4 Heroes</title>
   <link rel="shortcut icon" type="x-icon" href="4heroes.ico" />
   <style>
-    body { font-family: sans-serif; background: #111; color: #eee; margin:0; padding:0 }
+    body { font-family: sans-serif; background: #111; color: #eee; margin:0; padding:0; transition: background-color 0.2s ease; }
 	#start-screen {
   position: fixed;
   top: 0; left: 0;
@@ -161,7 +161,7 @@
 	
 	function runDiscoMode() {
     if (discoInterval !== null) return;
-    document.body.style.transition = 'none';
+    document.body.style.transition = 'background-color 0.2s ease';
 
     const discoColors = [
       '#fbffb3', '#ffffff',
@@ -187,12 +187,12 @@
 
     // —— Game State ——
     const party = [
-      {name:'Warrior',      maxHp:100,  hp:100, maxEn:40,  en:40,  actions:['Strike','Barrage','Block','Rest'], _weakened:false},
-      {name:'Mage',         maxHp:60,   hp:60,  maxEn:60,  en:60,  actions:['Spell','Buff','Weaken','Block','Rest'], buffTarget:null},
-      {name:'Healer',       maxHp:200,  hp:200, maxEn:30,  en:30,  actions:['Attack','Heal','Heal Area','Attract','Rest'], healTarget:null},
-      {name:'Heavy', maxHp:150,  hp:150, maxEn:25,  en:25,  actions:['Smash','Super','Block','Rest'], charging:false}
+      {name:'Warrior',      maxHp:100,  hp:100, maxEn:40,  en:40,  actions:['Strike','Barrage','Defend','Rest'], _weakened:false, _defend: false, dmgDone: 0},
+      {name:'Mage',         maxHp:60,   hp:60,  maxEn:60,  en:60,  actions:['Spell','Buff','Weaken','Block','Rest'], buffTarget:null, _defend: false, dmgDone: 0},
+      {name:'Healer',       maxHp:200,  hp:200, maxEn:30,  en:30,  actions:['Attack','Heal','Heal Area','Attract','Rest'], healTarget:null, _defend: false, dmgDone: 0},
+      {name:'Heavy', maxHp:150,  hp:150, maxEn:25,  en:25,  actions:['Smash','Super','Block','Rest'], charging:false, _defend: false, dmgDone: 0}
     ];
-    const boss = {name:'The Ultimate One', maxHp:1000, hp:1000, attractTarget:null};
+    const boss = {name:'The Ultimate One', maxHp:1000, hp:1000, attractTarget:null, attractCount: 0,};
     let turnIndex=0, turnCount=1, pendingAction=null, turnTimer = null;
 	let startTime=0;
 
@@ -239,7 +239,7 @@
     }
 
     const costOf = a => ({
-      'Strike':10,'Barrage':12,'Block':5,'Rest':0,
+      'Strike':10,'Barrage':12,'Defend':8, 'Block': 5, 'Rest':0,
       'Spell':15,'Buff':10,'Weaken':8,
       'Attack':8,'Heal':10,'Heal Area':15,'Attract':8,'Super':21
     }[a]||0);
@@ -247,6 +247,18 @@
     function disableAll(){
       document.querySelectorAll('#actions button').forEach(b=> b.disabled=true);
     }
+	
+	function showActionButtons(actor) {
+  const D = document.getElementById('actions');
+  D.innerHTML = '';
+  actor.actions.forEach(act => {
+    const btn = document.createElement('button');
+    btn.textContent = act;
+    if (actor.en < costOf(act)) btn.disabled = true;
+    btn.onclick = () => doAction(actor, act);
+    D.appendChild(btn);
+  });
+}
 	
 	async function log(txt = '') {
   const L = document.getElementById('log');
@@ -316,7 +328,7 @@
 	
 	async function bossStealsTurn(actor){
       disableAll();
-	  const impatient = rand(1, 2) === 1 ? `${actor.name} took too long! The Ultimate One took the opportunity to make a move!` : "The Ultimate One got impatient and began to make a move!";
+	  const impatient = randInt(1, 2) === 1 ? `${actor.name} took too long! The Ultimate One took the opportunity to make a move!` : "The Ultimate One got impatient and began to make a move!";
       await log(impatient);
       // 50% regen vs attack
       if(chance(10)){
@@ -364,16 +376,19 @@
         const A = party[turnIndex];
         if(A.hp<=0){ turnIndex++; return nextTurn(); }
 
-        await log(`-----------------------------------------------${A.name}'s Turn-----------------------------------------------`);
-        await delay(500);
-
         // Heavy Knight “Super” release
         if(A.charging){
           disableAll();
           if(chance(50)){
-            const dmg = randInt(30,100);
+            let dmg = randInt(30,100);
+			if (actor._buff) {
+				dmg = Math.ceil(dmg * 1.2);
+			}
             await log(`${A.name} released their attack and dealt ${dmg} devastating damage!`);
             boss.hp = Math.max(0, boss.hp-dmg);
+			if (actor._buff) {
+				delete actor._buff;
+			}
           } else {
             await log(`${A.name} released their attack but missed!`);
           }
@@ -385,7 +400,7 @@
 
         // Buff or Heal menu trigger
         if(A.name==='Mage'   && pendingAction==='Buff')   { return showBuffMenu(A); }
-        if(A.name==='Healer' && pendingAction==='Heal')   { return showHealMenu();  }
+        if (A.name==='Healer' && pendingAction==='Heal') { return showHealMenu(A); }
 
         // Show action buttons
         const D = document.getElementById('actions');
@@ -400,10 +415,9 @@
 
       } else {
         // Boss turn
-        await log(`------------------------------------------------Boss's Turn------------------------------------------------`);
+        await log(`-------------------------------------------The Ultimate One's Turn-------------------------------------------`);
         await delay(500);
 		const attacks = boss.phase2? 3 : 2;
-        boss.attractTarget = null;
 
         for(let i=1; i<=attacks; i++){
           disableAll();
@@ -420,26 +434,35 @@
 
           // Attack
           const alive = party.map((c,i)=>c.hp>0?i:null).filter(x=>x!==null);
-          const t = (boss.attractTarget!==null && i===1)
-                    ? boss.attractTarget
-                    : alive[randInt(0,alive.length-1)];
-          const T = party[t];
-
+		  let t;
+		  const T = party[t];
+		  if (boss.attractCount > 0) {
+			t = boss.attractTarget;
+			boss.attractCount--;
+		  } else {
+			t = alive[randInt(0, alive.length-1)];
+		  }
           if(chance(10)){
             const m = Math.random()<0.5
-                    ? `The Ultimate One missed their attack against ${T.name}!`
-                    : `${T.name} dodged The Ultimate One's attack!`;
+                    ? `The Ultimate One missed their attack against ${party[t].name}!`
+                    : `${party[t].name} dodged The Ultimate One's attack!`;
             await log(m);
           } else {
-            let dmg = randInt(10,16), isCrit=false;
-            if(chance(boss.phase2?8:5)){ dmg*=2; isCrit=true; }
+            let dmg = randInt(10,25);
+			if(party[t]._defend){
+				dmg = Math.floor(dmg * 0.33);
+				delete party[t]._defend;
+			}
+			if(boss.phase2) dmg = Math.floor(dmg * 1.2);
+			isCrit=false;
+            if(chance(boss.phase2?8:5)){ dmg = Math.floor(dmg * 2); isCrit=true; }
             await log(isCrit
-              ? `The Ultimate One attacked ${T.name} and dealt ${dmg} critical damage!`
-              : `The Ultimate One attacked ${T.name} and dealt ${dmg} damage!`);
+              ? `The Ultimate One attacked ${party[t].name} and dealt ${dmg} critical damage!`
+              : `The Ultimate One attacked ${party[t].name} and dealt ${dmg} damage!`);
             if(isCrit) flashCrit(t);
-            if(T._weakened){ dmg = Math.floor(dmg/2); delete T._weakened; }
-            if(T._block){ dmg = Math.floor(dmg*T._block); delete T._block; }
-            T.hp = Math.max(0, T.hp-dmg);
+            if(party[t]._weakened){ dmg = Math.floor(dmg/2); delete party[t]._weakened; }
+            if(party[t]._block){ dmg = Math.floor(dmg*party[t]._block); delete party[t]._block; }
+            party[t].hp = Math.max(0, party[t].hp-dmg);
             updateBars();
           }
           if(endGame()) return;
@@ -456,24 +479,27 @@
 	  document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
       const D = document.getElementById('actions');
       disableAll();
-      D.innerHTML = `<p>Choose buff target:</p>`;
-      [
-        {name:'Warrior', idx:0},
-        {name:'Healer',  idx:2},
-        {name:'Heavy Knight', idx:3}
-      ].forEach(t => {
-        const btn = document.createElement('button');
-        btn.textContent = t.name;
-        btn.onclick = async () => {
-          party[t.idx]._buff = true;
-          await log(`${actor.name} casted Buff and boosted ${t.name}'s abilities!`);
-          pendingAction = null;
-          turnIndex++;
-          updateBars();
-          nextTurn();
-        };
-        D.appendChild(btn);
-      });
+	  D.innerHTML = `<p>Choose buff target:</p>`;
+  
+  [
+    { name: 'Warrior',      idx: 0 },
+    { name: 'Healer',       idx: 2 },
+    { name: 'Heavy Knight', idx: 3 }
+  ].forEach(t => {
+    const btn = document.createElement('button');
+    btn.textContent = t.name;
+    btn.onclick = async () => {
+	  disableAll();
+	  actor.en -= costOf('Buff');
+      party[t.idx]._buff = true;
+      await log(`${actor.name} casted Buff and boosted ${t.name}'s abilities!`);
+      pendingAction = null;
+      turnIndex++;
+      updateBars();
+      nextTurn();
+    };
+    D.appendChild(btn);
+  });
 	  const cancel = document.createElement('button');
 	  cancel.textContent = 'Cancel';
 	  cancel.onclick = () => {
@@ -483,40 +509,75 @@
 	  };
 	  D.appendChild(cancel);
     }
+	
+	function showDefendMenu(actor) {
+  disableAll();
+  const D = document.getElementById('actions');
+  D.innerHTML = `<p>Choose ally to Defend:</p>`;
 
-    // —— Heal Menu ——  
-    function showHealMenu(){
-	  document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
-      const D = document.getElementById('actions');
-      disableAll();
-      D.innerHTML = `<p>Choose heal target:</p>`;
-      [
-        {name:'Warrior', idx:0},
-        {name:'Mage',    idx:1},
-        {name:'Heavy Knight', idx:3}
-      ].forEach(t => {
-        const btn=document.createElement('button');
-        btn.textContent=t.name;
-        btn.onclick=async()=>{
-          const T=party[t.idx];
-          const amt=Math.floor(T.maxHp*randInt(25,33)/100);
-          T.hp=Math.min(T.maxHp,T.hp+amt);
-          let msg=`Healer casted Heal and healed ${T.name} for ${amt} HP!`;
-          if(party[2]._buff){ msg+=' (Buffed)'; delete party[2]._buff; }
-          await log(msg);
-          pendingAction=null; turnIndex++; updateBars(); nextTurn();
-        };
-        D.appendChild(btn);
-      });
-	  const cancel = document.createElement('button');
-	  cancel.textContent = 'Cancel';
-	  cancel.onclick = () => {
-		document.querySelectorAll('#actions button').forEach(b=> b.disabled=false);
-		pendingAction = null;
-		showActionButtons(actor);
-	  };
-	  D.appendChild(cancel);
+  party.forEach((t, idx) => {
+    if (t.hp > 0) {
+      const btn = document.createElement('button');
+      btn.textContent = t.name;
+      btn.onclick = async () => {
+		actor.en -= costOf('Defend');
+        disableAll();
+        party[idx]._defend = true;
+		const defendText = (t === actor) ? 'themselves' : t.name;
+        await log(`${actor.name} defended ${defendText}!`);
+        pendingAction = null;
+        turnIndex++;
+        updateBars();
+        nextTurn();
+      };
+      D.appendChild(btn);
     }
+  });
+
+  const cancel = document.createElement('button');
+  cancel.textContent = 'Cancel';
+  cancel.onclick = () => {
+	document.querySelectorAll('#actions button').forEach(b => b.disabled = false);
+	pendingAction = null;
+	showActionButtons(actor);
+  };
+  D.appendChild(cancel);
+}
+
+  function showHealMenu(actor) {
+  disableAll();
+  const D = document.getElementById('actions');
+  D.innerHTML = `<p>Choose who to Heal:</p>`;
+
+  party.forEach((t, idx) => {
+    if (t.hp > 0) {
+      const btn = document.createElement('button');
+      btn.textContent = t.name;
+      btn.onclick = async () => {
+	    actor.en -= costOf('Heal');
+        disableAll();
+        const amt = Math.floor(t.maxHp * randInt(15,25) / 100);
+        t.hp = Math.min(t.maxHp, t.hp + amt);
+		const healText = (t === actor) ? 'themselves' : t.name;
+        await log(`${actor.name} casted Heal on ${healText} for ${amt} HP!`);
+        pendingAction = null;
+        turnIndex++;
+        updateBars();
+        nextTurn();
+      };
+      D.appendChild(btn);
+    }
+  });
+
+  const cancel = document.createElement('button');
+  cancel.textContent = 'Cancel';
+  cancel.onclick = () => {
+    disableAll();
+    pendingAction = null;
+    nextTurn();
+  };
+  D.appendChild(cancel);
+}
 
     // —— Player Action Handler ——  
     async function doAction(actor, act){
@@ -524,7 +585,6 @@
       document.querySelectorAll('#actions button').forEach(b=> b.disabled=true);
 
       pendingAction = act;
-      actor.en -= costOf(act);
       const N = actor.name;
       let msg = '';
 	  
@@ -534,8 +594,7 @@
         'Smash':()=> randInt(15,25)
       };
 	  
-	  if(counterMoves[act] && (boss.phase2?8:5)){
-        // boss counters
+	  if(counterMoves[act] && (chance(boss.phase2?8:5))){
         const intended = counterMoves[act]();
         const backDmg = intended*2;
         await log(`Boss countered your attack and dealt ${backDmg} damage!`);
@@ -548,6 +607,7 @@
 
       switch(act){
         case 'Strike':
+		  actor.en -= costOf('Strike');
           if(chance(8)){
             msg = Math.random()<0.5
               ? `${N} missed their attack against The Ultimate One!`
@@ -563,6 +623,7 @@
           break;
 
         case 'Barrage': {
+		  actor.en -= costOf('Barrage');
           let total=0, hits=0, parts=[];
           for(let i=1;i<=4;i++){
             const acc = i<=2?100:(i===3?90:85);
@@ -578,23 +639,30 @@
         }
 
         case 'Block':
+		  actor.en -= costOf('Block');
           actor._block = 0.25;
           msg = `${N} prepared to block the next attack that'll come for them!`;
           break;
+		  
+		case 'Defend':
+		  return showDefendMenu(actor);
+		  break;
 
-        case 'Rest': {
+        case 'Rest':
+		  actor.en -= costOf('Rest');
           const rec = randInt(10,20);
           actor.en = Math.min(actor.maxEn, actor.en+rec);
           msg = `${N} rested and recovered ${rec} energy!`;
           break;
-        }
 
         case 'Super':
+		  actor.en -= costOf('Super');
           actor.charging = true;
           msg = `${N} began charging up a powerful attack...`;
           break;
 
         case 'Spell':
+		  actor.en -= costOf('Spell');
           if(chance(15)){
             msg = Math.random()<0.5
               ? `The Ultimate One dodged ${N}'s spell!`
@@ -610,12 +678,14 @@
           return showBuffMenu(actor);
 
         case 'Weaken':
+		  actor.en -= costOf('Weaken');
           const ni = (party.indexOf(actor)+1)%party.length;
           party[ni]._weakened = true;
           msg = `${N} cast Weaken and weakened The Ultimate One!`;
           break;
 
         case 'Attack':
+		  actor.en -= costOf('Attack');
           if(chance(8)){
             msg = Math.random()<0.5
               ? `The Ultimate One dodged ${N}'s attack!`
@@ -631,6 +701,7 @@
           break;
 		  
 		case 'Smash':
+		  actor.en -= costOf('Smash');
           if(chance(8)){
             msg = Math.random()<0.5
               ? `The Ultimate One dodged ${N}'s attack!`
@@ -646,34 +717,42 @@
           break;
 
         case 'Heal':
-          return showHealMenu();
+          return showHealMenu(actor);
 
         case 'Heal Area':
-          let tot=0;
-          party.forEach(c=>{
-            if(c.hp>0){
-              const a=Math.floor(c.maxHp*randInt(12,16)/100);
-              c.hp = Math.min(c.maxHp,c.hp+a);
-              tot += a;
-            }
-          });
-          msg = `${N} casted Heal Area and healed everyone for ${tot} HP!`;
+		  actor.en -= costOf('Heal Area');
+          for (const c of party) {
+		    if (c.hp > 0) {
+				const before = c.hp;
+				const a = Math.floor(c.maxHp * randInt(12,16) / 100);
+				c.hp = Math.min(c.maxHp, c.hp + a);
+				const actual = c.hp - before;
+				await log(`${actor.name} casted Heal Area and healed ${c.name} for ${actual} HP!`);
+			}
+		  }
           break;
 
         case 'Attract':
-          if(chance(67)){
-            boss.attractTarget = party.indexOf(actor);
-            msg = `${N} began taunting the boss!`;
-          } else {
-            msg = `${N} began taunting The Ultimate One but it failed!`;
-          }
-          break;
-      }
+			actor.en -= costOf('Attract');
+			disableAll();
+			const cnt = randInt(1,2);
+			boss.attractTarget = 2;
+			boss.attractCount  = cnt;
+			await log(
+				`${actor.name} drew The Ultimate One's attention!`
+			);
+			pendingAction = null;
+			turnIndex++;
+			updateBars();
+			nextTurn();
+			return;
+		}
 
-      if(actor._buff){
-        msg += ' (Buffed)';
-        delete actor._buff;
-      }
+      const isDamageAct  = ['Strike','Barrage','Smash','Spell','Attack','Super'].includes(act);
+	  const isHealAct    = ['Heal','Heal Area'].includes(act);
+	  if ((isDamageAct || isHealAct) && actor._buff) {
+		delete actor._buff;
+	  }
 
       await log(msg);
       updateBars();
