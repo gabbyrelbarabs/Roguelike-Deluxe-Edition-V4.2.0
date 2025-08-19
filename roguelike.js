@@ -509,6 +509,8 @@ semiTrack.currentTime = 0;
 casinoMusic.loop = true;
 
       let ambushEnemiesQueue = null;
+	  let ambushActive = false;
+	  let ambushCallbackRoomKey = null;
 	  let beatTimer = null;
       let shopCooldown = 0;
       let allowedMoves = [];
@@ -5582,6 +5584,7 @@ function forceCultAmbush(key) {
   battleTint.style.display= "block";
 
   // Build 2–3 Cult Member clones
+  ambushActive = true;
   ambushEnemiesQueue = [];
   const count = 2 + Math.floor(Math.random() * 2);
   for (let i = 0; i < count; i++) {
@@ -5619,6 +5622,7 @@ function forceGuildAmbush(key) {
   battleLog.innerHTML     = "";
   battleLog.style.display = "block";
   battleTint.style.display= "block";
+  ambushActive = true;
 
   ambushEnemiesQueue = [];
   const count = 2 + Math.floor(Math.random() * 2);
@@ -6028,7 +6032,7 @@ if (gameDifficulty === "normal") {
 }
         let rewardMultiplier = Math.pow(1.5, floorBonus);
         currentEnemy.expReward = [currentEnemy.expReward[0] * rewardMultiplier, currentEnemy.expReward[1] * rewardMultiplier];
-        currentEnemy.moneyReward = [currentEnemy.moneyReward[0] * rewardMultiplier, currentEnemy.moneyReward[1] * rewardMultiplier];
+        currentEnemy.moneyReward = [currentEnemy.moneyReward[0] , currentEnemy.moneyReward[1]];
         currentEnemy.poison = false;
 		currentEnemy.frozen = 0;
 		currentEnemy.burned = false;
@@ -6052,33 +6056,108 @@ if (gameDifficulty === "normal") {
         battleMenu.style.display = "block";
       }
 	  
-	  function handleWarriorRoom(key) {
-  // 1. Prompt the player
+function handleWarriorRoom(key) {
   let fight = confirm(
     "You encountered another Warrior! What do you do?\n\n" +
     "Press OK to Fight, or Cancel to Pass by."
   );
+  
+  let alias = "Warrior";
 
-  // helper to kick off the battle
-  function startWarriorBattle(nameOverride) {
+  // We'll only set ambushCompleteCallback if a fight/ambush is actually launched.
+  let launchedAmbush = false;
+
+  if (fight) {
+    // player chose to fight; this launches the warrior battle and marks an ambush context
+    startWarriorBattle();
+    launchedAmbush = true;
+  } else {
+    // passing by: 10% chance they still attack (50% if Cult)
+    const fightChance = player.organization === "Cult" ? 0.5 : 0.1;
+    if (Math.random() < fightChance) {
+      // name alias distribution
+      const r2 = Math.random();
+      if (player.organization === "Cult") {
+        if (r2 < 0.67) alias = "Warrior";
+        else if (r2 < 0.835) alias = "Outlaw";
+        else alias = "Bandit";
+      } else {
+        // original 40/40/20 split
+        if (r2 < 0.4) alias = "Outlaw";
+        else if (r2 < 0.8) alias = "Bandit";
+        else alias = "Cult Member";
+      }
+      alert(`The ${alias} attacked you anyway!`);
+      startWarriorBattle(alias);
+      launchedAmbush = true;
+    } else {
+      // no ambush — finalize room and ensure no lingering ambush callback
+      finalizeRoom(key);
+      ambushCompleteCallback = null;
+      ambushActive = false;
+      ambushCallbackRoomKey = null;
+      return;
+    }
+  }
+
+  // If we launched an ambush/fight, create an ambush completion callback tied to this room key.
+  if (launchedAmbush) {
+    ambushCallbackRoomKey = key;
+    ambushCompleteCallback = () => {
+      let spare = confirm(`You have defeated the ${alias}, spare them?`);
+
+      if (player.organization === "Cult") {
+        alert(`You have defeated the ${alias}! You report to the Cult about your achievement.`);
+        finalizeRoom(key);
+        ambushCompleteCallback = null;
+        ambushActive = false;
+        ambushCallbackRoomKey = null;
+        return;
+      }
+
+      if (spare) {
+        if (Math.random() < 0.33) {
+          alert("They join you as a mercenary!");
+          player.mercenaries.push(createMercenary());
+          finalizeRoom(key);
+          ambushCompleteCallback = null;
+          ambushActive = false;
+          ambushCallbackRoomKey = null;
+          return;
+        } else {
+          alert("They thank you and leave.");
+          finalizeRoom(key);
+          ambushCompleteCallback = null;
+          ambushActive = false;
+          ambushCallbackRoomKey = null;
+          return;
+        }
+      } else {
+        finalizeRoom(key);
+        ambushCompleteCallback = null;
+        ambushActive = false;
+        ambushCallbackRoomKey = null;
+        return;
+      }
+    };
+  }
+}
+
+function startWarriorBattle(nameOverride) {
 	skillUsedThisBattle = true;
-	// stop any world music
 	stopWorldMusic();
-	// play warrior theme
 	warriorTrack.play();
-    // show battle log + tint
     battleLog.innerHTML     = "";
     battleLog.style.display = "block";
     battleTint.style.display= "block";
 
-    // build the mimic Warrior
     const warrior = {
       name:        nameOverride || "Warrior",
       hp:          player.maxHp,
       maxHp:       player.maxHp,
       damageRange: [ player.attack, player.magic ],
-      expReward:   player.level,
-      moneyReward: player.level,
+      expReward:   10,
+      moneyReward: 10,
       poison:      false,
 	  frozen:      0,
 	  burned:      false,
@@ -6086,6 +6165,7 @@ if (gameDifficulty === "normal") {
 	  paralyzed:   false,
 	  asleep:      0,
       boss:        true,
+      ambushActive:true,
     };
     // launch via ambush flow
     ambushEnemiesQueue = [ warrior ];
@@ -6105,64 +6185,6 @@ if (gameDifficulty === "normal") {
     updateEnemyInfo();
     battleMenu.style.display = "block";
     unlockActions();
-  }
-  
-  let alias = "Warrior";
-
-  if (fight) {
-    // player chose to fight
-    startWarriorBattle();
-  } else {
-    // passing by: 10% chance they still attack
-    const fightChance = player.organization==="Cult" ? 0.5 : 0.15;
-	if (Math.random() < fightChance) {
-		// name alias distribution
-		const r2 = Math.random();
-		if (player.organization==="Cult") {
-			if (r2 < 0.67) alias="Warrior";
-			else if (r2 < 0.835) alias="Outlaw";
-			else alias="Bandit";
-		} else {
-			// original 40/40/20 split
-			if (r2 < 0.4) alias="Outlaw";
-			else if (r2 < 0.8) alias="Bandit";
-			else alias="Cult Member";
-		}
-		alert(`The ${alias} attacked you anyway!`);
-		startWarriorBattle(alias);
-	} else {
-		finalizeRoom(key);
-		ambushCompleteCallback = null;
-	}
-  }
-  
-  ambushCompleteCallback = () => {
-      let spare = confirm(`You have defeated the ${alias}, spare them?`);
-	  if (player.organization==="Cult") {
-		alert(`You have defeated the ${alias}! You report to the Cult about your achievement.`);
-		finalizeRoom(key);
-		ambushCompleteCallback = null;
-      } else {
-		if (spare) {
-			if (Math.random() < 0.33) {
-				alert("They join you as a mercenary!");
-				player.mercenaries.push(createMercenary());
-				finalizeRoom(key);
-				ambushCompleteCallback = null;
-			} else {
-				alert("They thank you and leave.");
-				finalizeRoom(key);
-				ambushCompleteCallback = null;
-			}
-			finalizeRoom(key);
-			ambushCompleteCallback = null;
-		} else {
-			finalizeRoom(key);
-			ambushCompleteCallback = null;
-		}
-	  }
-	  ambushCompleteCallback = null;
-  };
 }
 
 function handleBossRoom(key) {
@@ -6280,6 +6302,7 @@ function handleBossRoom(key) {
   const queueNames = bossQueues[floor] || [];
   if (Array.isArray(queueNames) && queueNames.length > 0) {
     // Flavor alert
+    ambushActive = true;
     alert("You manage to find the Boss room, however, a few of its minions stand in your way.");
 
     // Build ambush queue
@@ -6496,8 +6519,8 @@ function getDummyEnemy(name) {
 		bossData.expReward[1] * rewardMultiplier
 	];
 	bossData.moneyReward = [
-		bossData.moneyReward[0] * rewardMultiplier,
-		bossData.moneyReward[1] * rewardMultiplier
+		bossData.moneyReward[0],
+		bossData.moneyReward[1]
 	];
   currentEnemy = JSON.parse(JSON.stringify(bossData));
   currentEnemy.boss = true;
@@ -6546,6 +6569,7 @@ function getDummyEnemy(name) {
   battleLog.style.display = "block";
   battleTint.style.display = "block";
   alert("You were ambushed!");
+  ambushActive = true;
 
   // spawn 2–6 enemies
   const minEnemies = 2, maxEnemies = 6;
@@ -6600,7 +6624,7 @@ if (gameDifficulty === "normal") {
 
 	const mult = Math.pow(1.5, floorBonus);
     e.expReward   = [e.expReward[0]   * mult, e.expReward[1]   * mult];
-    e.moneyReward = [e.moneyReward[0] * mult, e.moneyReward[1] * mult];
+    e.moneyReward = [e.moneyReward[0], e.moneyReward[1]];
     e.poison = false;
 	e.burned = false;
 	e.frozen = 0;
@@ -6908,10 +6932,12 @@ function getEnemyByName(enemyName) {
     return;
   }
 
+    ambushActive = true;
   // if this was an ambush, fire the finalizeRoom callback
-  if (ambushCompleteCallback) {
+  if (ambushCompleteCallback && ambushActive) {
     const cb = ambushCompleteCallback;
     ambushCompleteCallback = null;
+	ambushActive = false;
     ambushEnemiesQueue = null;
 	ambushTrack.pause();
 	ambushTrack.currentTime = 0;
