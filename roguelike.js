@@ -448,6 +448,8 @@ document.addEventListener(
   "Freezing Tundra": { audio: new Audio("Tundra.mp3"), savedTime: 0 },
   "The Black Sea": { audio: new Audio("sea.mp3"), savedTime: 0 },
   "Vast Ocean": { audio: new Audio("ocean.mp3"), savedTime: 0 },
+  "Jeju Island": { audio: new Audio("island.mp3"), savedTime: 0 },
+  "Giant Ant Nest": { audio: new Audio("antnest.mp3"), savedTime: 0 },
   "Valrr Trench": { audio: new Audio("trench.mp3"), savedTime: 0 },
   "Sky Dimension": { audio: new Audio("sky.mp3"), savedTime: 0 },
   "Future Megalopolis": { audio: new Audio("tech.mp3"), savedTime: 0 },
@@ -4668,14 +4670,12 @@ function generateAdjacentRooms(cx, cy) {
       }
     }
 
-    // Ambush chance on otherwise “safe” rooms
     if ([ROOM_TYPES.BATTLE, ROOM_TYPES.HEALING, ROOM_TYPES.EMPTY]
         .includes(type)
         && Math.random() < getBadAmbushChance()) {
       type = ROOM_TYPES.AMBUSH;
     }
 
-    // Ensure one-of-each non-battle type per floor
     if (type !== ROOM_TYPES.BATTLE) {
       if (usedNonBattle[type]) {
         const avail = baseTypes.filter(t => !usedNonBattle[t]);
@@ -4686,17 +4686,13 @@ function generateAdjacentRooms(cx, cy) {
       usedNonBattle[type] = true;
     }
 
-    // ——— Doom override: force-forbid Casino, Guild, Warrior ———
     if (gameDifficulty === "doom") {
-    // — Guaranteed 1 Battle room, plus weighted picks for the others ——
-    // 1) clone positions and pick one at random for Battle
     const doomPositions = positions.slice();
     const battleIndex = Math.floor(Math.random() * doomPositions.length);
 
     doomPositions.forEach((pos, i) => {
       let type;
       if (i === battleIndex) {
-        // force one Battle room
         type = ROOM_TYPES.BATTLE;
       } else {
         const r = Math.random();
@@ -4715,7 +4711,6 @@ function generateAdjacentRooms(cx, cy) {
     return;
   }
 
-    // Finally, create it
     createRoom(pos.x, pos.y, type, { disguised });
     allowedMoves.push(`${pos.x}_${pos.y}`);
   });
