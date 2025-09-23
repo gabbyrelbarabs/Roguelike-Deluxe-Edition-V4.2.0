@@ -1,5 +1,4 @@
-// Simple title screen functionality
-  document.getElementById("playButton").addEventListener("click", function () {
+ document.getElementById("playButton").addEventListener("click", function () {
   document.getElementById("titleScreen").style.display = "none";
   document.getElementById("difficultyMenu").style.display = "block";
   document.getElementById("abilityMenu").style.display   = "none";
@@ -159,7 +158,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // finally, attach them
   attachTooltip(
     "#difficultyMenu button[data-tooltip], #doomTitleScreen #beginJourneyBtn",
     el => el.dataset.tooltip
@@ -394,43 +392,36 @@ tabCultCrime.addEventListener("click", () => {
 
 let lastClickTime = 0;
 
-document.addEventListener(
-  "click",
-  (event) => {
+document.addEventListener("click", (event) => {
 	if (event.target.closest("#guildMenu")) {
       return;
     }
     const currentTime = Date.now();
 
-    // Check if 1 second (1000 ms) has passed since the last accepted click.
     if (currentTime - lastClickTime < 350) {
-      // Prevent further processing of this click event.
       event.stopImmediatePropagation();
       event.preventDefault();
       return;
     }
 
-    // If the cooldown period has passed, update the timestamp.
     lastClickTime = currentTime;
-  },
-  true // Use capture phase so that this check occurs before other click event listeners.
-);
+}, true);
 
 	  
-	  const TITLE_MUSIC_BPM = 120;
-	  const BEAT_INTERVAL_MS = (60 / TITLE_MUSIC_BPM) * 1000;
-	  const doomMusicOptions = [
-		"hell.mp3",
-		"lengthen.mp3",
-		"unchained.mp3",
-		"ripandtear.mp3",
-		"bfg.mp3",
-		"meathook.mp3",
-		"cultist.mp3",
-	  ];
-	  let lastDoomMusic = null;
+const TITLE_MUSIC_BPM = 120;
+const BEAT_INTERVAL_MS = (60 / TITLE_MUSIC_BPM) * 1000;
+const doomMusicOptions = [
+	"hell.mp3",
+	"lengthen.mp3",
+	"unchained.mp3",
+	"ripandtear.mp3",
+	"bfg.mp3",
+	"meathook.mp3",
+	"cultist.mp3",
+];
+let lastDoomMusic = null;
 	  
-	  const bgmTracks = {
+const bgmTracks = {
   "Deep Forests": { audio: new Audio("forest.mp3"), savedTime: 0 },
   "Forest Empire": { audio: new Audio("forest.mp3"), savedTime: 0 },
   "Abandoned Graveyard": { audio: new Audio("graveyard.mp3"), savedTime: 0 },
@@ -510,35 +501,34 @@ semiTrack.loop = true;
 semiTrack.currentTime = 0;
 casinoMusic.loop = true;
 
-      let ambushEnemiesQueue = null;
-	  let ambushActive = false;
-	  let ambushCallbackRoomKey = null;
-	  let beatTimer = null;
-      let shopCooldown = 0;
-      let allowedMoves = [];
-      let floorCount = 1;
-      let roomMoves = 0;
-      let roomsThisFloor = 0;
-	  let trapCount = 0;
-      let lastAltarFloor = 0;
-	  let secretAmbush = false;
-	  let turnNumber = 1;
-	  let killCount = 0;
-	  let actionsLocked = false;
-	  let currentWorld = "";
-	  let currentBGM = null;
-	  let battleAudio = null;
-	  let ambushCompleteCallback = null;
-	  let guildEncounteredBefore = false;
-	  let cultEncounteredBefore = false;
-	  let guildFound = false;
-	  let cultFound = false;
-	  let skillUsedThisBattle = false;
-	  let ignoreEnemyResistances = false;
+let ambushEnemiesQueue = null;
+let ambushActive = false;
+let ambushCallbackRoomKey = null;
+let beatTimer = null;
+let shopCooldown = 0;
+let allowedMoves = [];
+let floorCount = 1;
+let roomMoves = 0;
+let roomsThisFloor = 0;
+let trapCount = 0;
+let lastAltarFloor = 0;
+let secretAmbush = false;
+let turnNumber = 1;
+let killCount = 0;
+let actionsLocked = false;
+let currentWorld = "";
+let currentBGM = null;
+let battleAudio = null;
+let ambushCompleteCallback = null;
+let guildEncounteredBefore = false;
+let cultEncounteredBefore = false;
+let guildFound = false;
+let cultFound = false;
+let skillUsedThisBattle = false;
+let ignoreEnemyResistances = false;
 
-      let bossRoomGenerated = false;
-      let player = {
-  // Current stats (will be derived from baseStats + equipment)
+let bossRoomGenerated = false;
+let player = {
   attack:    2,
   defense:   2,
   magic:     2,
@@ -574,6 +564,7 @@ casinoMusic.loop = true;
   monsterKills: 0,
   mercenaries: [],
   canRowMovement: false,
+  
   statuses: {
     poisoned: false,
     burned: false,
@@ -582,7 +573,7 @@ casinoMusic.loop = true;
     frozen: 0,
     asleep: 0,
   },
-  // "True" base stats (permanent upgrades are stored here)
+  
   baseStats: {
     attack:    2,
     defense:   2,
@@ -600,7 +591,6 @@ casinoMusic.loop = true;
 	canRowMovement: false,
   },
 
-  // Equipped gear slots
   equipment: {
     weapon:    null,
     armor:     null,
@@ -720,19 +710,6 @@ const equipmentEffects = {
 	  p.defense *= 2;
     }
   },
-  "Mech Armor": p => {
-    if (p.equipment.accessory && p.equipment.accessory.name === "Nuclear Reactor" && p.equipment.weapon && p.equipment.weapon.name === "Mech Arms") {
-	  p.maxArmor *= 3;
-      p.defense *= 2;
-    }
-  },
-  "Nuclear Reactor": p => {
-    if (p.equipment.weapon && p.equipment.weapon.name === "Mech Arms" && p.equipment.armor && p.equipment.armor.name === "Mech Armor") {
-      p.maxMana *= 3;
-	  p.defense *= 2;
-    }
-  },
-  
   "Excalibur": p => {
     p.attack *= 3;
     p.agility  = Math.ceil(p.agility * 2);
@@ -835,14 +812,11 @@ const equipmentEffects = {
 	p.agility *= 2;
 	p.maxArmor += 30;
   },
-  "Armor":      p => {
-	p.defense = Math.ceil(p.defense * 1.5); 
-	p.maxArmor += 25;
-  },
-  "Cloak":      p => {
-    p.defense = Math.ceil(p.defense * 1.3);
-    p.agility = Math.ceil(p.agility * 2);
-	p.maxArmor += 10;
+  "Mech Armor": p => {
+    if (p.equipment.accessory && p.equipment.accessory.name === "Nuclear Reactor" && p.equipment.weapon && p.equipment.weapon.name === "Mech Arms") {
+	  p.maxArmor *= 3;
+      p.defense *= 2;
+    }
   },
   "Mantle":       p => {
     p.defense = Math.ceil(p.defense * 1.25);
@@ -890,6 +864,12 @@ const equipmentEffects = {
 	p.potential = Math.ceil(p.potential * 1.5);
 	p.luck = Math.ceil(p.luck * 1.5);
 	p.fortune = Math.ceil(p.fortune * 1.5);
+  },
+  "Nuclear Reactor": p => {
+    if (p.equipment.weapon && p.equipment.weapon.name === "Mech Arms" && p.equipment.armor && p.equipment.armor.name === "Mech Armor") {
+      p.maxMana *= 3;
+	  p.defense *= 2;
+    }
   },
   "Mobility Rune":      p => {
 	p.dodgeChance = 0.1;
@@ -953,7 +933,6 @@ const EQUIP_AFFECTED_STATS = {
   "Unmaykr": ["attack", "magic", "maxMana"],
   "Doomblade Arm Upgrade": ["attack", "agility", "perception"],
   "Chainshield": ["attack", "defense", "maxArmor"],
-  
 };
 
 const weaponSkillMap = {
@@ -1070,39 +1049,40 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
   this.style.display = "none";
 });
 	  
-	  const badTrapChance = Math.max(0, 0.05  - player.luck * 0.001);
-	  const badAmbushChance  = Math.max(0, 0.10  - player.luck * 0.001);
+const badTrapChance = Math.max(0, 0.05  - player.luck * 0.001);
+const badAmbushChance  = Math.max(0, 0.10  - player.luck * 0.001);
 	  
-      let map = {};
-      const ROOM_TYPES = {
-        BATTLE: "battle",
-        HEALING: "healing",
-        SHOP: "shop",
-        EMPTY: "empty",
-        BOSS: "boss",
-        ALTAR: "altar",
-        CASINO: "casino",
-        AMBUSH: "ambush",
-        LOOT: "loot",
-		TRAP: "trap",
-		GUILD: "guild",
-		CULT: "cult",
-		WARRIOR:  "warrior",
-      };
-      const roomIcons = {
-        battle: "battle.png",
-        healing: "heal.png",
-        shop: "shop.png",
-        boss: "skull.png",
-        altar: "altar.png",
-        casino: "casino.png",
-        ambush: "ambush.png",
-        loot: "loot.png",
-		trap: "trap.png",
-		guild: "guild.png",
-		cult: "cult.png",
-      };
-      const enemies = [{
+let map = {};
+const ROOM_TYPES = {
+	BATTLE: "battle",
+	HEALING: "healing",
+	SHOP: "shop",
+	EMPTY: "empty",
+	BOSS: "boss",
+	ALTAR: "altar",
+	CASINO: "casino",
+	AMBUSH: "ambush",
+	LOOT: "loot",
+	TRAP: "trap",
+	GUILD: "guild",
+	CULT: "cult",
+	WARRIOR:  "warrior",
+};
+const roomIcons = {
+	battle: "battle.png",
+	healing: "heal.png",
+	shop: "shop.png",
+	boss: "skull.png",
+	altar: "altar.png",
+	casino: "casino.png",
+	ambush: "ambush.png",
+	loot: "loot.png",
+	trap: "trap.png",
+	guild: "guild.png",
+	cult: "cult.png",
+};
+const enemies = [
+	  {
         name: "Monster Crow",
         hp: 20,
         damageRange: [2, 4],
@@ -1492,7 +1472,9 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
         damageRange: [9, 17],
         expReward: [10, 12],
         moneyReward: [5, 10]
-      }, {
+      },
+	//Boss-enemies
+  {
     name: "Goblin King",
     hp: 100,
     damageRange: [10, 15],
@@ -1933,9 +1915,9 @@ const bossQueues = {
 	1060: ["Omni", "Demon God", "Black King", "Warden Of Judgement, Will, And Balance"],
 };
 
-      function getBossForFloor(floor) {
-		if (gameDifficulty === "doom") {
-   // Every 50 floors you hit a boss; cycle through these seven
+function getBossForFloor(floor) {
+   if (gameDifficulty === "doom") {
+   // Every 50+ floors you hit a boss; cycle through these bosses
    const bosses = [
      { name: "Behemoth",            hp: 3000,  damageRange: [15, 20],  expReward: [100, 100], moneyReward: [100, 100], },
 	 { name: "Baron of Hell",            hp: 10000,  damageRange: [20, 30],  expReward: [200, 200], moneyReward: [100, 100], },
@@ -1960,6 +1942,7 @@ const bossQueues = {
    return bosses[idx];
  }
  
+ //Every 5+ floors you hit a boss
  if (gameDifficulty === "bossRush") {
 	 const bosses = {
           3: {
@@ -2394,6 +2377,7 @@ const bossQueues = {
 		// If you exceed the highest defined boss, just give the final one
 	return bosses[bossFloors[bossFloors.length - 1]];
 	}
+		//Every 20+ floors you hit a boss
         const bosses = {
           20: {
             name: "Goblin King",
@@ -2988,13 +2972,12 @@ const bossQueues = {
 				return bosses[thresh];
 			}
 		}
-		// If you exceed the highest defined boss, just give the final one
 	return bosses[bossFloors[bossFloors.length - 1]];
 	}
 
       function getAllowedEnemies() {
 		if (gameDifficulty === "doom") {
-			// Only these in Hell:
+			// Only these enemies in Hell:
 			const hellOnly = ["Demon", "Imp", "Archdem﻿on", "Sinner", "Ghoul", "Skeleton", "Possessed Armor", "Mancubus", "Cacodemon", "Gargoyle", "Cyberdemon", "Baron", "Hell Knight"];
 			return enemies.filter(e => hellOnly.includes(e.name));
 		}
@@ -3539,17 +3522,16 @@ let shopItemsList = [
   },
 ];
 
-      /*******************
-       * INITIALIZATION
-       *******************/
-	  function showDifficultyMenu() {
+/*******************
+   INITIALIZATION
+*******************/
+function showDifficultyMenu() {
   document.getElementById("titleScreen").style.display = "none";
   document.getElementById("difficultyMenu").style.display = "block";
   document.getElementById("abilityMenu").style.display   = "none";
   battleTint.style.display = "block";
 }
 
-// Called when player clicks Easy/Normal/Hard
 function selectDifficulty(difficulty) {
   gameDifficulty = difficulty;
   document.getElementById("difficultyMenu").style.display = "none";
@@ -3564,7 +3546,6 @@ function selectDifficulty(difficulty) {
 		if (btn) {
 			btn.style.display = "none";
 			if (stat === "hp") {
-				// also remove the literal "HP: " text node that lives right after the button
 				const txtNode = btn.nextSibling;
 				if (txtNode && txtNode.nodeType === Node.TEXT_NODE) {
 				txtNode.textContent = "";
@@ -3586,13 +3567,9 @@ function selectDifficulty(difficulty) {
     "Demon Slayer",
 	"Heavensent Executioner",
    ];
-   // Pick one at random
    const rand = Math.floor(Math.random() * doomNames.length);
-   // Overwrite the player's chosen ability name
    player.doomAbilities = doomNames[rand];
 
-   // Update whatever UI shows the ability title:
-   // (Use your existing element—here’s a generic example)
    document.getElementById("hudPlayerPassive").textContent = player.doomAbilities;
    document.getElementById("hudPlayerActive" ).innerText = "Rip and Tear";
    initGame();
@@ -3602,7 +3579,6 @@ function selectDifficulty(difficulty) {
   el.innerText = "Arsenal";
   });
 
-// 2) Replace every “Magic:” and “Mana:” label in your stats panel
 const statsEl = document.getElementById("stats");
 if (statsEl) {
   statsEl.innerHTML = statsEl.innerHTML
@@ -3610,20 +3586,16 @@ if (statsEl) {
     .replace(/Mana:/g,  "Ammo:");
 }
 
-// 3) Rename the level‑up menu’s “Magic” button and labels
 const levelUpEl = document.getElementById("levelUpMenu");
 if (levelUpEl) {
-  // button text
   levelUpEl.querySelectorAll('button[data-stat="magic"]').forEach(btn => {
     btn.innerText = "Arsenal";
   });
-  // any inline labels
   levelUpEl.innerHTML = levelUpEl.innerHTML
     .replace(/Magic:/g, "Arsenal:")
     .replace(/Mana:/g,  "Ammo:");
 }
 
-// 4) Make sure your mana‑display now reads “Ammo”
 const manaBtns = document.querySelectorAll('[data-stat="mana"]');
 manaBtns.forEach(el => el.innerText = "Ammo");
 
@@ -3709,7 +3681,6 @@ shopItemsList = [
 	description: "The Slayer's main source of defense.",
   },
 
-  // Equipment (must be equipped to work)
   // ─ Accessories ─
   {
     name: "Mobility Rune",
@@ -3917,7 +3888,7 @@ shopItemsList = [
   },
 ];
    
-   // ——— Doom starting stats override ———
+   // ——— Doom Mode Slayer stats override ———
 const effMaxHp = Math.floor(getEffectiveMaxHp());
 // Core stats
 player.level       = 1;
@@ -3967,7 +3938,7 @@ updateManaDisplay();
    currentWorld = "Hell";
       worldNum     = 666;
       worldName    = "Hell";
-      document.body.style.background = "#b30003";      // Hell-red
+      document.body.style.background = "#b30003";
       const wc = document.getElementById("worldCounter");
       if (wc) wc.textContent = "Hell 666 - 0";
 	  return;
@@ -3980,7 +3951,6 @@ player.guildMissionKills = 0;
  document.getElementById("abilityMenu").style.display   = "block";
 }
 
-// Wire up the difficulty buttons
 document.getElementById("normalBtn").addEventListener("click", () => selectDifficulty("normal"));
 document.getElementById("hardBtn").addEventListener("click", () => selectDifficulty("hard"));
 document.getElementById("extremeBtn").addEventListener("click", () => selectDifficulty("extreme"));
@@ -3996,22 +3966,21 @@ document.getElementById("doomBtn").addEventListener("click", () => {
 });
 document.getElementById("ultimateBtn").addEventListener("click", () => selectDifficulty("ultimate"));
 	   
-      function initGame() {
-		player.x = 0;
-		player.y = 0;
-        createRoom(0, 0, ROOM_TYPES.EMPTY);
-        const startRoom = map["0_0"];
-        startRoom.element.innerHTML = '<div class="player"></div>';
-        centerCamera();
-        generateAdjacentRooms(0, 0);
-		updateManaDisplay();
-		updateStats();
-		applyEquipmentEffects();
-      }
+function initGame() {
+	player.x = 0;
+	player.y = 0;
+	createRoom(0, 0, ROOM_TYPES.EMPTY);
+	const startRoom = map["0_0"];
+	startRoom.element.innerHTML = '<div class="player"></div>';
+	centerCamera();
+	generateAdjacentRooms(0, 0);
+	updateManaDisplay();
+	updateStats();
+	applyEquipmentEffects();
+}
 	  
-  var playButton = document.getElementById("playButton");
-  function weightedRandomSelection(abilities) {
-  // Calculate the cumulative weight.
+var playButton = document.getElementById("playButton");
+function weightedRandomSelection(abilities) {
   let totalWeight = abilities.reduce((sum, ability) => sum + ability.chance, 0);
   let random = Math.random() * totalWeight;
   for (let ability of abilities) {
@@ -4020,72 +3989,56 @@ document.getElementById("ultimateBtn").addEventListener("click", () => selectDif
     }
     random -= ability.chance;
   }
-  return abilities[0].name;  // fallback to the first one
+  return abilities[0].name;
 }
 
 function spinAbilities() {
-  // Randomly select passive and active abilities using the weighted logic.
   const selectedPassive = weightedRandomSelection(passiveAbilities);
   const selectedActive = weightedRandomSelection(activeAbilities);
 
-  // Update the ability selection menu texts.
   document.getElementById("playerPassiveAbility").innerText = selectedPassive;
   document.getElementById("playerActiveAbility").innerText = selectedActive;
 
-  // Also store these abilities in the global player object.
   player.passiveAbility = selectedPassive;
   player.activeAbility = selectedActive;
 
-  // Enable the "Start Game" button now that abilities are set.
   document.getElementById("confirmAbilitiesButton").disabled = false;
 }
 
-// -----------------------------
-// Rolling‐slot effect for Innates
-// -----------------------------
 function startAbilityRoll() {
   const confirmBtn = document.getElementById("confirmAbilitiesButton");
-  // 🔒 Make sure the confirm button is off while we spin
   confirmBtn.disabled = true;
 
-  const duration      = 5000;  // total roll time in ms
-  const startInterval =   10;   // initial flash speed
-  const endInterval   =  300;   // final flash speed
+  const duration      = 5000;
+  const startInterval =   10;
+  const endInterval   =  300;
   let elapsed = 0;
   let interval = startInterval;
 
-  // grab names once
   const passiveNames = passiveAbilities.map(a => a.name);
   const activeNames  = activeAbilities .map(a => a.name);
   const passiveEl    = document.getElementById("playerPassiveAbility");
   const activeEl     = document.getElementById("playerActiveAbility");
 
-  // one flash
   function flash() {
     passiveEl.innerText = passiveNames[Math.floor(Math.random() * passiveNames.length)];
     activeEl .innerText = activeNames [Math.floor(Math.random() * activeNames .length)];
   }
 
-  // recursive step with easing
   function step() {
     flash();
     elapsed += interval;
 
-    // linear ease from start→end
     const t = Math.min(elapsed / duration, 1);
     interval = startInterval + (endInterval - startInterval) * t;
 
     if (elapsed < duration) {
       setTimeout(step, interval);
     } else {
-      // 🔓 now that the roll finished, pick & lock in
       spinAbilities();
-      // spinAbilities() ends by doing:
-      // confirmBtn.disabled = false;
     }
   }
 
-  // kick things off
   step();
 }
 
@@ -4097,7 +4050,6 @@ document.getElementById("spinAbilityButton").addEventListener("click", function 
 	document.getElementById("spinAbilityButton").style.display = "none";
 });	
 
-// When the player confirms abilities and starts the game.
 document.getElementById("confirmAbilitiesButton").addEventListener("click", function () {
   document.getElementById("abilityMenu").style.display = "none";
   document.getElementById("hudPlayerPassive").innerText = player.passiveAbility || "None";
@@ -4115,7 +4067,6 @@ function showClassSelectionMenu() {
   battleTint.style.display = "block";
 }
 
-// 2) Global inline handler from each button:
 function selectClass(cls) {
   player.playerClass = cls;
   applyClassEffects(cls);
@@ -4141,10 +4092,8 @@ function applyClassEffects(cls) {
   switch (cls) {
     case "Swordsman":
       if (w && swordNames.includes(w)) {
-        // +10% with swords
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
-        // -10% with anything else (or no weapon)
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
       break;
@@ -4175,10 +4124,8 @@ function applyClassEffects(cls) {
 
     case "Heavy Knight":
       if (w && heavyNames.includes(w)) {
-        // +10% with warhammer, greatsword, spear
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.10);
       } else {
-        // -10% with any other
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
       player.baseStats.defense = Math.ceil(player.baseStats.defense * 1.10);
@@ -4187,13 +4134,10 @@ function applyClassEffects(cls) {
 
     case "Berserker":
       if (!w) {
-        // +25% with no weapon
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.25);
       } else if (w && gauntletNames.includes(w)) {
-        // +15% with gauntlets
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 1.375);
       } else {
-        // -10% with any other weapon
         player.baseStats.attack = Math.ceil(player.baseStats.attack * 0.90);
       }
       player.baseStats.defense    = Math.ceil(player.baseStats.defense    * 1.05);
@@ -4246,8 +4190,6 @@ window.addEventListener('DOMContentLoaded', () => {
 /*********************
  * Title Screen Handling
  *********************/
-// When the title screen is clicked, instead of immediately starting the game,
-// hide the title screen and show the ability selection menu.
 document.getElementById("playButton").addEventListener("click", () => {
   showDifficultyMenu;
   equipmentBtn.style.display = "flex";
@@ -4263,7 +4205,6 @@ document.getElementById("closeShopBtn").addEventListener("click", () => {
 });
 
 function handleTitleScreenClick() {
-  // 1) play the music under a user gesture
   titleMusic.play().catch((e) => {
 	console.log("Title music playback prevented:", e);
   });
@@ -4281,7 +4222,6 @@ function handleTitleScreenClick() {
   titleScreen.removeEventListener("click", handleTitleScreenClick);
 }
 
-// listen for the very first screen-click
 titleScreen.addEventListener("click", handleTitleScreenClick);
 
 document.getElementById("playButton").addEventListener("click", function () {
@@ -4305,26 +4245,20 @@ function createFadeOverlay() {
   return ov;
 }
 
-// at top of file, alongside other globals:
 let gateAudio;
 
-// Doom-button handler: immediate fade to black → load title behind the curtain → reveal title + play gate music
 document.getElementById("doomBtn").addEventListener("click", () => {
-  // stop the OG title music
   titleMusic.pause();
   titleMusic.currentTime = 0;
 
-  // hide difficulty/ability menus
   document.getElementById("difficultyMenu").style.display = "none";
   document.getElementById("abilityMenu").style.display   = "none";
 
-  // 1) Create full-screen black overlay and fade it in
   const overlay = createFadeOverlay();
   setTimeout(() => {
 	  overlay.style.opacity = "1";
   }, 10);
 
-  // 2) Once it’s fully opaque (1s), show title screen behind it & start gate audio
   setTimeout(() => {
 	document.getElementById("doomTitleScreen").style.display = "flex";
 	
@@ -4365,7 +4299,6 @@ function onDoomTrackEnded() {
 }
 
 document.getElementById("beginJourneyBtn").addEventListener("click", () => {
-  // 1) Fade the gate audio out over 1s
   if (gateAudio) {
     const fadeInterval = setInterval(() => {
       gateAudio.volume = Math.max(0, gateAudio.volume - 0.05);
@@ -4376,7 +4309,6 @@ document.getElementById("beginJourneyBtn").addEventListener("click", () => {
     }, 50);
   }
 
-  // 2) Create a fresh black overlay and fade in to block the title
   const overlay = createFadeOverlay();
   setTimeout(() => {
 		overlay.style.opacity = "1", 20;
@@ -4404,17 +4336,14 @@ document.getElementById("beginJourneyBtn").addEventListener("click", () => {
 });
 
 
-// Play the world background music.
 function playWorldMusic(worldName) {
 	if (gameDifficulty === "doom") {
 		return;
 	}
-  // If the same world's music is already playing, do nothing.
   if (currentBGM && currentWorld === worldName) return;
   if (titleMusic) {
 			titleMusic.pause();
 		}
-  // Pause and save the current background music if one is already playing.
   if (currentBGM) {
     currentBGM.pause();
     if (bgmTracks[currentWorld]) {
@@ -4422,24 +4351,20 @@ function playWorldMusic(worldName) {
     }
   }
 
-  // Set the current world.
   currentWorld = worldName;
   let trackObj = bgmTracks[worldName];
 
-  // Check if the track exists.
   if (!trackObj) {
     console.error("No track defined for world:", worldName);
     return;
   }
 
-  // Retrieve and configure the audio object.
   currentBGM = trackObj.audio;
   currentBGM.currentTime = trackObj.savedTime || 0;
   currentBGM.loop = true;
   currentBGM.play();
 }
 
-// Stop the current world music and save its time.
 function stopWorldMusic() {
 	if (gameDifficulty === "doom") return;
   if (currentBGM) {
@@ -4451,7 +4376,6 @@ function stopWorldMusic() {
   }
 }
 
-// Resume the world music after a battle.
 function resumeWorldMusicAfterBattle() {
   if (currentWorld) {
     let trackObj = bgmTracks[currentWorld];
@@ -4469,16 +4393,16 @@ function resumeWorldMusicAfterBattle() {
   }
 }
 
-      /*******************
-       * ROOM FUNCTIONS
-       *******************/
-	function getBossInterval() {
-		if (gameDifficulty === "doom")     return 50;
-		if (gameDifficulty === "bossRush") return BOSS_RUSH_INTERVAL;
-		return 20;
-	}
+/*******************
+* ROOM FUNCTIONS
+*******************/
+function getBossInterval() {
+	if (gameDifficulty === "doom")     return 50;
+	if (gameDifficulty === "bossRush") return BOSS_RUSH_INTERVAL;
+	return 20;
+}
 
-      function createRoom(x, y, type, options = {}) {
+function createRoom(x, y, type, options = {}) {
     const { disguised = false } = options;
     const key = x + "_" + y;
 
@@ -4536,22 +4460,19 @@ function resumeWorldMusicAfterBattle() {
     };
 }
 	  
-	  // === Constants & Configurations ===
-	  const TRAP_SPAWN_RATE_BASE = 0.05;
-	  const AMBUSH_SPAWN_RATE_BASE = 0.10;
-	  const ALTAR_COOLDOWN_FLOORS = 5;
-	  const FULL_EQUALIZE_LUCK = 100;
+const TRAP_SPAWN_RATE_BASE = 0.05;
+const AMBUSH_SPAWN_RATE_BASE = 0.10;
+const ALTAR_COOLDOWN_FLOORS = 5;
+const FULL_EQUALIZE_LUCK = 100;
 
-	  // Pull non-battle room weights into a constant
-  	  const BASE_NON_BATTLE_WEIGHTS = {
-		[ROOM_TYPES.CASINO]: 14,
-		[ROOM_TYPES.SHOP]:   25,
-		[ROOM_TYPES.LOOT]:   15,
-		[ROOM_TYPES.HEALING]:25,
-		[ROOM_TYPES.EMPTY]:  35
-	  };
+const BASE_NON_BATTLE_WEIGHTS = {
+	[ROOM_TYPES.CASINO]: 14,
+	[ROOM_TYPES.SHOP]:   25,
+	[ROOM_TYPES.LOOT]:   15,
+	[ROOM_TYPES.HEALING]:25,
+	[ROOM_TYPES.EMPTY]:  35
+};
 
-      // === Dynamic Chance Calculators ===
 function getBadTrapChance() {
   return Math.max(0, TRAP_SPAWN_RATE_BASE - player.luck * 0.001);
 }
@@ -4569,7 +4490,6 @@ const DOOM_ALLOWED_ROOMS = [
   ROOM_TYPES.EMPTY,
 ];
 
-// === Updated Room Generation ===
 function generateAdjacentRooms(cx, cy) {
   allowedMoves = [];
   const positions = [
@@ -4578,27 +4498,25 @@ function generateAdjacentRooms(cx, cy) {
     { x: cx + 1, y: cy - 1 }
   ];
   
-  // === Boss Rush mode: only Altars, Shops, Loots & Bosses ===
   if (gameDifficulty === "bossRush") {
     if (floorCount % getBossInterval() === 0 && !bossRoomGenerated) {
-      // spawn the boss room straight ahead
       const bossPos = { x: cx, y: cy - 1 };
       createRoom(bossPos.x, bossPos.y, ROOM_TYPES.BOSS);
       allowedMoves.push(`${bossPos.x}_${bossPos.y}`);
       bossRoomGenerated = true;
       return;
     }
-    // else generate only altar/shop/loot
+	
     positions.forEach(pos => {
       const r = Math.random();
       let type;
-      if (r < 0.6)      type = ROOM_TYPES.ALTAR;  // 60% altar
-      else if (r < 0.8) type = ROOM_TYPES.SHOP;   // 20% shop
-      else              type = ROOM_TYPES.LOOT;   // 20% loot
+      if (r < 0.6)      type = ROOM_TYPES.ALTAR;
+      else if (r < 0.8) type = ROOM_TYPES.SHOP;
+      else              type = ROOM_TYPES.LOOT;
       createRoom(pos.x, pos.y, type);
       allowedMoves.push(`${pos.x}_${pos.y}`);
     });
-    return; // skip the default generator
+    return;
   }
 
   if (floorCount % getBossInterval() === 0 && !bossRoomGenerated) {
@@ -4609,15 +4527,11 @@ function generateAdjacentRooms(cx, cy) {
     return;
   }
 
-  // Track how many battles/traps we've added
   let battleCount = 0;
   let localTrapCount = 0;
   const usedNonBattle = {};
   const luckFactor = Math.min(1, player.luck / FULL_EQUALIZE_LUCK);
 
-  // Build the non-battle pool and weights (we still need
-  // them for Healing, Altar, Ambush etc — we’ll just
-  // force the forbidden ones into NORMAL at the end)
   const baseTypes = Object.keys(BASE_NON_BATTLE_WEIGHTS);
   const avgWeight = baseTypes.reduce((sum, t) =>
     sum + BASE_NON_BATTLE_WEIGHTS[t], 0) / baseTypes.length;
@@ -4631,34 +4545,27 @@ function generateAdjacentRooms(cx, cy) {
   positions.forEach(pos => {
     let type, disguised = false;
 
-    // Warrior—only if NOT Doom
     if (gameDifficulty !== "doom" && Math.random() < 0.15) {
       type = ROOM_TYPES.WARRIOR;
       disguised = true;
     }
-    // Trap (max 2)
     else if (localTrapCount < 2 && Math.random() < getBadTrapChance()) {
       type = ROOM_TYPES.TRAP;
       localTrapCount++;
       if (Math.random() < 0.5) disguised = true;
     }
-    // Battle (max 2)
     else if (battleCount < 2 && Math.random() < 0.5) {
       type = ROOM_TYPES.BATTLE;
       battleCount++;
     }
-    // Healing on even floors
     else if (floorCount % 2 === 0) {
       type = ROOM_TYPES.HEALING;
     }
-    // Altar every ALTAR_COOLDOWN_FLOORS floors
     else if ((floorCount - lastAltarFloor) >= ALTAR_COOLDOWN_FLOORS
              && Math.random() < 0.2) {
       type = ROOM_TYPES.ALTAR;
       lastAltarFloor = floorCount;
     }
-    // Otherwise pick from non-battle pool (including CASINO & GUILD,
-    // we'll override them out next)
     else {
       let rand = Math.random() * totalWeight;
       for (let t of baseTypes) {
@@ -5285,13 +5192,10 @@ if (gameDifficulty !== "doom") {
   updateInventoryDisplay();
 }
 
-      // Returns a valid loot item. If the drop is an equipment and player already has it, re-run the drop.
       function getLootItem(attempts = 0) {
-        // Prevent infinite loops – try up to 5 times.
         if (attempts > 5) return null;
         const randomIndex = Math.floor(Math.random() * shopItemsList.length);
         const item = shopItemsList[randomIndex];
-        // If the item is equipment (unique) and the player already has it, try again.
         if (item.type === "equipment" && hasItem(item.name)) {
           return getLootItem(attempts + 1);
         }
@@ -5308,9 +5212,9 @@ function applyPlayerStatus(type, duration = null) {
       : null;
   }
 }
-      /*******************
-       * MOVEMENT & CAMERA
-       *******************/
+/*******************
+* MOVEMENT & CAMERA
+*******************/
       function moveToRoom(x, y) {
   const key = x + "_" + y;
   if (!allowedMoves.includes(key) && !player.canRowMovement && y !== player.y - 1 && map[key]) {
@@ -5321,7 +5225,6 @@ function applyPlayerStatus(type, duration = null) {
   if (!timerRunning) {
 	startTimer();
   }
-  // Remove player from old room.
   const oldKey = player.x + "_" + player.y;
   if (map[oldKey]) {
     map[oldKey].element.innerHTML = "";
@@ -5334,7 +5237,6 @@ function applyPlayerStatus(type, duration = null) {
 	  map[oldKey].type = ROOM_TYPES.EMPTY;
     }
   }
-  // Update player's position.
   player.x = x;
   player.y = y;
   map[key].element.innerHTML = '<div class="player"></div>';
@@ -5350,7 +5252,6 @@ function applyPlayerStatus(type, duration = null) {
   updateManaDisplay();
   updateInventoryDisplay();
 
-  // Trigger the room event.
   if (map[key].secretAmbush) {
     map[key].secretAmbush = false;
     const img = document.createElement("img");
@@ -5413,10 +5314,9 @@ function applyPlayerStatus(type, duration = null) {
   } else if (map[key].type === ROOM_TYPES.CULT) {
     const inGuild = player.organization === "Guild";
   const inCult  = player.organization === "Cult";
-  const requiredKills = 100; // or use your CULT_MISSIONS[0], etc.
+  const requiredKills = 100;
 
   if (inGuild) {
-    // Guild member stumbles into Cult domain
     const msg = Math.random() < 0.5
       ? "It's the Guild! Guards, get them!"
       : "Who the hell do you think you are? Get 'em boys!";
@@ -5424,12 +5324,10 @@ function applyPlayerStatus(type, duration = null) {
     forceCultAmbush();
     return;
   } else if (inCult) {
-    // Already accepted—always show Cult menu
     showCultMainMenu();
 	finalizeRoom(key);
     return;
   } else {
-    // Not yet worthy: give them a chance (and only now do we do the kill-check logic)
     const choice = confirm(
       "Who are you, and what do you want?\n" +
       "Are you part of the guild or… do you wish to join our cause?\n\n"
@@ -5451,7 +5349,6 @@ function applyPlayerStatus(type, duration = null) {
     } else {
 		alert("Hmm...");
       if (player.monsterKills >= requiredKills) {
-    // Automatically accept once you have enough kills
     alert("I see... welcome to the Clan then, my boy!");
     player.organization = "Cult";
 	player.cultUnlocked = true;
@@ -5505,8 +5402,6 @@ function applyPlayerStatus(type, duration = null) {
     const dmg = Math.ceil(player.maxHP * 0.02);
     player.currentHP = Math.max(0, player.currentHP - dmg);
   }
-  
-  // Finalize the room if none of the above events delay room completion.
   finalizeRoom(key);
 }
 
@@ -5531,54 +5426,51 @@ function finalizeRoom(key) {
   updateBackgroundColor();
 }
 
-      function centerCamera() {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const offsetX = centerX - player.x * roomSize - roomSize / 2;
-        const offsetY = centerY - player.y * roomSize - roomSize / 2;
-        mapDiv.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-      }
-      /*******************
-       * ROOM EFFECTS
-       *******************/
-      function healPlayer() {
-        const effMaxHp = Math.floor(getEffectiveMaxHp());
-		if (gameDifficulty === "normal" || gameDifficulty === "hard" || gameDifficulty === "ultimate") {
-			player.hp = player.hp + Math.floor(effMaxHp * 0.5);
-			if (player.hp > effMaxHp) {
-				player.hp = effMaxHp;
-			}
-		} else if (gameDifficulty === "extreme" || gameDifficulty === "insane" || gameDifficulty === "calamity" || gameDifficulty === "doom") {
-			player.hp = player.hp + Math.floor(effMaxHp * 0.25);
-			if (player.hp > effMaxHp) {
-				player.hp = effMaxHp;
-			}
-		} else {
+function centerCamera() {
+	const centerX = window.innerWidth / 2;
+	const centerY = window.innerHeight / 2;
+	const offsetX = centerX - player.x * roomSize - roomSize / 2;
+	const offsetY = centerY - player.y * roomSize - roomSize / 2;
+	mapDiv.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+}
+/*******************
+* ROOM EFFECTS
+*******************/
+function healPlayer() {
+	const effMaxHp = Math.floor(getEffectiveMaxHp());
+	if (gameDifficulty === "normal" || gameDifficulty === "hard" || gameDifficulty === "ultimate") {
+		player.hp = player.hp + Math.floor(effMaxHp * 0.5);
+		if (player.hp > effMaxHp) {
 			player.hp = effMaxHp;
 		}
-		['burned','poisoned','paralyzed','weakened'].forEach(s => player.statuses[s] = false);
-		updatePlayerStatusUI();
-		player.mana = player.maxMana
-        updateStats();
-		updateManaDisplay();
-      }
+	} else if (gameDifficulty === "extreme" || gameDifficulty === "insane" || gameDifficulty === "calamity" || gameDifficulty === "doom") {
+		player.hp = player.hp + Math.floor(effMaxHp * 0.25);
+		if (player.hp > effMaxHp) {
+			player.hp = effMaxHp;
+		}
+	} else {
+		player.hp = effMaxHp;
+	}
+	['burned','poisoned','paralyzed','weakened'].forEach(s => player.statuses[s] = false);
+	updatePlayerStatusUI();
+	player.mana = player.maxMana
+	updateStats();
+	updateManaDisplay();
+}
 	  
-	  /*******************
-       * CULT SHIT
-       *******************/
+/*******************
+* CULT SHIT
+*******************/
 
 function forceCultAmbush(key) {
-  // Mark we used a skill, switch music
   skillUsedThisBattle = true;
   stopWorldMusic();
   warriorTrack.play();
 
-  // Clear & show log + tint
   battleLog.innerHTML     = "";
   battleLog.style.display = "block";
   battleTint.style.display= "block";
 
-  // Build 2–3 Cult Member clones
   ambushActive = true;
   ambushEnemiesQueue = [];
   const count = 2 + Math.floor(Math.random() * 2);
@@ -5606,9 +5498,6 @@ function forceCultAmbush(key) {
   startNextAmbush();
 }
 
-/**
- * Starts a Guild ambush: 2–3 Warriors in a row.
- */
 function forceGuildAmbush(key) {
   skillUsedThisBattle = true;
   stopWorldMusic();
@@ -5647,21 +5536,17 @@ function forceGuildAmbush(key) {
 
 function startNextAmbush() {
   if (ambushEnemiesQueue.length === 0) {
-    // all waves done
     battleTint.style.display = "none";
     return;
   }
 
-  // 1) Pop next enemy
   currentEnemy = ambushEnemiesQueue.shift();
 
-  // 2) Randomize its level around the player’s
   const minLv = Math.max(player.level - 2, 1);
   const maxLv = player.level + 2;
   const lvl   = Math.floor(Math.random() * (maxLv - minLv + 1)) + minLv;
   currentEnemy.level = lvl;
 
-  // 3) Scale HP by ~5% per level difference
   if (currentEnemy.baseMaxHp === undefined) {
     currentEnemy.baseMaxHp = currentEnemy.hp;
   }
@@ -5670,15 +5555,12 @@ function startNextAmbush() {
   currentEnemy.hp    = newHp;
   currentEnemy.maxHp = newHp;
 
-  // 4) Reset log & statuses
   battleLog.innerHTML = "";
-  // (If you clear status icons separately, do it here.)
 
-  // 5) Show UI & enable actions
   battleTint.style.display    = "block";
-  updateEnemyInfo();           // draws name, HP bar, statuses… :contentReference[oaicite:0]{index=0}
+  updateEnemyInfo();
   battleMenu.style.display    = "block";
-  unlockActions();             // Attack/Magic/Items…
+  unlockActions();
 }
 
 function onEnemyDefeated() {
@@ -5699,12 +5581,10 @@ function onEnemyDefeated() {
 function showCultMainMenu() {
   updateCultRankUI();
 
-  // 3) Display the Cult menu + tint
   const cultMenu = document.getElementById("cultMenu");
   cultMenu.style.display = "block";
   battleTint.style.display = "block";
 
-  // 4) Wire up the buttons inside the menu
   document.getElementById("closeCultMenu").onclick = () => {
     cultMenu.style.display = "none";
     battleTint.style.display = "none";
@@ -5749,7 +5629,6 @@ function handleCultMission() {
       alert("You have completed all objectives!");
       return;
     }
-    // reward
 	const req   = getCurrentCultRequirement();
     const idx   = player.cultMissionStage - 1;
     const bonus = CULT_BONUSES[idx];
@@ -5794,13 +5673,12 @@ function updateCultMissionProgress() {
     counterEl.innerText = `${player.cultKills}/${req}`;
   }
 }	
-	  /*******************
-       * GUILD SHIT
-       *******************/
+/*******************
+* GUILD SHIT
+*******************/
 	  
 function showGuildApplicationPrompt() {
   let input = prompt("Welcome to the Guild! Please pay $500 if you wish to apply!");
-  // If the player cancels or inputs nothing, assume they’re choosing to leave.
   if (input === null) {
     alert("We hope you reconsider applying!");
     return;
@@ -5826,7 +5704,6 @@ function getGuildRank() {
 }
 
 function updateGuildRankUI() {
-  // update every occurrence of the guild‑rank text (HUD + guild modal)
   const els = document.querySelectorAll('#guildRankText');
   els.forEach(el => {
     if (!player.guildUnlocked) {
@@ -5848,7 +5725,6 @@ function getGuildBonuses() {
     { damage: 0.20, hp: 0.35 },
     { damage: 0.25, hp: 0.50 }
   ];
-  // Ensure that player.guildMissionStage falls within the array bounds.
   let index = player.guildMissionStage;
   if (index < 0) index = 0;
   if (index >= guildBonus.length) index = guildBonus.length - 1;
@@ -5856,14 +5732,12 @@ function getGuildBonuses() {
 }
 
 function showGuildMainMenu() {
-  // Make sure the guild menu (defined in your HTML) is visible, and update its rank text
   const guildMenu = document.getElementById("guildMenu");
   updateGuildRankUI();
 
   const hireMercenaryBtn = document.getElementById("hireMercenaryButton");
   const closeBtn = document.getElementById("closeGuildMenu");
 
-  // Remove any existing event listeners by reassigning the onclick properties
   document.getElementById("missionButton").onclick = handleMission;
   hireMercenaryBtn.onclick = handleHireMercenary;
   closeBtn.onclick = function() {
@@ -5871,7 +5745,6 @@ function showGuildMainMenu() {
 	document.getElementById("battleTint").style.display = "none";
   };
 
-  // Display the guild menu.
   guildMenu.style.display = "block";
   document.getElementById("battleTint").style.display = "block";
 }
@@ -5882,7 +5755,6 @@ function getCurrentMissionRequirement() {
 }
 
 function setMissionUI() {
-  // Assume you use the #missionDisplay element (already present in your HTML)
   let missionDisplay = document.getElementById("missionDisplay");
   let req = getCurrentMissionRequirement();
   missionDisplay.innerHTML = `<p>Mission: Hunt ${req} enemies</p><p id="missionCounter">0/${req}</p>`;
@@ -5890,13 +5762,11 @@ function setMissionUI() {
 }
 
 function handleMission() {
-  // If a mission is in progress but incomplete, do not allow a new one to start.
   if (player.guildMissionStage > 0 && player.guildMissionKills < getCurrentMissionRequirement()) {
     alert("Complete your current task!");
     return;
   }
   
-  // If a mission was just completed...
   if (player.guildMissionStage > 0 && player.guildMissionKills >= getCurrentMissionRequirement()) {
     if (player.guildMissionStage === 7) {
       alert("You have completed all missions!");
@@ -5916,9 +5786,8 @@ function handleMission() {
     return;
   }
   
-  // If no mission has been started yet:
   if (player.guildMissionStage === 0 && player.guildMissionKills === 0) {
-    player.guildMissionStage = 1;  // start first mission
+    player.guildMissionStage = 1;
     setMissionUI();
   }
 }
@@ -5937,7 +5806,6 @@ function updateGuildMissionProgress() {
 }
 
 function handleHireMercenary() {
-  // Prompt the player for hiring a mercenary.
   let choice = confirm("Hire Mercenary for $200? Press OK to pay, Cancel for Nevermind.");
   if (!choice) {
     return;
@@ -5953,40 +5821,39 @@ function handleHireMercenary() {
 
 function createMercenary() {
   return {
-    // Base damage is half the player's current attack.
     baseDamage: player.attack / 2,
     critChance: 0.10,
     dodgeChance: 0.5,
   };
 }
 
-      /*******************
-       * BATTLE MECHANICS
-       *******************/
-      const enemyDodgeChance = 0.05;
+/*******************
+* BATTLE MECHANICS
+*******************/
+const enemyDodgeChance = 0.05;
 	  
-      function startBattle() {
-		preBattleStats = {
-			attack:        player.attack,
-			magic:        player.magic,
-			defense:      player.defense,
-			agility:       player.agility,
-			perception:   player.perception,
-			critMultiplier: player.critMultiplier,
-			critChance:    player.critChance || 0,
-		};
-		player.weaponSkill.usedThisBattle = false;
-		skillUsedThisBattle = true;
-        battleLog.innerHTML = "";
-        battleLog.style.display = "block";
-        battleTint.style.display = "block";
-		turnNumber = 1;
-		logBattle("----------Turn " + turnNumber + "----------");
-		unlockActions();
-        let allowedEnemies = getAllowedEnemies();
-        currentEnemy = JSON.parse(JSON.stringify(allowedEnemies[Math.floor(Math.random() * allowedEnemies.length)]));
-		let floorBoost = 1 + floorCount * 0.1;
-	    let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
+function startBattle() {
+	preBattleStats = {
+		attack:        player.attack,
+		magic:        player.magic,
+		defense:      player.defense,
+		agility:       player.agility,
+		perception:   player.perception,
+		critMultiplier: player.critMultiplier,
+		critChance:    player.critChance || 0,
+	};
+	player.weaponSkill.usedThisBattle = false;
+	skillUsedThisBattle = true;
+	battleLog.innerHTML = "";
+	battleLog.style.display = "block";
+	battleTint.style.display = "block";
+	turnNumber = 1;
+	logBattle("----------Turn " + turnNumber + "----------");
+	unlockActions();
+	let allowedEnemies = getAllowedEnemies();
+	currentEnemy = JSON.parse(JSON.stringify(allowedEnemies[Math.floor(Math.random() * allowedEnemies.length)]));
+	let floorBoost = 1 + floorCount * 0.1;
+	let floorBonus = Math.max( Math.floor((floorCount / 10) * floorBoost), 1 );
 
 if (gameDifficulty === "normal") {
     currentEnemy.hp = Math.ceil(currentEnemy.hp * floorBonus) + Math.ceil(10 * floorBonus * (player.level / floorCount));
@@ -6025,31 +5892,31 @@ if (gameDifficulty === "normal") {
         currentEnemy.damageRange[1] + Math.round(4 * floorBonus * (player.level / floorCount))
     ];
 }
-        let rewardMultiplier = Math.pow(1.5, floorBonus);
-        currentEnemy.expReward = [currentEnemy.expReward[0] * rewardMultiplier, currentEnemy.expReward[1] * rewardMultiplier];
-        currentEnemy.moneyReward = [currentEnemy.moneyReward[0] , currentEnemy.moneyReward[1]];
-        currentEnemy.poison = false;
-		currentEnemy.frozen = 0;
-		currentEnemy.burned = false;
-        currentEnemy.weaken = false;
-		currentEnemy.paralyzed = false;
-		currentEnemy.asleep = 0;
-        player.rage = false;
-        player.iron = false;
-        const minLv = Math.max(player.level - 3, 1);
-        const maxLv = player.level + 5;
-        const enemyLevel = Math.floor(Math.random() * (maxLv - minLv + 1)) + minLv;
-        currentEnemy.level = enemyLevel;
-        if (currentEnemy.baseMaxHp === undefined) {
-          currentEnemy.baseMaxHp = currentEnemy.hp;
-        }
-        const levelDiff = enemyLevel - player.level;
-        const scale = 1 + 0.05 * levelDiff;
-        const newHp = Math.max(1, Math.round(currentEnemy.baseMaxHp * scale));
-        currentEnemy.hp = currentEnemy.maxHp = newHp;
-        updateEnemyInfo();
-        battleMenu.style.display = "block";
-      }
+	let rewardMultiplier = Math.pow(1.5, floorBonus);
+	currentEnemy.expReward = [currentEnemy.expReward[0] * rewardMultiplier, currentEnemy.expReward[1] * rewardMultiplier];
+	currentEnemy.moneyReward = [currentEnemy.moneyReward[0] , currentEnemy.moneyReward[1]];
+	currentEnemy.poison = false;
+	currentEnemy.frozen = 0;
+	currentEnemy.burned = false;
+	currentEnemy.weaken = false;
+	currentEnemy.paralyzed = false;
+	currentEnemy.asleep = 0;
+	player.rage = false;
+	player.iron = false;
+	const minLv = Math.max(player.level - 3, 1);
+	const maxLv = player.level + 5;
+	const enemyLevel = Math.floor(Math.random() * (maxLv - minLv + 1)) + minLv;
+	currentEnemy.level = enemyLevel;
+	if (currentEnemy.baseMaxHp === undefined) {
+		currentEnemy.baseMaxHp = currentEnemy.hp;
+	}
+	const levelDiff = enemyLevel - player.level;
+	const scale = 1 + 0.05 * levelDiff;
+	const newHp = Math.max(1, Math.round(currentEnemy.baseMaxHp * scale));
+	currentEnemy.hp = currentEnemy.maxHp = newHp;
+	updateEnemyInfo();
+	battleMenu.style.display = "block";
+}
 	  
 function handleWarriorRoom(key) {
   let fight = confirm(
@@ -6059,25 +5926,20 @@ function handleWarriorRoom(key) {
   
   let alias = "Warrior";
 
-  // We'll only set ambushCompleteCallback if a fight/ambush is actually launched.
   let launchedAmbush = false;
 
   if (fight) {
-    // player chose to fight; this launches the warrior battle and marks an ambush context
     startWarriorBattle();
     launchedAmbush = true;
   } else {
-    // passing by: 10% chance they still attack (50% if Cult)
     const fightChance = player.organization === "Cult" ? 0.5 : 0.1;
     if (Math.random() < fightChance) {
-      // name alias distribution
       const r2 = Math.random();
       if (player.organization === "Cult") {
         if (r2 < 0.67) alias = "Warrior";
         else if (r2 < 0.835) alias = "Outlaw";
         else alias = "Bandit";
       } else {
-        // original 40/40/20 split
         if (r2 < 0.4) alias = "Outlaw";
         else if (r2 < 0.8) alias = "Bandit";
         else alias = "Cult Member";
@@ -6086,7 +5948,6 @@ function handleWarriorRoom(key) {
       startWarriorBattle(alias);
       launchedAmbush = true;
     } else {
-      // no ambush — finalize room and ensure no lingering ambush callback
       finalizeRoom(key);
       ambushCompleteCallback = null;
       ambushActive = false;
@@ -6095,7 +5956,6 @@ function handleWarriorRoom(key) {
     }
   }
 
-  // If we launched an ambush/fight, create an ambush completion callback tied to this room key.
   if (launchedAmbush) {
     ambushCallbackRoomKey = key;
     ambushCompleteCallback = () => {
@@ -6162,7 +6022,6 @@ function startWarriorBattle(nameOverride) {
       boss:        true,
       ambushActive:true,
     };
-    // launch via ambush flow
     ambushEnemiesQueue = [ warrior ];
     currentEnemy        = ambushEnemiesQueue.shift();
     const minLv = Math.max(player.level - 3, 1);
@@ -6176,7 +6035,6 @@ function startWarriorBattle(nameOverride) {
         const scale = 1 + 0.05 * levelDiff;
         const newHp = Math.max(1, Math.round(currentEnemy.baseMaxHp * scale));
         currentEnemy.hp = currentEnemy.maxHp = newHp;
-        // ───────────────────────────────────────────────────────────────
     updateEnemyInfo();
     battleMenu.style.display = "block";
     unlockActions();
@@ -6185,9 +6043,7 @@ function startWarriorBattle(nameOverride) {
 function handleBossRoom(key) {
   const floor = floorCount;
 
-  // === 1) GLOBAL SKIP: No bosses ever in doom or bossRush modes ===
   if (gameDifficulty === "doom" || gameDifficulty === "bossRush") {
-    // Just clear the room and move on—no boss fight
     startBossBattle(() => finalizeRoom(key));
     generateAdjacentRooms(player.x, player.y);
     return;
@@ -6284,33 +6140,27 @@ function handleBossRoom(key) {
     return;
   }
 
-  // === 2) SKIP AMBUSH on special floors 820, 920, 940 ===
   const skipAmbushFloors = [820, 920, 940];
   if (skipAmbushFloors.includes(floor)) {
-    // Directly start the boss, no minions
     startBossBattle(() => finalizeRoom(key));
     generateAdjacentRooms(player.x, player.y);
     return;
   }
 
-  // === 3) NORMAL FLOW: Check for a bossQueue ambush ===
   const queueNames = bossQueues[floor] || [];
   if (Array.isArray(queueNames) && queueNames.length > 0) {
-    // Flavor alert
     ambushActive = true;
     alert("You manage to find the Boss room, however, a few of its minions stand in your way.");
 
-    // Build ambush queue
     ambushEnemiesQueue = queueNames.map(name => {
       const template = enemies.find(e => e.name === name);
       if (!template) {
         console.warn(`Unknown enemy “${name}” in bossQueues[${floor}]`);
         return {...getDummyEnemy(name)};
       }
-      return JSON.parse(JSON.stringify(template)); // deep copy
+      return JSON.parse(JSON.stringify(template));
     });
 
-    // When ambush clears, kick off boss battle
     ambushCompleteCallback = () => {
       startBossBattle(() => finalizeRoom(key));
       generateAdjacentRooms(player.x, player.y);
@@ -6320,12 +6170,10 @@ function handleBossRoom(key) {
     return;
   }
 
-  // === 4) NO QUEUE? Final boss directly ===
   startBossBattle(() => finalizeRoom(key));
   generateAdjacentRooms(player.x, player.y);
 }
 
-// Helper for dummy fallback (you can keep your original if you prefer)
 function getDummyEnemy(name) {
   return {
     name,
@@ -6339,7 +6187,7 @@ function getDummyEnemy(name) {
   };
 }
 
-      function startBossBattle(onComplete) {
+function startBossBattle(onComplete) {
   let bossTemplate = getBossForFloor(floorCount);
   let bossData = JSON.parse(JSON.stringify(bossTemplate));
   currentEnemy = JSON.parse(JSON.stringify(bossData));
@@ -6409,7 +6257,6 @@ function getDummyEnemy(name) {
   bossTemplate = getBossForFloor(floorCount);
   
   if (gameDifficulty === "doom") {
-    // lock BGM to Hell
     stopWorldMusic();
     if (bossTemplate.name === "The Dark Lord, Davoth") {
       dkTrack.currentTime = 0;
@@ -6418,10 +6265,7 @@ function getDummyEnemy(name) {
       bgmTracks["Hell"].audio.loop = true;
       bgmTracks["Hell"].audio.play();
     }
-    // Clone it so we don’t mangle the template
     bossData = JSON.parse(JSON.stringify(bossTemplate));
-
-    // Apply your usual floor‐scaling (same as normal)
     const floorBoost = 1 + floorCount * 0.1;
     const floorBonus = Math.max(Math.floor((floorCount / 10) * floorBoost), 1);
 
@@ -6435,7 +6279,6 @@ function getDummyEnemy(name) {
     bossData.expReward = [bossData.expReward[0] * rewardMultiplier, bossData.expReward[1] * rewardMultiplier];
     bossData.moneyReward = [bossData.moneyReward[0] * rewardMultiplier, bossData.moneyReward[1] * rewardMultiplier];
 
-    // Finalize currentEnemy
     currentEnemy.boss  = true;
     currentEnemy.poison = false;
     currentEnemy.burned = false;
@@ -6445,7 +6288,6 @@ function getDummyEnemy(name) {
 	currentEnemy.asleep = 0;
     currentEnemy.maxHp  = currentEnemy.hp;
 
-    // Show battle UI
     let bossLevel = player.level + 10;
 	currentEnemy.level = bossLevel;
 	if (currentEnemy.baseMaxHp === undefined) {
@@ -6462,7 +6304,6 @@ function getDummyEnemy(name) {
     battleTint.style.display = "block";
     battleMenu.style.display = "block";
 
-    // Kick off first enemy turn
     setTimeout(enemyTurnWrapper, 250);
     return;
   } else {
@@ -6543,10 +6384,9 @@ function getDummyEnemy(name) {
   battleLog.style.display = "block";
   battleTint.style.display = "block";
 
-  // Instead of simply unlocking actions, call the enemy turn wrapper after a delay
   setTimeout(enemyTurnWrapper, 250);
   }
-	  }
+}
   
       /*******************
        * AMBUSH BATTLE SYSTEM
@@ -6629,7 +6469,6 @@ if (gameDifficulty === "normal") {
     ambushEnemiesQueue.push(e);
   }
 
-  // start with the first enemy
   currentEnemy = ambushEnemiesQueue.shift();
   const minLv = Math.max(player.level - 3, 1);
         const maxLv = player.level + 5;
@@ -6652,65 +6491,61 @@ function getEnemyByName(enemyName) {
   return enemies.find(e => e.name.toLowerCase() === enemyName.toLowerCase());
 }
 
-      function updateEnemyInfo() {
-        let name = currentEnemy.name;
-        if (currentEnemy.poison) name += " - Poisoned";
-		if (currentEnemy.frozen) name += " - Frozen";
-		if (currentEnemy.burned) name += " - Burned";
-        if (currentEnemy.weaken) name += " - Weakened";
-		if (currentEnemy.paralyzed) name += " - Paralyzed";
-		if (currentEnemy.asleep) name += " - Asleep";
-        enemyInfo.innerHTML = `
-			<h3>${name}</h3>
-			<p class="enemy-level">Level ${currentEnemy.level}</p>
-			<p>HP: ${currentEnemy.hp} / ${currentEnemy.maxHp}</p>`;
-      }
+function updateEnemyInfo() {
+	let name = currentEnemy.name;
+	if (currentEnemy.poison) name += " - Poisoned";
+	if (currentEnemy.frozen) name += " - Frozen";
+	if (currentEnemy.burned) name += " - Burned";
+	if (currentEnemy.weaken) name += " - Weakened";
+	if (currentEnemy.paralyzed) name += " - Paralyzed";
+	if (currentEnemy.asleep) name += " - Asleep";
+	enemyInfo.innerHTML = `<h3>${name}</h3>	<p class="enemy-level">Level ${currentEnemy.level}</p> <p>HP: ${currentEnemy.hp} / ${currentEnemy.maxHp}</p>`;
+}
 
-      function endBattle() {
-		  const defeatedBoss = currentEnemy && currentEnemy.boss && currentEnemy.hp <= 0 ? currentEnemy.name : null;
-		  const enemyName = currentEnemy.name;
-		killCount++;
-		  // only count true monsters
-		  if (!["Warrior","Outlaw","Bandit","Cult Member"].includes(enemyName)) {
-			  player.monsterKills++;
-			  if (player.organization==="Guild") updateGuildMissionProgress();
-		  } else {
-			  if (player.organization==="Cult") updateCultMissionProgress();
-		  }
+function endBattle() {
+  const defeatedBoss = currentEnemy && currentEnemy.boss && currentEnemy.hp <= 0 ? currentEnemy.name : null;
+  const enemyName = currentEnemy.name;
+  killCount++;
+  if (!["Warrior","Outlaw","Bandit","Cult Member"].includes(enemyName)) {
+	player.monsterKills++;
+	if (player.organization==="Guild") updateGuildMissionProgress();
+  } else {
+	if (player.organization==="Cult") updateCultMissionProgress();
+  }
 		  
-		  if (preBattleStats.attack !== undefined) {
-			  player.attack        = preBattleStats.attack;
-			  player.defense        = preBattleStats.defense;
-			  player.agility       = preBattleStats.agility;
-			  player.critMultiplier = preBattleStats.critMultiplier;
-			  player.critChance    = preBattleStats.critChance;
-			  player.rage          = false;
-			  player.iron          = false;
-			  preBattleStats = {};
-		  }
+  if (preBattleStats.attack !== undefined) {
+	player.attack        = preBattleStats.attack;
+	player.defense        = preBattleStats.defense;
+	player.agility       = preBattleStats.agility;
+	player.critMultiplier = preBattleStats.critMultiplier;
+	player.critChance    = preBattleStats.critChance;
+	player.rage          = false;
+	player.iron          = false;
+	preBattleStats = {};
+  }
   
-		  if (preBattleStats.defense !== undefined) {
-			player.attack        = preBattleStats.attack;
-			player.defense        = preBattleStats.defense;
-			player.agility       = preBattleStats.agility;
-			player.critMultiplier = preBattleStats.critMultiplier;
-			player.critChance    = preBattleStats.critChance;
-			player.rage          = false;
-			player.iron          = false;
-			preBattleStats = {};
-		  }
-		  player.statuses.frozen = 0;
-		  player.statuses.asleep = 0;
-		  updatePlayerStatusUI();
+  if (preBattleStats.defense !== undefined) {
+	player.attack        = preBattleStats.attack;
+	player.defense        = preBattleStats.defense;
+	player.agility       = preBattleStats.agility;
+	player.critMultiplier = preBattleStats.critMultiplier;
+	player.critChance    = preBattleStats.critChance;
+	player.rage          = false;
+	player.iron          = false;
+	preBattleStats = {};
+  }
+  player.statuses.frozen = 0;
+  player.statuses.asleep = 0;
+  updatePlayerStatusUI();
   
-		  if (defeatedBoss === "Demon King") {
-			alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
-			alert("You stand pridefully on top of the Demon King's corpse as you become the hero and saviour of the world, when suddenly, a bright flash of light blinds you.");
-			alert("''Greetings human, congratulations on coming this far. Find me, and I shall finally test you for myself''.");
-		  }
-		  if (defeatedBoss === "Omni") {
-			alert("As you land the finishing blow, you suddenly feel as if the world shifted... no, reality shifted. A bright flash of light then blinds you once again, as you realize you're back in a familiar place, but... it's different, somhow.");
-		  }
+  if (defeatedBoss === "Demon King") {
+	alert("As you kill the Demon King, you take a deep sigh of relief as you realize you've finally beaten the final Legend, the strongest monster of this world.");
+	alert("You stand pridefully on top of the Demon King's corpse as you become the hero and saviour of the world, when suddenly, a bright flash of light blinds you.");
+	alert("''Greetings human, congratulations on coming this far. Find me, and I shall finally test you for myself''.");
+  }
+  if (defeatedBoss === "Omni") {
+	alert("As you land the finishing blow, you suddenly feel as if the world shifted... no, reality shifted. A bright flash of light then blinds you once again, as you realize you're back in a familiar place, but... it's different, somhow.");
+  }
   if (defeatedBoss === "Abominable Snowman") {
 	alert("You find an ancient, abandoned port near the frozen shore. You explore it and find a boat. You meddle around and somehow got it to work as you then hop on and resume your journey, through the sea.");
   }
@@ -6735,7 +6570,6 @@ function getEnemyByName(enemyName) {
 	alert("Your entire body aches as you fall to the ground. But you get back up, as you start to get a positive feeling this time, that your journey is finally coming to an end.");
   }
   if (defeatedBoss === "King God General Emperor, Supreme Divine Entity of Ultimacy, Archangel & Creator, Gabriel") {
-    // 1) Fade screen to black
     const overlay = document.createElement('div');
     overlay.id = 'endingOverlay';
     Object.assign(overlay.style, {
@@ -6747,15 +6581,12 @@ function getEnemyByName(enemyName) {
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.style.opacity = '1');
 
-    // 2) After fade-out, show image + text + choices
     overlay.addEventListener('transitionend', function onFade() {
       overlay.removeEventListener('transitionend', onFade);
-      // Set background to ending image
       Object.assign(overlay.style, {
         background: black,
         opacity: 1, transition: ''
       });
-      // Create text container
       const text = document.createElement('div');
       Object.assign(text.style, {
         position: 'absolute', bottom: '10%', left: '50%',
@@ -6768,7 +6599,6 @@ function getEnemyByName(enemyName) {
         `Will thou accept?`;
       overlay.appendChild(text);
 
-      // Create Accept/Reject buttons
       const btnContainer = document.createElement('div');
       Object.assign(btnContainer.style, { marginTop: '20px' });
       const btnYes = document.createElement('button');
@@ -6781,18 +6611,15 @@ function getEnemyByName(enemyName) {
       });
       overlay.appendChild(btnContainer);
 
-      // Accept: remove overlay and continue game
       btnYes.onclick = () => {
         overlay.remove();
         currentEnemy = null;
         resumeWorldMusicAfterBattle();
 		gameDifficulty = "ultimate";
       };
-      // Reject: reload game
       btnNo.onclick = () => location.reload();
     });
 
-    // Skip the normal clean-up
     return;
   }
   
@@ -6801,7 +6628,6 @@ function getEnemyByName(enemyName) {
   battleTint.style.display = "none";
   inventoryMenu.style.display = "none";
   
-   // reward the player if the enemy died
    if (currentEnemy && currentEnemy.hp <= 0) {
     let gloryKill = false;
     if (gameDifficulty === "doom" && Math.random() < 0.2) {
@@ -6811,7 +6637,6 @@ function getEnemyByName(enemyName) {
       alert(`${currentEnemy.name} defeated!`);
     }
 
-    // ——— compute and apply rewards ———
 	 let bossTemplate = getBossForFloor(floorCount);
 	 let bossData = JSON.parse(JSON.stringify(bossTemplate));
      let gainedExp, gainedMoney;
@@ -6826,7 +6651,6 @@ function getEnemyByName(enemyName) {
        let [minM, maxM] = currentEnemy.moneyReward;
        gainedMoney = Math.floor(Math.random() * (maxM - minM + 1)) + minM;
      }
-    // double rewards on glory kill
     if (gloryKill) {
       gainedExp   *= 2;
       gainedMoney *= 2;
@@ -6834,77 +6658,74 @@ function getEnemyByName(enemyName) {
      addExp(gainedExp);
      player.money = Math.round(player.money + gainedMoney * Math.round(1 + player.fortune * 0.08));
  
-     // armor regeneration
     let armorHealAmt = Math.round(Math.random() * (20 - 10 + 1)) + 10;
-    // double armor heal on glory kill
     if (gloryKill) armorHealAmt *= 2;
 	if (gameDifficulty === "doom") {
        if (player.baseStats.maxArmor >= 50) {
         let armorHealAmt = Math.round(Math.random() * (20 - 10 + 1)) + 10;
         let heal = armorHealAmt;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 100) {
         let armorHealAmt = Math.round(Math.random() * (30 - 10 + 1)) + 10;
         let heal = Math.round((armorHealAmt/20)*30);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 200) {
         let armorHealAmt = Math.round(Math.random() * (50 - 30 + 1)) + 30;
         let heal = Math.round((armorHealAmt/20)*50);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 300) {
         let armorHealAmt = Math.round(Math.random() * (75 - 35 + 1)) + 35;
         let heal = Math.round((armorHealAmt/20)*75);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 500) {
         let armorHealAmt = Math.round(Math.random() * (125 - 50 + 1)) + 50;
         let heal = Math.round((armorHealAmt/20)*125);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else {
         let armorHealAmt = Math.round(Math.random() * (10 - 2 + 1)) + 5;
         let heal = Math.round((armorHealAmt/20)*10);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        }
      } else {
 		if (player.baseStats.maxArmor >= 100) {
         let armorHealAmt = Math.round(Math.random() * (20 - 10 + 1)) + 10;
         let heal = armorHealAmt;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 200) {
         let armorHealAmt = Math.round(Math.random() * (30 - 10 + 1)) + 10;
         let heal = Math.round((armorHealAmt/20)*30);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 300) {
         let armorHealAmt = Math.round(Math.random() * (50 - 30 + 1)) + 30;
         let heal = Math.round((armorHealAmt/20)*50);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 500) {
         let armorHealAmt = Math.round(Math.random() * (75 - 35 + 1)) + 35;
         let heal = Math.round((armorHealAmt/20)*75);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else if (player.baseStats.maxArmor >= 700) {
         let armorHealAmt = Math.round(Math.random() * (125 - 50 + 1)) + 50;
         let heal = Math.round((armorHealAmt/20)*125);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        } else {
         let armorHealAmt = Math.round(Math.random() * (10 - 2 + 1)) + 5;
         let heal = Math.round((armorHealAmt/20)*10);
         if (gloryKill) heal *= 2;
-         player.armor = Math.min(player.armor + heal, player.maxArmor);
+        player.armor = Math.min(player.armor + heal, player.maxArmor);
        }
 	 }
      updateStats();
    }
 
-  // if more ambush enemies remain, queue the next one
   if (ambushEnemiesQueue && ambushEnemiesQueue.length > 0) {
     currentEnemy = ambushEnemiesQueue.shift();
     logBattle("Next enemy appears!");
@@ -6927,8 +6748,7 @@ function getEnemyByName(enemyName) {
     return;
   }
 
-    ambushActive = true;
-  // if this was an ambush, fire the finalizeRoom callback
+  ambushActive = true;
   if (ambushCompleteCallback && ambushActive) {
     const cb = ambushCompleteCallback;
     ambushCompleteCallback = null;
@@ -6959,7 +6779,6 @@ function getEnemyByName(enemyName) {
     return;
   }
   
-  // otherwise, normal battle cleanup
   currentEnemy = null;
   ambushTrack.pause();
   ambushTrack.currentTime = 0;
@@ -6986,170 +6805,165 @@ function getEnemyByName(enemyName) {
   }
 }
 
-	   /*******************
-       * PLAYER ATTACK SYSTEM
-       *******************/
+/*******************
+* PLAYER ATTACK SYSTEM
+*******************/
 
-      function playerAttack(moveType) {
-        if (!currentEnemy) return;
-        if (!player.neverMiss && Math.random() < enemyDodgeChance) {
-          logBattle(`${currentEnemy.name} dodged your attack!`);
-		  if (player.passiveAbility === "Relentless") {
-    // reset stats to pre-battle values on a miss
-    player.attack  = preBattleStats.attack;
-    player.magic   = preBattleStats.magic;
-    player.defense = preBattleStats.defense;
-    logBattle("<em>You lost momentum!</em>");
-    updateStats();
+function playerAttack(moveType) {
+  if (!currentEnemy) return;
+  if (!player.neverMiss && Math.random() < enemyDodgeChance) {
+	logBattle(`${currentEnemy.name} dodged your attack!`);
+	if (player.passiveAbility === "Relentless") {
+	  player.attack  = preBattleStats.attack;
+	  player.magic   = preBattleStats.magic;
+	  player.defense = preBattleStats.defense;
+	  logBattle("<em>You lost momentum!</em>");
+	  updateStats();
+	}
+	setTimeout(enemyTurnWrapper, 0);
+	enemyTurn();
+	return;
   }
-		  setTimeout(enemyTurnWrapper, 0);
-          enemyTurn();
-          return;
-        }
-		const extra = getGuildBonuses();
-		let fsBonus = 0;
-		if (player.passiveAbility === "Fighting Spirit") {
-			fsBonus = (player.maxHp - player.hp) / player.maxHp;
-		}
-        let baseDamage;
-        if (moveType === "attack") {
-          const multiplier = Math.random() * (1.15 - 0.85) + 0.85;
-          baseDamage = Math.floor(multiplier * player.attack * (1 + extra.damage + fsBonus));
-        } else if (moveType === "magic") {
-          const multiplier = Math.random() * (1.5 - 1) + 1;
-          baseDamage = Math.floor(multiplier * player.magic * (1 + extra.damage + fsBonus));
-        }
+  const extra = getGuildBonuses();
+  let fsBonus = 0;
+  if (player.passiveAbility === "Fighting Spirit") {
+	fsBonus = (player.maxHp - player.hp) / player.maxHp;
+  }
+  let baseDamage;
+  if (moveType === "attack") {
+	const multiplier = Math.random() * (1.15 - 0.85) + 0.85;
+	baseDamage = Math.floor(multiplier * player.attack * (1 + extra.damage + fsBonus));
+  } else if (moveType === "magic") {
+	const multiplier = Math.random() * (1.5 - 1) + 1;
+	baseDamage = Math.floor(multiplier * player.magic * (1 + extra.damage + fsBonus));
+  }
 		
-		if (moveType === "attack" && player.equipment.weapon?.name === "Bow" && player.equipment.accessory) {
-			const acc = player.equipment.accessory.name;
+  if (moveType === "attack" && player.equipment.weapon?.name === "Bow" && player.equipment.accessory) {
+	const acc = player.equipment.accessory.name;
 
-			if (acc === "Flame Arrow" && Math.random() < 0.5) {
-				currentEnemy.burned = true;
-				logBattle(`You fired a Flame Arrow and burned ${currentEnemy.name}!`);
-			} else if (acc === "Poison Arrow") {
-				if (Math.random() < 0.25) {
-					currentEnemy.poison = true;
-					logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}!`);
-				} else if (Math.random() < 0.25) {
-					currentEnemy.asleep = Math.floor(Math.random() * 3) + 2;
-					logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}, putting it to sleep!`);
-				}
-			} else if (acc === "Frost Arrow" && Math.random() < 0.5) {
-				currentEnemy.frozen = Math.floor(Math.random() * 3) + 2;
-				logBattle(`You fired a Frost Arrow and froze${currentEnemy.name}!`);
-			} else if (acc === "Lightning Arrow" && Math.random() < 0.6) {
-				currentEnemy.paralyzed = true;
-				logBattle(`You fired a Lightning Arrow and paralyzed ${currentEnemy.name}!`);
-			}
-			
-			updateEnemyInfo();
+	if (acc === "Flame Arrow" && Math.random() < 0.5) {
+	  currentEnemy.burned = true;
+	  logBattle(`You fired a Flame Arrow and burned ${currentEnemy.name}!`);
+	} else if (acc === "Poison Arrow") {
+	  if (Math.random() < 0.25) {
+		currentEnemy.poison = true;
+		logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}!`);
+	  } else if (Math.random() < 0.25) {
+		currentEnemy.asleep = Math.floor(Math.random() * 3) + 2;
+		logBattle(`You fired a Poison Arrow and poisoned ${currentEnemy.name}, putting it to sleep!`);
+	  }
+	} else if (acc === "Frost Arrow" && Math.random() < 0.5) {
+	  currentEnemy.frozen = Math.floor(Math.random() * 3) + 2;
+	  logBattle(`You fired a Frost Arrow and froze${currentEnemy.name}!`);
+	} else if (acc === "Lightning Arrow" && Math.random() < 0.6) {
+	  currentEnemy.paralyzed = true;
+	  logBattle(`You fired a Lightning Arrow and paralyzed ${currentEnemy.name}!`);
+	}	
+  updateEnemyInfo();
+  }
+  let damage = Math.round(baseDamage);
+  if (damage < 1) damage = 1;
+  let resisted = false;
+  if (currentEnemy.reductionAll) {
+	if (ignoreEnemyResistances === true) {
+		resisted = false;
+	} else {
+		damage = Math.round(damage * (1 - currentEnemy.reductionAll));
+		resisted = true;
+	}
+  }
+  if (moveType === "attack" && currentEnemy.reductionAttack) {
+	if (ignoreEnemyResistances === true) {
+		resisted = false;
+	} else {
+		damage = Math.round(damage * (1 - currentEnemy.reductionAttack));
+		resisted = true;
+	}
+  }
+  if (moveType === "magic" && currentEnemy.reductionMagic) {
+	if (ignoreEnemyResistances === true) {
+		resisted = false;
+	} else {
+		damage = Math.round(damage * (1 - currentEnemy.reductionMagic));
+		resisted = true;
+	}
+  }
+  let isCritical = false;
+  let critMulValue = (player.perception / 100) + 2;
+  let critDamageMultiplier = Math.min(critMulValue, 5);
+  if (moveType === "attack") {
+	if (Math.random() < 0.05 + (player.perception - 1) * 0.001) {
+		damage = Math.round(damage * critDamageMultiplier);
+		isCritical = true;
+		if (player.outgoingDamageMultiplier && player.passiveAbility === "Reckless") {
+			damage *= player.outgoingDamageMultiplier;
 		}
-        let damage = Math.round(baseDamage);
-        if (damage < 1) damage = 1;
-        let resisted = false;
-        if (currentEnemy.reductionAll) {
-			if (ignoreEnemyResistances === true) {
-				resisted = false;
-			} else {
-				damage = Math.round(damage * (1 - currentEnemy.reductionAll));
-				resisted = true;
-			}
-        }
-        if (moveType === "attack" && currentEnemy.reductionAttack) {
-			if (ignoreEnemyResistances === true) {
-				resisted = false;
-			} else {
-				damage = Math.round(damage * (1 - currentEnemy.reductionAttack));
-				resisted = true;
-			}
-        }
-        if (moveType === "magic" && currentEnemy.reductionMagic) {
-			if (ignoreEnemyResistances === true) {
-				resisted = false;
-			} else {
-				damage = Math.round(damage * (1 - currentEnemy.reductionMagic));
-				resisted = true;
-			}
-        }
-        let isCritical = false;
-		let critMulValue = (player.perception / 100) + 2;
-		let critDamageMultiplier = Math.min(critMulValue, 5);
-        if (moveType === "attack") {
-          if (Math.random() < 0.05 + (player.perception - 1) * 0.001) {
-            damage = Math.round(damage * critDamageMultiplier);
-            isCritical = true;
-			if (player.outgoingDamageMultiplier && player.passiveAbility === "Reckless") {
-				damage *= player.outgoingDamageMultiplier;
-			}
-			if (player.rage = true) {
-				if (player.rage) {
-					damage = Math.round(damage * 2);
-					player.critChance *= 2;
-				}
-			}
-          }
-        }
-		if (moveType === "magic") {
-			if (player.outgoingDamageMultiplier && player.passiveAbility === "Reckless") {
-				damage *= player.outgoingDamageMultiplier;
-			}
-			if (player.rage = true) {
-				if (player.rage) {
-					damage = Math.round(damage * 2);
-				}
+		if (player.rage = true) {
+			if (player.rage) {
+				damage = Math.round(damage * 2);
+				player.critChance *= 2;
 			}
 		}
-        if (isCritical) {
-          logBattle(`You attacked and dealt ${damage} critical damage!`);
-        } else if (resisted) {
-			if (gameDifficulty !== "doom") {
-				logBattle(`You ${moveType === "attack" ? "attacked" : "cast magic"} and dealt ${damage} resisted damage.`);
-			} else {
-				logBattle(`You ${moveType === "attack" ? "attacked" : "fired"} and dealt ${damage} resisted damage.`);
-			}
-        } else {
-          if (gameDifficulty !== "doom") {
-				logBattle(`You ${moveType === "attack" ? "attacked" : "cast magic"} and dealt ${damage} damage.`);
-			} else {
-				logBattle(`You ${moveType === "attack" ? "attacked" : "fired"} and dealt ${damage} damage.`);
-			}
-        }
-        currentEnemy.hp -= damage;
-        if (currentEnemy.hp < 0) currentEnemy.hp = 0;
-        updateEnemyInfo();
-        if (currentEnemy.hp <= 0) {
-          processEnemyDefeat();
-          return;
-        }
-		if (player.mercenaries.length > 0) {
+	}
+  }
+  if (moveType === "magic") {
+	if (player.outgoingDamageMultiplier && player.passiveAbility === "Reckless") {
+		damage *= player.outgoingDamageMultiplier;
+	}
+	if (player.rage = true) {
+		if (player.rage) {
+			damage = Math.round(damage * 2);
+		}
+	}
+  }
+  if (isCritical) {
+	logBattle(`You attacked and dealt ${damage} critical damage!`);
+  } else if (resisted) {
+	if (gameDifficulty !== "doom") {
+		logBattle(`You ${moveType === "attack" ? "attacked" : "cast magic"} and dealt ${damage} resisted damage.`);
+	} else {
+		logBattle(`You ${moveType === "attack" ? "attacked" : "fired"} and dealt ${damage} resisted damage.`);
+	}
+  } else {
+	if (gameDifficulty !== "doom") {
+		logBattle(`You ${moveType === "attack" ? "attacked" : "cast magic"} and dealt ${damage} damage.`);
+	} else {
+		logBattle(`You ${moveType === "attack" ? "attacked" : "fired"} and dealt ${damage} damage.`);
+	}
+  }
+  currentEnemy.hp -= damage;
+  if (currentEnemy.hp < 0) currentEnemy.hp = 0;
+  updateEnemyInfo();
+  if (currentEnemy.hp <= 0) {
+	processEnemyDefeat();
+	return;
+  }
+  if (player.mercenaries.length > 0) {
     mercenaryAttack();
   }
-		if (damage < 1) damage = 1;
-		setTimeout(enemyTurnWrapper, 250);
+  if (damage < 1) damage = 1;
+  setTimeout(enemyTurnWrapper, 250);
 
-if (player.statuses.frozen > 0 || player.statuses.asleep > 0) {
-  battleLog(`Player is currently ${player.statuses.frozen>0?'frozen':'asleep'} and is unable to move!`);
-  // decrement counter
-  if (player.statuses.frozen > 0) player.statuses.frozen--;
-  if (player.statuses.asleep > 0)  player.statuses.asleep--;
-  updatePlayerStatusUI();
-  enemyTurn();  // skip to enemy
-  return;
-}
-// check paralysis chance
-if (player.statuses.paralyzed && Math.random() < 0.33) {
-  battleLog(`Player is paralyzed and is unable to move!`);
-  enemyTurn();
-  return;
-}
+  if (player.statuses.frozen > 0 || player.statuses.asleep > 0) {
+	battleLog(`Player is currently ${player.statuses.frozen>0?'frozen':'asleep'} and is unable to move!`);
+	if (player.statuses.frozen > 0) player.statuses.frozen--;
+	if (player.statuses.asleep > 0)  player.statuses.asleep--;
+	updatePlayerStatusUI();
+	enemyTurn();
+	return;
+  }
+  if (player.statuses.paralyzed && Math.random() < 0.33) {
+	battleLog(`Player is paralyzed and is unable to move!`);
+	enemyTurn();
+	return;
+  }
 
-      }
+}
 	  
 function mercenaryAttack() {
     if (player.mercenaries && player.mercenaries.length > 0) {
         player.mercenaries.forEach((mercenary) => {
-            // Apply a random multiplier to the base damage.
-            let randomFactor = 0.8 + Math.random() * 0.4;  // multiplier between 0.8 and 1.2
+            let randomFactor = 0.8 + Math.random() * 0.4;
             let damage = Math.floor(mercenary.baseDamage * randomFactor);
             logBattle("Your mercenary attacked " + currentEnemy.name + " for " + damage + " damage.");
             currentEnemy.hp -= damage;
@@ -7157,42 +6971,33 @@ function mercenaryAttack() {
     }
 }
 	  
-	  function dealPlayerDamage(options = {}) {
-  // options: { multiplier, forceCrit, ignoreDodge }
+function dealPlayerDamage(options = {}) {
   const { multiplier = 1, forceCrit = false, ignoreDodge = false } = options;
-  // stash
   const origAttack = player.attack;
   const origCritMul = player.critMultiplier;
   const origNeverMiss = player.neverMiss;
-  // apply
   player.attack *= multiplier;
   if (forceCrit) {
-	  player.critMultiplier = 999;
-	  isCritical = true;
+	player.critMultiplier = 999;
+	isCritical = true;
   }
   if (ignoreDodge) player.neverMiss = true;
-  // perform
   playerAttack("attack");
-  // restore
   player.attack = origAttack;
   player.critMultiplier = origCritMul;
   player.neverMiss = origNeverMiss;
 }
 
 function dealPlayerMagicDamage(mult = 1) {
-  // stash
   const origMagic = player.magic;
-  // apply
   player.magic *= mult;
-  // perform
   playerAttack("magic");
-  // restore
   player.magic = origMagic;
 }
 
 /*******************
-       * ENEMY TURN
-       *******************/
+* ENEMY TURN
+*******************/
 const statusInflictConfig = [
   // Weaken
   { statuses:'weakened', list:[
@@ -7258,7 +7063,6 @@ const statusInflictConfig = [
   ], chance:0.05 },
 ];
 
-// 2️⃣ Attach status chances to each enemy object
 statusInflictConfig.forEach(cfg => {
   cfg.list.forEach(enemyName => {
     const e = enemies.find(en => en.name === enemyName);
@@ -7269,8 +7073,7 @@ statusInflictConfig.forEach(cfg => {
   });
 });
 
-      function enemyTurn() {
-  // If Infinity Innate is active, drain mana instead of taking hits
+function enemyTurn() {
   if (player.infinityActive) {
     player.mana = Math.max(0, player.mana - 1);
     updateManaDisplay();
@@ -7282,32 +7085,27 @@ statusInflictConfig.forEach(cfg => {
     return;
   }
 
-  // Dodge check
   if (Math.random() < player.dodgeChance + (player.agility - 1) * 0.001) {
     logBattle("Player dodged the enemy attack!");
     updateStats();
     return;
   }
 
-  // Base damage roll
   const [minD, maxD] = currentEnemy.damageRange;
   let enemyDamage = Math.round(Math.random() * (maxD - minD + 1)) + minD;
   enemyDamage -= Math.round(enemyDamage * (player.defense / 200));
   if (enemyDamage <= 0) enemyDamage = 1;
   enemyDamage = Math.ceil(enemyDamage / 2);
 
-  // Critical hit?
   let enemyCritical = false;
   if (Math.random() < 0.05) {
     enemyDamage *= 2;
     enemyCritical = true;
   }
 
-  // Iron passive halves incoming
   if (player.iron) {
     enemyDamage = Math.round(enemyDamage / 2);
   }
-  // Other modifiers
   if (player.enemyDamageReduction) {
     enemyDamage *= player.enemyDamageReduction;
   }
@@ -7371,7 +7169,6 @@ statusInflictConfig.forEach(cfg => {
   }
   updateStats();
 
-  // Log the attack
   if (enemyCritical) {
     logBattle(`${currentEnemy.name} attacked and dealt ${rawEnemyDamage} critical damage!`);
   } else {
@@ -7404,13 +7201,11 @@ statusInflictConfig.forEach(cfg => {
   }
   updateStats();
 
-  // Check for death
   if (player.hp <= 0) {
     showDeathMenu();
     return;
   }
 
-  // --- NEW: Reflective passive bounces 50% back immediately ---
   if (player.reflective) {
     const reflectDmg = Math.ceil(player.lastEnemyDamage * 0.5);
     logBattle(`You reflected ${reflectDmg} damage back!`);
@@ -7422,7 +7217,6 @@ statusInflictConfig.forEach(cfg => {
     }
   }
 
-  // Boss self-heal chance
   if (currentEnemy.boss && Math.random() < 0.10) {
     const healAmt = Math.ceil(currentEnemy.maxHp * 0.10);
     currentEnemy.hp = Math.min(currentEnemy.hp + healAmt, currentEnemy.maxHp);
@@ -7432,11 +7226,9 @@ statusInflictConfig.forEach(cfg => {
   }
 }
 	  
-	  function enemyTurnWrapper() {
+function enemyTurnWrapper() {
   enemyTurn();
-  // If the enemy is still alive and not defeated during its turn...
   if (currentEnemy && currentEnemy.hp > 0) {
-    // Process poison damage if the enemy is poisoned:
     if (currentEnemy.poison) {
       const poisonDamage = Math.max(Math.round(currentEnemy.hp * 0.02), 1);
       logBattle(`${currentEnemy.name} took ${poisonDamage} poison damage!`);
@@ -7445,7 +7237,7 @@ statusInflictConfig.forEach(cfg => {
       updateEnemyInfo();
     }
 	if (currentEnemy.burned) {
-	  const burnDamage = Math.max(Math.round(currentEnemy.hp * 0.02), 1);   // reuse the same function
+	  const burnDamage = Math.max(Math.round(currentEnemy.hp * 0.02), 1);
 	  logBattle(`${currentEnemy.name} took ${burnDamage} burn damage!`);
 	  currentEnemy.hp -= burnDamage;
 	  if (currentEnemy.hp < 0) currentEnemy.hp = 0;
@@ -7468,7 +7260,6 @@ statusInflictConfig.forEach(cfg => {
   setTimeout(() => {
     unlockActions();
   }, 125);
-    // Check if the enemy died after poison damage.
     if (currentEnemy.hp <= 0) {
       alert(`${currentEnemy.name} defeated!`);
       endBattle();
@@ -7478,9 +7269,7 @@ statusInflictConfig.forEach(cfg => {
       endBattle();
       return;
 	}
-	// Mercenary dodge check
 if (player.mercenaries.length > 0) {
-  // did enemy hit? if they fail the dodge roll, mercenary dies immediately
   if (Math.random() > player.mercenaries[0].dodgeChance) {
     const idx = Math.floor(Math.random() * player.mercenaries.length);
     logBattle(`Your mercenary was attacked by ${currentEnemy.name} and has fallen!`);
@@ -7488,7 +7277,7 @@ if (player.mercenaries.length > 0) {
   } else {
     logBattle(`${currentEnemy.name} attacked your mercenary, but they dodged!`);
   }
-  return; // prevent them from targeting you directly this turn
+  return;
 }
  else {
 	}
@@ -7496,7 +7285,7 @@ if (player.mercenaries.length > 0) {
   setTimeout(newTurn, 250);
 }
 
-      function attemptRun() {
+function attemptRun() {
         if (ambushEnemiesQueue && ambushEnemiesQueue.length > 0) {
           logBattle("You're surrounded by monsters, you can't escape!");
 		  setTimeout(enemyTurnWrapper, 250);
@@ -7516,20 +7305,16 @@ if (player.mercenaries.length > 0) {
           logBattle("You attempted to run but failed!");
 		  setTimeout(enemyTurnWrapper, 250);
         }
-      }
+}
 	  
-	  function processEnemyDefeat() {
-    // Check if the active ability is Necromancy.
+function processEnemyDefeat() {
     if (player.activeAbility === "Necromancy") {
-        // Instead of simply alerting defeat, prompt with two choices.
-        // We use confirm() to simulate two options: OK = "Yes", Cancel = "Finish Off".
         let choice = confirm(
             "Player defeated " + currentEnemy.name + 
             "! Would you like for it to become your soldier?\n\n" +
             "Press OK for Yes, or Cancel to Finish Off."
         );
         if (choice) {
-            // "Yes" selected – determine chance based on whether enemy is a boss.
             let successChance = currentEnemy.boss ? (0.33) : 0.5;
             if (Math.random() < successChance) {
                 alert("You have resurrected " + currentEnemy.name + "!");
@@ -7558,17 +7343,15 @@ if (player.mercenaries.length > 0) {
     }
 }
 
-	  /*******************
-       * ABILITIES
-       *******************/
+/*******************
+* ABILITIES
+*******************/
 	   
-	   function applyPassiveAbilityEffects() {
+function applyPassiveAbilityEffects() {
   switch (player.passiveAbility) {
     case "None":
-      // No changes
       break;
     case "Berserker":
-      // Doubles the player's Attack stat
 	  player.baseStats.attack += 5;
 	  updateStats();
 	  updateManaDisplay();
@@ -7590,7 +7373,6 @@ if (player.mercenaries.length > 0) {
 	  updateManaDisplay();
       break;
     case "Hunter":
-      // Increase crit chance by 10%
       player.critChance = (player.critChance || 0) + 0.10;
       player.alwaysHit = true;
       ignoreEnemyResistances = true;
@@ -7616,7 +7398,6 @@ if (player.mercenaries.length > 0) {
       ignoreEnemyResistances = true;
       break;
 	case "Burning":
-	  // When enemy hits you, we’ll roll in enemyTurn()
 	  player.burning = true;
 	  break;
     case "Adaptable":
@@ -7628,7 +7409,6 @@ if (player.mercenaries.length > 0) {
       break;
     case "Reckless":
       player.outgoingDamageMultiplier = 2;
-      // Increase enemy damage taken by 50% (i.e. enemy damage multiplier).
       player.incomingDamageMultiplier = 1.5;
       break;
     case "Aura Farmer":
@@ -7638,7 +7418,6 @@ if (player.mercenaries.length > 0) {
       player.overrideManaCost = 1;
       break;
 	case "Heavenly Restricted":
-      // Override the player's base stats.
 	  player.baseStats.maxHp = 500;
       player.hp = 500;
 	  player.baseStats.maxArmor = 100;
@@ -7661,7 +7440,6 @@ if (player.mercenaries.length > 0) {
       // Prevent the player from leveling up by setting the required EXP to Infinity.
       player.expToLevel = Infinity;
 
-      // Optionally update UI elements if they exist.
       const activeAbilityEl = document.getElementById("hudPlayerActive");
       if (activeAbilityEl) {
         activeAbilityEl.innerText = "None";
@@ -7740,13 +7518,11 @@ if (player.mercenaries.length > 0) {
   updateManaDisplay();
 }
 
-// Listen for Q:
 document.addEventListener("keydown", e => {
   if (e.key.toLowerCase() === "q") {
 	let manaCost = player.overrideManaCost || 10;
     if (!skillUsedThisBattle) {
       logBattle("You're too exhausted to do that again...");
-    // re-unlock so battle can continue
     setTimeout(() => unlockActions(), 250);
     return;
     } else {
@@ -7764,7 +7540,6 @@ document.addEventListener("keydown", e => {
 function useActiveAbility() { 
   if (skillUsedThisBattle = false) {
     logBattle("You're too exhausted to do that again...");
-    // re-unlock so battle can continue
     setTimeout(() => unlockActions(), 250);
     return;
   }
@@ -7833,7 +7608,6 @@ function useActiveAbility() {
 
     case "Maxima":
 	  logBattle("<em>Single Point. Focus. Maximum Output. Maxima!</em>");
-      // +10× magic attack, enemy +20% dodge
       const origDodge = currentEnemy.dodgeChance || 0;
       currentEnemy.dodgeChance = origDodge + 0.20;
       dealPlayerMagicDamage(10);
@@ -7876,13 +7650,11 @@ function useActiveAbility() {
 
     case "Strike":
 	  logBattle("<em>Through and Through. Impact. Strike!</em>");
-      // extra physical attack at 2× damage
       dealPlayerDamage(2);
       break;
 
     case "Blast":
 	  logBattle("<em>Single Point. Focus. Blast!</em>");
-      // extra magic attack at 2× magic
       dealPlayerMagicDamage(2);
       break;
 	  
@@ -7985,7 +7757,6 @@ function useActiveAbility() {
 	
     case "Blade of Gold":
 	  logBattle("<em>Heaven's Edge. Tear The Sky. Rip Through Negativity. Shine Bright. Blade of Gold!</em>");
-      // convert all money into attack for remainder of battle
       player.attack += player.money;
 	  player.money -= player.money;
 	  updateStats();
@@ -7999,7 +7770,6 @@ function useActiveAbility() {
 	  
 	case "Shining Armor":
 	  logBattle("<em>Fortify. Defend The Gods. Divine Nightingale. Shine Bright. Shining Armor!</em>");
-      // convert all money into attack for remainder of battle
       player.defense += player.money;
 	  player.money -= player.money;
 	  updateStats();
@@ -8023,7 +7793,6 @@ function useActiveAbility() {
   }
 
   skillUsedThisBattle = false;
-  // advance turn
   setTimeout(newTurn, 500);
 }
 
@@ -8031,7 +7800,6 @@ function useInfinitySkill() {
   const effectRoll = Math.random();
 
   if (effectRoll < 0.2) {
-    // Effect 1 - Immune to all damage for this turn
     player.infinityActive = true;
     logBattle("<em>All Else Means Nothing. Incomparable. Existent And Nonexistent. Incomprehensible. Beyond All Else. Infinity!</em>");
   } else if (effectRoll < 0.4) {
@@ -8085,7 +7853,6 @@ function useSwitchSkill() {
 document.addEventListener("keydown", e => {
   if (e.key.toLowerCase() !== "e") return;
 
-  // must be in battle
   if (!currentEnemy) {
     alert("But nothing happened...");
     return;
@@ -8117,11 +7884,8 @@ document.addEventListener("keydown", e => {
     return;
   }
 
-  // spend flat 5 mana
   player.mana -= 5;
   updateManaDisplay();
-
-  // execute the right effect
   switch (ws.name) {
     case "Assassinate":
       logBattle("<em>You dashed at the target and attacked them!</em>");
@@ -8225,23 +7989,19 @@ document.addEventListener("keydown", e => {
   }
 
   ws.usedThisBattle = true;
-  // advance turn
   setTimeout(newTurn, 500);
 });
 	  
-      /*******************
-       * BACKGROUND COLOR UPDATE
-       *******************/
-      function updateBackgroundColor() {
-  // ——— Doom override ———
+/*******************
+* BACKGROUND COLOR UPDATE
+*******************/
+function updateBackgroundColor() {
   if (gameDifficulty === "doom") {
-    // stay in Hell forever, world 666
     document.body.style.background = "#b30003";
     const worldCounterEl = document.getElementById("worldCounter");
     if (worldCounterEl) {
       worldCounterEl.textContent = "Hell 666 - " + Math.floor(roomMoves);
     }
-    // ensure BGM is Hell’s
     if (currentWorld !== "Hell") {
       playWorldMusic("Hell");
     }
@@ -8532,7 +8292,6 @@ document.addEventListener("keydown", e => {
     worldCounterEl.textContent = worldName + " " + worldNum + "-" + Math.floor(roomMoves);
   }
   
-  // FIX: Trigger playing of the appropriate world music.
   if (worldName) {
     playWorldMusic(worldName);
   }
@@ -8820,17 +8579,16 @@ document.addEventListener("keydown", e => {
     worldCounterEl.textContent = worldName + " " + worldNum + "-" + Math.floor(roomMoves);
   }
   
-  // FIX: Trigger playing of the appropriate world music.
   if (worldName) {
     playWorldMusic(worldName);
   }
   }
 }
 
-      /*******************
-       * ITEM USAGE IN BATTLE
-       *******************/
-      function showInventoryMenu(battleMode) {
+/*******************
+* ITEM USAGE IN BATTLE
+*******************/
+function showInventoryMenu(battleMode) {
   inventoryMenu.style.display = "block";
   inventoryMenu.innerHTML = "<h3>Choose an item: </h3>";
   let hasUsableItem = false;
@@ -8860,7 +8618,6 @@ document.addEventListener("keydown", e => {
 	  }
 
       function useItem(item, index, battleMode) {
-        // Check if the item can be used in the current context.
         if (battleMode && !item.usableInBattle) {
           alert(item.name + " cannot be used in battle!");
           return;
@@ -8875,7 +8632,6 @@ document.addEventListener("keydown", e => {
         }
         inventoryMenu.style.display = "none";
         if (battleMode) {
-          // Effects when used in battle:
           switch (item.name) {
             case "Medkit":
             case "Healing Potion":
@@ -9007,10 +8763,8 @@ document.addEventListener("keydown", e => {
 			  updateEnemyInfo();
               break;
 
-          // Continue with enemy's turn if applicable.
 		  unlockActions();
 		  setTimeout(enemyTurnWrapper, 250);
-          // Effects when used out-of-battle:
           switch (item.name) {
 	    case "Medkit":
             case "Healing Potion":
@@ -9152,12 +8906,12 @@ document.addEventListener("keydown", e => {
 		setTimeout(enemyTurnWrapper, 250);
 		unlockActions();
 		}
-      }
+}
 
-      /*******************
-       * SHOP SYSTEM
-       *******************/
-      function openShopMenu() {
+/*******************
+* SHOP SYSTEM
+*******************/
+function openShopMenu() {
         const shuffled = shuffle([...shopItemsList]);
         const selectedItems = shuffled.slice(0, 3);
 		shopMenu.classList.add("jump-zoom-shop");
@@ -9175,9 +8929,9 @@ document.addEventListener("keydown", e => {
 		attachTooltip("#shopItems button[data-tooltip]");
         shopMenu.style.display = "block";
 		battleTint.style.display = "block";
-      }
+}
 
-      function hasItem(name) {
+function hasItem(name) {
         return player.inventory.some(i => i && i.name === name);
       }
 
@@ -9208,7 +8962,6 @@ document.addEventListener("keydown", e => {
 		finalCost = Math.ceil(item.cost * base.multiplier);
       }
 
-		// — Check & deduct based on finalCost —
 		if (player.money < finalCost) {
 			alert("Not enough money!");
 			return;
@@ -9218,14 +8971,13 @@ document.addEventListener("keydown", e => {
         updateStats();
 		updateInventoryDisplay();
         alert(`${item.name} purchased!`);
-      }
+}
 	  
-      document.getElementById("closeShopBtn").addEventListener("click", () => {
+document.getElementById("closeShopBtn").addEventListener("click", () => {
         shopMenu.style.display = "none";
 		battleTint.style.display = "none";
-      });
-	  
-	  // Open Sell Menu: list non-null inventory slots
+});
+
 sellBtn.addEventListener("click", () => {
   sellItemsDiv.innerHTML = "";
   player.inventory.forEach((item, idx) => {
@@ -9276,7 +9028,6 @@ sellBtn.addEventListener("click", () => {
 		}
 	}
 
-    // --- build button ---
     const btn = document.createElement("button");
     btn.textContent = `${item.name} — Sell for $${sellPrice}`;
     btn.style.display = "block";
@@ -9298,26 +9049,25 @@ sellBtn.addEventListener("click", () => {
   battleTint.style.display = "block";
 });
 
-// Close Sell Menu
 closeSellBtn.addEventListener("click", () => {
   sellMenu.style.display = "none";
   shopMenu.style.display = "block";
 });
 
-      /*******************
-       * EXP & LEVEL UP
-       *******************/
-      function addExp(amount) {
+/*******************
+* EXP & LEVEL UP
+*******************/
+function addExp(amount) {
         let multiplier = 1 + (player.potential - 1) * 0.08;
         player.exp = Math.round(player.exp + Math.floor(amount * multiplier));
         updateStats();
         while (player.exp >= player.expToLevel) {
           levelUp();
         }
-      }
-      let upgradesRemaining = 0;
+}
+let upgradesRemaining = 0;
 
-      function levelUp() {
+function levelUp() {
         player.level += 1;
         player.exp -= player.expToLevel;
         if (gameDifficulty === "easy") {
@@ -9351,15 +9101,15 @@ closeSellBtn.addEventListener("click", () => {
 		if (gameDifficulty === "doom" || gameDifficulty === "ultimate") {
 			initiateLevelUp(1);
 		}
-      }
+}
 
-      function initiateLevelUp(upgradeCount) {
+function initiateLevelUp(upgradeCount) {
         upgradesRemaining += upgradeCount;
         levelUpMenu.style.display = "block";
 		battleTint.style.display = "block";
-      }
+}
 	  
-      levelUpMenu.addEventListener("click", function(e) {
+levelUpMenu.addEventListener("click", function(e) {
         if (e.target.tagName.toLowerCase() === "button") {
           const stat = e.target.getAttribute("data-stat");
           if (stat === "hp") {
@@ -9403,21 +9153,21 @@ closeSellBtn.addEventListener("click", () => {
 			}
           }
         }
-      });
+});
 	  
-      /*******************
-       * BATTLE LOG UTILS
-       *******************/
-      function logBattle(message) {
+/*******************
+* BATTLE LOG UTILS
+*******************/
+function logBattle(message) {
   const p = document.createElement("p");
   p.innerHTML = message;
   battleLog.appendChild(p);
   battleLog.scrollTop = battleLog.scrollHeight;
 }
-      /*******************
-       * DEATH HANDLING
-       *******************/
-      function showDeathMenu() {
+/*******************
+* DEATH HANDLING
+*******************/
+function showDeathMenu() {
   battleMenu.style.display     = "none";
   battleLog.style.display      = "none";
   battleTint.style.display     = "block";
@@ -9439,9 +9189,7 @@ closeSellBtn.addEventListener("click", () => {
     </p>
   `;
   
-  // Find the first button in the deathMenu (either retry or resurrection)
   const firstBtn = deathMenu.querySelector("button");
-  // Insert our stats *before* that button
   deathMenu.insertBefore(statsDiv, firstBtn);
 
   const btn = document.getElementById("resurrectBtn");
@@ -9451,62 +9199,54 @@ closeSellBtn.addEventListener("click", () => {
     btn.style.display = "none";
   }
 }
-      document.getElementById("retryBtn").addEventListener("click", function() {
+document.getElementById("retryBtn").addEventListener("click", function() {
         initGame();
 		location.reload();
-      });
+});
 	  
-	  document.getElementById("resurrectBtn").addEventListener("click", () => {
-  // 1) Hide death UI
+document.getElementById("resurrectBtn").addEventListener("click", () => {
   deathMenu.style.display = "none";
   battleTint.style.display = "none";
 
-  // 2) Restore the player
   player.hp   = player.maxHp;
   player.mana = player.maxMana;
   updateStats();
   updateManaDisplay();
 
-  // 3) Remove Resurrection so it can’t be used again
   player.activeAbility = "None";
   document.getElementById("hudPlayerActive").innerText = "None";
 
-  // 4) Hide this button permanently
   document.getElementById("resurrectBtn").style.display = "none";
 });
 	  
-	  function showOverlay() {
-  // Check if an overlay element already exists; if not, create one.
+function showOverlay() {
   let overlay = document.getElementById('overlay');
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'overlay';
-    // Style the overlay to cover the entire viewport.
     overlay.style.position = 'fixed';
     overlay.style.top = '0';
     overlay.style.left = '0';
     overlay.style.width = '100%';
     overlay.style.height = '100%';
-    overlay.style.background = 'rgba(0, 0, 0, 0.5)'; // semi-transparent black
-    overlay.style.zIndex = '400';  // Adjust z-index to be beneath modal menus
+    overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+    overlay.style.zIndex = '400';
     document.body.appendChild(overlay);
   }
-  // Display the overlay.
   overlay.style.display = 'block';
 }
 
 function hideOverlay() {
-  // Hide the overlay if it exists.
   const overlay = document.getElementById('overlay');
   if (overlay) {
     overlay.style.display = 'none';
   }
 }
 
-      /*******************
-       * BATTLE MENU EVENTS
-       *******************/
-      document.getElementById("attackBtn").addEventListener("click", () => {
+/*******************
+* BATTLE MENU EVENTS
+*******************/
+document.getElementById("attackBtn").addEventListener("click", () => {
 		if (actionsLocked) return;
 		lockActions();
 		playerAttack("attack");
@@ -9514,9 +9254,9 @@ function hideOverlay() {
 		if (Math.random() < player.agility * 0.0005) {
 			dealPlayerDamage(1);
 		}
-      });
+});
 	  
-	  function updateManaDisplay() {
+function updateManaDisplay() {
   document.querySelectorAll("#manaText").forEach(el => {
     el.innerText = `${player.mana}/${player.maxMana}`;
   });
@@ -9528,18 +9268,15 @@ function hideOverlay() {
   magicBtn.disabled = player.mana < spellCost;
 }
 	  
-      const magicBtn = document.getElementById("magicBtn");
+const magicBtn = document.getElementById("magicBtn");
 magicBtn.addEventListener("click", () => {
   if (actionsLocked) return;
   lockActions();
 
-  // Determine spell cost: normally 2, but Six Eyes forces it to 1
   const spellCost = player.overrideManaCost || (gameDifficulty === "doom") ? 10 : 2;
 
-  // Perform the magic attack
   playerAttack("magic");
 
-  // Subtract mana (never below 0)
   player.mana = Math.max(0, player.mana - spellCost);
   updateManaDisplay();
   if (player.mana < spellCost) {
@@ -9564,14 +9301,12 @@ magicBtn.addEventListener("click", () => {
 });
 
 document.getElementById("abilityBtn").addEventListener("click", () => {
-  // Prevent spamming during animations/battles
   if (actionsLocked) return;
   lockActions();
   
   let manaCost = player.overrideManaCost || 10;
     if (!skillUsedThisBattle) {
       logBattle("You're too exhausted to do that again...");
-    // re-unlock so battle can continue
     setTimeout(() => unlockActions(), 250);
     return;
     } else {
@@ -9587,22 +9322,22 @@ document.getElementById("abilityBtn").addEventListener("click", () => {
   setTimeout(() => unlockActions(), 250);
 });
 
-      document.getElementById("itemsBtn").addEventListener("click", () => {
+document.getElementById("itemsBtn").addEventListener("click", () => {
 		showInventoryMenu();
-      });
-      document.getElementById("runBtn").addEventListener("click", () => {
+});
+document.getElementById("runBtn").addEventListener("click", () => {
         if (actionsLocked) return;
 		lockActions();
 		attemptRun();
-      });
-      document.getElementById("itemsBtn").addEventListener("click", () => {
+});
+document.getElementById("itemsBtn").addEventListener("click", () => {
 		showInventoryMenu(!!currentEnemy);
-      });
+});
 	  
-	  /*******************
-       * CASINO FUNCTIONS
-       *******************/
-	  function showCasinoChoice(onComplete) {
+/*******************
+* CASINO FUNCTIONS
+*******************/
+function showCasinoChoice(onComplete) {
   casinoCompleteCallback = onComplete;
   casinoChoiceMenu.style.display = "block";
   battleTint.style.display       = "block";
@@ -9620,7 +9355,6 @@ chooseBlackjackBtn.onclick = () => {
   });
 };
 
-// Slot Machine path
 chooseSlotsBtn.onclick = () => {
   casinoChoiceMenu.style.display = "none";
   slotMenu.style.display         = "block";
@@ -9629,7 +9363,6 @@ chooseSlotsBtn.onclick = () => {
   stopWorldMusic();
 };
 
-// Close slot menu
 closeSlotBtn.onclick = () => {
   slotMenu.style.display   = "none";
   battleTint.style.display = "none";
@@ -9653,18 +9386,16 @@ spinSlotsBtn.onclick = () => {
   updateStats();
 
   const startTime    = Date.now();
-  const totalDur     = 7000;   // 7 seconds total
-  const minInterval  = 50;     // start super-fast
-  const maxInterval  = 1000;   // end at one update per second
+  const totalDur     = 7000;
+  const minInterval  = 50;
+  const maxInterval  = 1000;
 
   function spinStep() {
     const elapsed = Date.now() - startTime;
     if (elapsed >= totalDur) {
-      // Time’s up — finalize results
       const results = slotNumEls.map(_ => Math.floor(Math.random() * 10));
       slotNumEls.forEach((el, i) => el.textContent = results[i]);
 
-      // Count matches & compute reward
       const counts = {};
       results.forEach(n => counts[n] = (counts[n]||0) + 1);
       let reward = 0;
@@ -9684,29 +9415,25 @@ spinSlotsBtn.onclick = () => {
       return;
     }
 
-    // randomize all three while spinning
     slotNumEls.forEach(el => el.textContent = Math.floor(Math.random() * 10));
 
-    // calculate next delay: ramps from minInterval → maxInterval over 7s
     const t     = elapsed / totalDur;
     const delay = minInterval + (maxInterval - minInterval) * t;
 
     setTimeout(spinStep, delay);
   }
 
-  // kick off the loop
   spinStep();
 };
 	  
-      let casinoBet = 0;
-      let casinoPlayerTotal = 0;
-      let casinoEnemyTotal = 0;
+let casinoBet = 0;
+let casinoPlayerTotal = 0;
+let casinoEnemyTotal = 0;
 
-      function openCasino(onComplete) {
+function openCasino(onComplete) {
   casinoCompleteCallback = onComplete || null;
-  // reset hit buttons
   hitButtons.forEach(btn => {
-    btn.style.display = "";   // back to whatever your CSS says
+    btn.style.display = "";
   });
   stopWorldMusic();
   casinoMusic.play();
@@ -9777,7 +9504,7 @@ function finalizeCasinoRound() {
   finalizeRoom(casinoKey);
 }
 	  
-      placeBetBtn.addEventListener("click", () => {
+placeBetBtn.addEventListener("click", () => {
         const bet = parseInt(betInput.value);
         if (isNaN(bet) || bet < 1) {
           alert("Please enter a valid bet amount.");
@@ -9789,19 +9516,16 @@ function finalizeCasinoRound() {
         }
         casinoBet = bet * Math.round(1 + player.fortune * 0.08);
         casinoGameArea.style.display = "block";
-      });
+});
 	  
-      hitButtons.forEach((btn) => {
+hitButtons.forEach((btn) => {
   btn.addEventListener("click", function onHit() {
-    // Hide this hit button once pressed.
     btn.style.display = "none";
     
-    // Player draws a card.
     const card = Math.floor(Math.random() * 13) + 1;
     casinoPlayerTotal += card;
     casinoPlayerTotalEl.textContent = casinoPlayerTotal;
     
-    // If player's total exceeds 21 immediately, handle bust.
     if (casinoPlayerTotal >= 21) {
       alert("It's a bust! You lost.");
       finalizeCasinoRound(true);
@@ -9814,13 +9538,11 @@ function finalizeCasinoRound() {
         return;
       }
     
-    // Dealer draws a card if below 17.
     if (casinoEnemyTotal < 17) {
       const enemyCard = Math.floor(Math.random() * 13) + 1;
       casinoEnemyTotal += enemyCard;
       casinoEnemyTotalEl.textContent = casinoEnemyTotal;
       
-      // If the dealer’s total goes over 21 immediately, win for the player.
       if (casinoEnemyTotal >= 21) {
         alert("Dealer had a bust! They lost.");
         finalizeCasinoRound();
@@ -9828,37 +9550,32 @@ function finalizeCasinoRound() {
       }
     }
     
-    // Check if no hit buttons remain visible.
     const remainingButtons = Array.from(hitButtons).filter(b => b.style.display !== "none");
     if (remainingButtons.length === 0) {
-      // All hit buttons have vanished; finalize round based on closeness to 21.
       finalizeCasinoRound();
     }
   });
 });
 
-      standBtn.addEventListener("click", () => {
+standBtn.addEventListener("click", () => {
         while (casinoEnemyTotal < 17) {
           const enemyCard = Math.floor(Math.random() * 13) + 1;
           casinoEnemyTotal += enemyCard;
         }
         casinoEnemyTotalEl.textContent = casinoEnemyTotal;
         finalizeCasinoRound();
-      });
+});
 	  
 function handleTrapRoom() {
-  // 67% chance it doesn’t go off
   if (Math.random() < 0.67) {
     alert("You sense something's off… but nothing happens.");
     return;
   }
 
-  // 20–30% of max HP
   const minPct = 0.20, maxPct = 0.30;
   const pct = Math.random() * (maxPct - minPct) + minPct;
   let damage = Math.floor(player.maxHp * pct);
 
-  // if it was a disguised trap, only 1/3 damage
   if (map[ player.x + "_" + player.y ].disguisedTrap) {
     damage = Math.floor(damage / 3);
     alert("You fell into a trap!");
@@ -9871,7 +9588,6 @@ function handleTrapRoom() {
   updateStats();
 
   if (player.hp <= 0) {
-    // immediate death handling
     battleTint.style.display = "none";
     battleMenu.style.display = "none";
     deathMenu.style.display = "block";
@@ -9884,7 +9600,6 @@ function getEffectiveMaxHp() {
 }
 
 function updatePlayerStatsUI() {
-  // Update HP text: The hpText element might now show effective values.
   const effectiveMaxHp = getEffectiveMaxHp();
   document.getElementById("hpText").innerText = `${player.hp}/${effectiveMaxHp.toFixed(0)}`;
 }
@@ -9922,33 +9637,28 @@ function clampPlayerStats() {
   });
 }
 
-      function updateStats() {
+function updateStats() {
   const extra = getGuildBonuses();
 
-  // ——— HP text & bar ———
   const effMaxHp = Math.floor(getEffectiveMaxHp());
   document.querySelectorAll("#hpText").forEach(el => {
     el.textContent = `${player.hp}/${effMaxHp}`;
   });
-  // bar % uses effective max
   const hpPercent = (player.hp / effMaxHp) * 100;
   document.getElementById("hpBarInner").style.width = `${hpPercent}%`;
   
-  // ——— Armor text & bar ———
   document.querySelectorAll("#armorText").forEach(el => {
 	el.textContent = `${player.armor}/${player.maxArmor}`;
   });
   const armorPercent = (player.armor / player.maxArmor) * 100;
   document.getElementById("armorBarInner").style.width = `${armorPercent}%`;
 
-  // ——— EXP text & bar ———
   document.querySelectorAll("#expText").forEach(el => {
     el.textContent = `${player.exp}/${player.expToLevel}`;
   });
   const expPercent = (player.exp / player.expToLevel) * 100;
   document.getElementById("expBarInner").style.width = `${expPercent}%`;
 
-  // ——— Attack & Magic (both get damage bonus) ———
   const effAttack = Math.floor(player.attack * (1 + extra.damage));
   document.querySelectorAll("#attackStat").forEach(el => {
     el.textContent = effAttack;
@@ -9958,7 +9668,6 @@ function clampPlayerStats() {
     el.textContent = effMagic;
   });
 
-  // ——— The rest of your stats remain unchanged ———
   document.querySelectorAll("#defenseStat").forEach(el => {
     el.textContent = player.defense;
   });
@@ -9981,7 +9690,6 @@ function clampPlayerStats() {
     el.textContent = player.money;
   });
 
-  // ——— Player Level label ——— (unchanged)
   document.querySelectorAll("#playerLevel").forEach(el => {
     if (gameDifficulty === "doom") {
       el.textContent = `Doom Guy Level: ${player.level}`;
@@ -10000,7 +9708,6 @@ function clampPlayerStats() {
 function updateInventoryDisplay() {
   const slots = document.querySelectorAll("#inventorySlots .inventorySlot");
   slots.forEach((slot, i) => {
-    // Clear out old content, listeners, and classes
     slot.innerHTML = "";
     slot.className = "inventorySlot";
 
@@ -10018,14 +9725,11 @@ function updateInventoryDisplay() {
       const nameEl = document.createElement("span");
       nameEl.textContent = firstWord;
       slot.appendChild(nameEl);
-
-      // 2. Create the delete button (hidden by default)
       const delBtn = document.createElement("button");
       delBtn.className = "delete-btn";
       delBtn.textContent = "×";
       slot.appendChild(delBtn);
 
-      // 3. Hover handlers to show/hide the button
       slot.addEventListener("mouseover", () => {
         delBtn.style.display = "inline";
       });
@@ -10033,13 +9737,11 @@ function updateInventoryDisplay() {
         delBtn.style.display = "none";
       });
 
-      // 4. Click handler to remove the item and refresh UI
       delBtn.addEventListener("click", () => {
         player.inventory[i] = null;
-        updateStats();    // this also calls updateInventoryDisplay under the hood
+        updateStats();
       });
 
-      // 5. Colorize slot based on existing item.type/category
       let cls;
       if (item.type === "equipment") {
         cls = item.category.toLowerCase();
@@ -10066,29 +9768,21 @@ function updateInventoryDisplay() {
   attachTooltip("#inventorySlots .inventorySlot[data-tooltip]");
 }
 
-/* Revised applyEquipmentEffects: resets to player.baseStats, then reapplies gear bonuses */
 function applyEquipmentEffects() {
-  // 1) Reset player stats from their true baseStats
   Object.assign(player, player.baseStats);
   player.canRowMovement = false;
   player.autoWinCasino = false;
 
-  // 2) Apply each equipped item's effects on top
-  // 2) For each equipped item, apply base effect *and* grade multiplier
   Object.values(player.equipment).forEach(item => {
   if (!item) return;
 
-  // — Base effect (as before) —
   if (equipmentEffects[item.name]) {
     equipmentEffects[item.name](player);
   }
 
-    // — Grade multiplier —
   if (item.grade) {
-    // look up the grade object
     const gradeObj = EQUIP_GRADES.find(g => g.name === item.grade);
     if (gradeObj && gradeObj.multiplier > 1) {
-      // multiply all core numeric stats by grade.multiplier
       const stats = EQUIP_AFFECTED_STATS[item.name] || [];
       stats.forEach(stat => {
         if (typeof player[stat] === 'number') {
@@ -10104,7 +9798,6 @@ function applyEquipmentEffects() {
   player.weaponSkill.name = skillName;
   player.weaponSkill.usedThisBattle = false;
 
-  // update all UI spots
   document.querySelectorAll("#hudWeaponSkill").forEach(el => {
     el.textContent = skillName;
   });
@@ -10113,20 +9806,16 @@ function applyEquipmentEffects() {
   updateManaDisplay();
 }
 
-// Open / close the Equipment modal
 equipmentBtn.addEventListener("click", () => {
   equipmentMenu.style.display = "block";
   battleTint.style.display    = "block";
 });
-// (A) When closing the equipment menu, also hide inventoryMenu
 closeEquipmentBtn.addEventListener("click", () => {
   equipmentMenu.style.display = "none";
   inventoryMenu.style.display  = "none";
   battleTint.style.display     = "none";
 });
 
-// Populate slots when opening
-// (B) Update the UI‐refresh to use "None"
 function updateEquipmentUI() {
   document.querySelectorAll(".equipmentSlot").forEach(el => {
     const slot = el.dataset.slot;
@@ -10135,13 +9824,11 @@ function updateEquipmentUI() {
 	el.querySelector(".slot-item").textContent = nameWithGrade;
   });
 }
-// Call this once on load to show “Empty” everywhere:
 updateEquipmentUI();
 
-// Clicking a slot → show only matching inventory items
 document.querySelectorAll(".equipmentSlot").forEach(slotEl => {
   slotEl.addEventListener("click", () => {
-    const category = slotEl.dataset.slot; // "weapon"|"armor"|"accessory"
+    const category = slotEl.dataset.slot;
     showEquipmentInventory(category);
   });
 });
@@ -10176,16 +9863,13 @@ function showEquipmentInventory(category) {
   }
 }
 
-// Equip logic: swap into slot (unequipping old one back into inventory)
 function equipItem(category, invIndex) {
   const newItem = player.inventory[invIndex];
   const oldItem = player.equipment[category];
 
-  // Put old item back if present
   if (oldItem) player.inventory[invIndex] = oldItem;
   else         player.inventory[invIndex] = null;
 
-  // Equip new one
   player.equipment[category] = newItem;
 
   applyEquipmentEffects();
@@ -10195,7 +9879,6 @@ function equipItem(category, invIndex) {
   inventoryMenu.style.display = "none";
 }
 
-// Unequip via the “×” button
 document.querySelectorAll(".unequipBtn").forEach(btn => {
   btn.addEventListener("click", e => {
     e.stopPropagation();
@@ -10209,7 +9892,6 @@ document.querySelectorAll(".unequipBtn").forEach(btn => {
       return;
     }
 
-    // Move it back, clear the slot
     player.inventory[freeIdx] = itm;
     player.equipment[category]  = null;
 
@@ -10298,37 +9980,32 @@ function closeWishMenu() {
   document.getElementById("wishMenu").style.display = "none";
 }
 
-      /*******************
-       * START THE GAME
-       *******************/
+/*******************
+* START THE GAME
+*******************/
 	   
-	   (function() {
+(function() {
   const titleScreen   = document.getElementById("titleScreen");
   const playButton    = document.getElementById("playButton");
   const dotsEl        = document.getElementById("dots");
 
-  // Prevent any title‐screen audio/UI until loading completes
   titleScreen.style.display = "none";
   const delay = 10000 + Math.random() * 10000;
 
   setTimeout(() => {
-    // 1) change text to "Completed!"
     const textDiv = loadingScreen.querySelector(".loading-text");
     textDiv.textContent = "Loading Completed!";
 
-    // 2) after a short moment, fade out
     setTimeout(() => {
       loadingScreen.style.opacity = "0";
 
-      // 3) once fade completes, remove overlay & show title screen
       loadingScreen.addEventListener("transitionend", () => {
         loadingScreen.remove();
         titleScreen.style.display = "flex";
-        // also reveal playButton if your logic shows it then:
         playButton.style.display = "";
       }, { once: true });
 
-    }, 500); // hold “Completed!” for 0.5s
+    }, 500);
 
   }, delay);
 })();

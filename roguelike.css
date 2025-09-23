@@ -25,7 +25,6 @@ body {
   font-size: 2em;
   font-family: sans-serif;
 }
-/* keyframes for looping dots */
 @keyframes dotPulse {
   0%   { content: "."; }
   33%  { content: ".."; }
@@ -38,7 +37,17 @@ body {
 }
 
 #difficultyMenu {
-	z-index: 300;
+	display:none;
+	position:fixed;
+    top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	background: rgba(0,0,0,0.85);
+	padding: 20px;
+	border: 2px solid white;
+	border-radius: 10px;
+	z-index: 900;
+	max-width: 800px;
 }
 
 #difficultyMenu button {
@@ -140,7 +149,6 @@ body {
   margin: 0 auto 0.0005px;
 }
 
-/* Center box for title + button */
 #doomTitleScreen {
   display: none;
   position: fixed;
@@ -152,8 +160,8 @@ body {
   background-size: cover;
   display: flex;
   justify-content: center;
-  align-items: flex-start;      /* push content to top */
-  padding-top: 40px;            /* space below top edge */
+  align-items: flex-start;
+  padding-top: 40px;
   z-index: 2000;
   font-family: "Copperplate Gothic Bold", "Copperplate Gothic", Copperplate, fantasy;
   font-weight: bold;
@@ -173,22 +181,22 @@ body {
 }
 
 #doomTitleImage {
-  max-width: 40%;               /* shrink it */
+  max-width: 40%;
   height: auto;
-  margin: 0 auto 30px;          /* centered, with bottom gap */
+  margin: 0 auto 30px;
   animation: levitate 3s ease-in-out infinite;
 }
 
 #doomTitleImg {
-  max-width: 40%;               /* shrink it */
+  max-width: 40%;
   height: auto;
-  margin: 0 auto 30px;          /* centered, with bottom gap */
+  margin: 0 auto 30px;
   animation: levitate 3s ease-in-out infinite;
 }
 
 #beginJourneyBtn {
-  background: none;             /* no bg */
-  color: white;                 /* white text */
+  background: none;
+  color: white;
   font-size: 22px;
   border: none;
   cursor: pointer;
@@ -200,7 +208,6 @@ body {
   opacity: 0.8;
 }
 
-/* Black overlay for fade effect */
 #doomFadeOverlay {
   position: fixed;
   top:0; left:0;
@@ -218,11 +225,10 @@ body.doom-mode #stats {
 }
 
 body.doom-mode .room {
-  background-color: #2e0000 !important; /* match stats-menu bg */
-  border: 2px solid #ff6200 !important;  /* match stats-menu text */
+  background-color: #2e0000 !important;
+  border: 2px solid #ff6200 !important;
 }
 
-/* And player if it’s a DOM element */
 body.doom-mode .player {
   width: 25px;
   height: 25px;
@@ -430,8 +436,8 @@ body.doom-mode #deathMenu button:hover {
 
 body.doom-mode #equipmentBtn {
   position: absolute;
-  top: 320px;      /* adjust to fit your layout */
-  right: 1250px;    /* place near the other HUD elements */
+  top: 320px;
+  right: 1250px;
   width: 100px;
   height: 100px;
   background: #2e0000;
@@ -453,7 +459,6 @@ body.doom-mode #equipmentBtn img {
   height: 90px;
 }
 
-/* Equipment Menu Modal */
 body.doom-mode #equipmentMenu.modal {
   position: fixed;
   top: 50%;
@@ -515,7 +520,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   display: block;
 }
 
-/*DOOM MODE*/
+/*DOOM MODE END*/
 
 #titleBox {
   background: rgba(0, 0, 0, 0);
@@ -524,6 +529,50 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   text-align: center;
   max-width: 700px;
   box-shadow: 0 0 15px rgba(0,0,0,0);
+}
+
+#titleScreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-image: url("background.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 1365px 600px;
+	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	margin-top: 20px;
+}
+#titleScreen h1 {
+	font-size: 48px;
+	margin-bottom: 20px;
+}
+#titleScreen .subheading {
+	font-size: 24px;
+	margin-bottom: 10px;
+	text-align: center;
+	max-width: 80%;
+}
+#titleScreen .subsubheading {
+	font-size: 18px;
+	margin-bottom: 30px;
+}
+#titleScreen button {
+	padding: 10px 20px;
+	font-size: 20px;
+	background: #000000;
+	color: white;
+	border: 1px solid white;
+        cursor: pointer;
+}
+#titleScreen button:hover {
+	background: #777;
 }
 
 #titleScreen h6 {
@@ -1060,7 +1109,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   background: #888;
 }
 
-/* Guild Menu Modal */
 #guildMenu.modal {
   position: fixed;
   top: 50%;
@@ -1075,12 +1123,10 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   text-align: center;
 }
 
-/* Modal content styling */
 #guildMenu .modal-content {
   position: relative;
 }
 
-/* Close button style */
 #guildMenu .close-btn {
   position: absolute;
   top: 10px;
@@ -1097,7 +1143,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   background: #666;
 }
 
-/* Style the guild buttons */
 #guildMenu .guild-buttons button {
   margin-top: 30px;
   padding: 10px 20px;
@@ -1223,7 +1268,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   background: #440022;
 }
 
-/* === Cult Objectives Modal === */
 #cultObjectiveMenu {
   position: fixed; top: 52%; left: 50%;
   transform: translate(-50%, -50%);
@@ -1245,8 +1289,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
 }
 
 #cultLibraryMenu, #cultObjectiveMenu {
-  /* ... your existing styles ... */
-  z-index: 360;  /* above battleTint which is probably 10000 */
+  z-index: 360;
 }
 
 #libraryMenu {
@@ -1318,11 +1361,10 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
      width: 300px;
 }
 
-/* Equipment Button on HUD */
 #equipmentBtn {
   position: absolute;
-  top: 290px;      /* adjust to fit your layout */
-  right: 1250px;    /* place near the other HUD elements */
+  top: 290px;
+  right: 1250px;
   width: 100px;
   height: 100px;
   background: gray;
@@ -1344,7 +1386,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   height: 90px;
 }
 
-/* Equipment Menu Modal */
 #equipmentMenu.modal {
   position: fixed;
   top: 50%;
@@ -1414,7 +1455,6 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
   50%  { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* this class simply runs the keyframe once */
 .jump-zoom-fire {
   animation: zoomBeat 0.49s infinite;
   transform-origin: center center;
@@ -1501,58 +1541,54 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
 }
 
 #classSelectionMenu {
-  display: none;                                       /* hidden until showClassSelectionMenu() */
-  position: absolute;                                     /* same as abilityMenu */
+  display: none;
+  position: absolute;
   top: 50%; left: 50%; transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.85);                     /* same dark backdrop */
-  padding: 20px 24px;                                       /* same padding */
-  border: 2px solid white;                             /* same border */
-  border-radius: 10px;                                 /* same rounding */
-  z-index: 900;                                        /* same layer as abilityMenu */ 
-  max-width: 800px;                                    /* match abilityMenu’s width limit */ 
+  background: rgba(0, 0, 0, 0.85);
+  padding: 20px 24px;
+  border: 2px solid white;
+  border-radius: 10px;
+  z-index: 900;
+  max-width: 800px;
 }
 
-/* 2) Use library’s inner scroll for our entries */
 #classSelectionMenu .content.scrollable {
-  display: block;        /* block so it stacks under the H2 */
-  margin: 1rem 0;        /* space above and below */
-  padding: 0 16px;       /* horizontal padding so buttons never touch the “walls” */
+  display: block;
+  margin: 1rem 0;
+  padding: 0 16px;
   max-height: 300px;     
   overflow-y: auto;      
   box-sizing: border-box;
   border: 2px solid white;
 }
 
-/* 2) Each entry’s button + info vertical */
 #classSelectionMenu .class-entry {
-  margin-bottom: 1.5rem; /* space between entries */
+  margin-bottom: 1.5rem;
 }
 
-/* 3) Make buttons wide, rectangular, with curved corners */
 #classSelectionMenu .class-entry button {
   display: block;
-  width: 100%;           /* full width inside the padded scroll area */
+  width: 100%;
   box-sizing: border-box;
-  padding: 0.75rem 1rem; /* comfy tap/click area */
-  border-radius: 6px;    /* curved corners */
-  background: #555;      /* match your other menus */
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: #555;
   border: none;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
-  margin: 0;             /* no extra outer margin */
+  margin: 0;
   border: 1px solid white;
 }
 
-/* 4) Info text sits right under each button */
 #classSelectionMenu .class-entry p {
-  margin: 0.5rem 0 0;    /* little gap above, flush below */
+  margin: 0.5rem 0 0;
   color: #ddd;
   line-height: 1.4;
 }
 
 #classSelectionMenu .class-entry button:hover {
-  background: #777;                                    /* same hover as other menus */
+  background: #777;
 }
 
 #playerJobs {
@@ -1579,7 +1615,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
 #player-level-status {
   display: inline-flex;
   align-items: center;
-  gap: 6px; /* space between level & badges */
+  gap: 6px;
 }
 .status-burned    { background: #e74c3c; color: #fff; padding:2px 6px; border-radius:4px; font-size:0.8em; }
 .status-poisoned  { background: #27ae60; color: #fff; padding:2px 6px; border-radius:4px; font-size:0.8em; }

@@ -4,53 +4,7 @@
     <meta charset="UTF-8" />
     <title>Roguelike! Deluxe Edition</title>
 	<link rel="shortcut icon" type="x-icon" href="icon.ico" />
-    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="roguelike.css" />
-    <style>
-      #titleScreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-image: url("background.png");
-		background-repeat: no-repeat;
-		background-position: center;
-		background-size: 1365px 600px;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-		margin-top: 20px;
-      }
-      #titleScreen h1 {
-        font-size: 48px;
-        margin-bottom: 20px;
-      }
-      #titleScreen .subheading {
-        font-size: 24px;
-        margin-bottom: 10px;
-        text-align: center;
-        max-width: 80%;
-      }
-      #titleScreen .subsubheading {
-        font-size: 18px;
-        margin-bottom: 30px;
-      }
-      #titleScreen button {
-        padding: 10px 20px;
-        font-size: 20px;
-       background: #000000;
-	  color: white;
-	  border: 1px solid white;
-        cursor: pointer;
-      }
-      #titleScreen button:hover {
-        background: #777;
-      }
-    </style>
   </head>
   <body>
   
@@ -58,8 +12,7 @@
 	<div class="loading-text">Game Currently Loading<br>Please Wait<span id="dots"></span></div>
   </div>
   
-    <!-- Title Screen -->
-    <div id="titleScreen">
+<div id="titleScreen">
   <div id="titleBox">
     <h1>Roguelike! Deluxe Edition<br> Alpha V5.0.0</h1>
     <p>
@@ -70,194 +23,194 @@
     </h5>
     <button id="playButton" style="display: none;">Start Game</button>
 	<p>(Press the screen to play!)</p>
-	</div>
-	
-	<div id="creditsToggle" style="cursor:pointer;" onclick="toggleCredits()">Credits</div>
-  <div id="creditsCredits">
-    <div id="contentCredits" class="content scrollable">
-      <h1><strong>☆Credits☆</strong></h1>
-	  <br>
-	  ===============================================
-	  <br>
-	  <br>
-      <p><strong>Creator:</strong><br><br>Gabriel A. Barabar</p>
-	  <br>
-	  --------------------------------------------------------------------------------
-	  <br>
-	  <p><strong>Inspired by:</strong>
-		<br>
-		<br>
-		<br>
-		Pokémon
-		<br>
-		<br>
-		Exp Minima
-		<br>
-		<br>
-		Dragon Ball
-		<br>
-		<br>
-		Solo Leveling
-		<br>
-		<br>
-		Daniel Krafft - "They Dared Me to Make a Minecraft Mod..."
-		<br>
-		<br>
-		The DOOM franchise
-		<br>
-		<br>
-		Soul Knight
-		<br>
-		<br>
-		<br>
-	  </p>
-	  --------------------------------------------------------------------------------
-	  <br>
-	  <p>
-		<strong>Used Songs:</strong>
-		<br>
-		<br>
-		<br>
-		"Empty Town (Remix Cover)" - Vetrom
-		<br>
-		<br>
-		"LOST IN PARADISE" - ALI, AKLO
-		<br>
-		<br>
-		"Tokyo's Way" - Shiritsu Ebisu Chugaku
-		<br>
-		<br>
-		"Rumbling" - SiM
-		<br>
-		<br>
-		"Boku no Sensou" - Shinsei Kamattechan
-		<br>
-		<br>
-		"Heroes Avatar" - Soul Knight OST
-		<br>
-		<br>
-		"Poke Mart Remix" - Qumu
-		<br>
-		<br>
-		"LeveL" - SawanoHiroyuki[nZk], TOMORROW X TOGETHER
-		<br>
-		<br>
-		"Bling Bang Bang Born" - Creepy Nuts
-		<br>
-		<br>
-		"SPECIALZ" - King Gnu
-		<br>
-		<br>
-		"THE HERO!" - JAM Project
-		<br>
-		<br>
-		"The End Begins" - GOW2
-		<br>
-		<br>
-		"Iron Will Braves The Waves/Neo Isle" - Soul Knight OST
-		<br>
-		<br>
-		"Chairman Rose Battle (Orchestral Arrangement)" - Minako Adachi, Go Ichinose
-		<br>
-		<br>
-		"Volo Battle (Cover)" - Master of Sounds
-		<br>
-		<br>
-		"Interdimensional Summit" - Dimmu Borgir
-		<br>
-		<br>
-		"The Only Thing They Fear Is You" - Mick Gordon
-		<br>
-		<br>
-		"Tuca Donka" - CURSEDEVIL, DJ FKU, Skorde
-		<br>
-		<br>
-		"Trippin on Love" - Ashley Collins
-		<br>
-		<br>
-		"Admiring You (Private Pure Love Train)" - Pharozen
-		<br>
-		<br>
-		"Explorer" - AXS Music
-		<br>
-		<br>
-		"Chisel Town" - Soul Knight OST
-		<br>
-		<br>
-		"Tundra" - Skyrim OST
-		<br>
-		<br>
-		"Desert Caravans" - Derek Fiechter
-		<br>
-		<br>
-		"God Only Knows" - A-One
-		<br>
-		<br>
-		"VS Team Sky" - Sobanoodles
-		<br>
-		<br>
-		"Spider Dance (Lo-fi Remix)" - KaatuWaves
-		<br>
-		<br>
-		"Judas" - Lady Gaga
-		<br>
-		<br>
-		"Self-Embodiment of Perfection" - Alisa Okehazama
-		<br>
-		<br>
-		"伏魔御廚子(Malevolent Shrine)" - Yoshimasa Terui
-		<br>
-		<br>
-		<br>
-		Along with many other free music on YouTube...
-		<br>
-		<br>
-	  </p>
-	  --------------------------------------------------------------------------------
-	  <br>
-	  <p><strong>Special Thanks:</strong>
-	  <br>
-	  <br>
-	  <br>
-	  Tiffany G. Sanchez <br><strong>(My beloved girlfriend that inspired me to keep going💪 AND for making the title screen/main menu art so I love her for that and for being the absolute goat of this all)</strong>
-	  <br>
-	  <br>
-	  Prince Jayrick Belmes <br><strong>(Tester)</strong>
-	  <br>
-	  <br>
-	  Jian Carmelo Dellosa <br><strong>(Tester)</strong>
-	  <br>
-	  <br>
-	  Candice Ariane T. Babaylan <br><strong>(Tester and emotional support)</strong>
-	  <br>
-	  <br>
-	  -The entirety of Arts/Dibuho Club <br><strong>(Testers)</strong>
-	  <br>
-	  <br>
-	  Gabryll Vynn C. Asuncion <br><strong>(tester.)</strong>
-	  </p>
-	  <br>
-	  --------------------------------------------------------------------------------
-	  <br>
-	  <br>
-	  <p><strong>Project Created:</strong><br><br>April 3, 2025</p>
-	  <br>
-	  --------------------------------------------------------------------------------
-	  <br>
-	  <br>
-	  <br>
-	  <p>Roguelike! Deluxe Edition Alpha V5.0.0</p>
-	  <br>
-	  <br>
-	  ===============================================
-	  <br>
-	  <h2><strong>☆Thank you, everyone!☆</strong></h2>
-    </div>
-	<br>
-	<button id="exitCredits">Back</button>
-</div>
-<h6>WARNING: Please note that this game does NOT save</h6>
   </div>
+	
+  <div id="creditsToggle" style="cursor:pointer;" onclick="toggleCredits()">Credits</div>
+	<div id="creditsCredits">
+      <div id="contentCredits" class="content scrollable">
+		<h1><strong>☆Credits☆</strong></h1>
+		<br>
+		===============================================
+		<br>
+		<br>
+		<p><strong>Creator:</strong><br><br>Gabriel A. Barabar</p>
+		<br>
+		--------------------------------------------------------------------------------
+		<br>
+		<p><strong>Inspired by:</strong>
+			<br>
+			<br>
+			<br>
+			Pokémon
+			<br>
+			<br>
+			Exp Minima
+			<br>
+			<br>
+			Dragon Ball
+			<br>
+			<br>
+			Solo Leveling
+			<br>
+			<br>
+			Daniel Krafft - "They Dared Me to Make a Minecraft Mod..."
+			<br>
+			<br>
+			The DOOM franchise
+			<br>
+			<br>
+			Soul Knight
+			<br>
+			<br>
+			<br>
+		</p>
+		--------------------------------------------------------------------------------
+		<br>
+			<p>
+				<strong>Used Songs:</strong>
+				<br>
+				<br>
+				<br>
+				"Empty Town (Remix Cover)" - Vetrom
+				<br>
+				<br>
+				"LOST IN PARADISE" - ALI, AKLO
+				<br>
+				<br>
+				"Tokyo's Way" - Shiritsu Ebisu Chugaku
+				<br>
+				<br>
+				"Rumbling" - SiM
+				<br>
+				<br>
+				"Boku no Sensou" - Shinsei Kamattechan
+				<br>
+				<br>
+				"Heroes Avatar" - Soul Knight OST
+				<br>
+				<br>
+				"Poke Mart Remix" - Qumu
+				<br>
+				<br>
+				"LeveL" - SawanoHiroyuki[nZk], TOMORROW X TOGETHER
+				<br>
+				<br>
+				"Bling Bang Bang Born" - Creepy Nuts
+				<br>
+				<br>
+				"SPECIALZ" - King Gnu
+				<br>
+				<br>
+				"THE HERO!" - JAM Project
+				<br>
+				<br>
+				"The End Begins" - GOW2
+				<br>
+				<br>
+				"Iron Will Braves The Waves/Neo Isle" - Soul Knight OST
+				<br>
+				<br>
+				"Chairman Rose Battle (Orchestral Arrangement)" - Minako Adachi, Go Ichinose
+				<br>
+				<br>
+				"Volo Battle (Cover)" - Master of Sounds
+				<br>
+				<br>
+				"Interdimensional Summit" - Dimmu Borgir
+				<br>
+				<br>
+				"The Only Thing They Fear Is You" - Mick Gordon
+				<br>
+				<br>
+				"Tuca Donka" - CURSEDEVIL, DJ FKU, Skorde
+				<br>
+				<br>
+				"Trippin on Love" - Ashley Collins
+				<br>
+				<br>
+				"Admiring You (Private Pure Love Train)" - Pharozen
+				<br>
+				<br>
+				"Explorer" - AXS Music
+				<br>
+				<br>
+				"Chisel Town" - Soul Knight OST
+				<br>
+				<br>
+				"Tundra" - Skyrim OST
+				<br>
+				<br>
+				"Desert Caravans" - Derek Fiechter
+				<br>
+				<br>
+				"God Only Knows" - A-One
+				<br>
+				<br>
+				"VS Team Sky" - Sobanoodles
+				<br>
+				<br>
+				"Spider Dance (Lo-fi Remix)" - KaatuWaves
+				<br>
+				<br>
+				"Judas" - Lady Gaga
+				<br>
+				<br>
+				"Self-Embodiment of Perfection" - Alisa Okehazama
+				<br>
+				<br>
+				"伏魔御廚子(Malevolent Shrine)" - Yoshimasa Terui
+				<br>
+				<br>
+				<br>
+				Along with many other free music on YouTube...
+				<br>
+				<br>
+			</p>
+			--------------------------------------------------------------------------------
+			<br>
+			<p><strong>Special Thanks:</strong>
+				<br>
+				<br>
+				<br>
+				Tiffany G. Sanchez <br><strong>(My beloved girlfriend that inspired me to keep going💪 AND for making the title screen/main menu art so I love her for that and for being the absolute goat of this all)</strong>
+				<br>
+				<br>
+				Prince Jayrick Belmes <br><strong>(Tester)</strong>
+				<br>
+				<br>
+				Jian Carmelo Dellosa <br><strong>(Tester)</strong>
+				<br>
+				<br>
+				Candice Ariane T. Babaylan <br><strong>(Tester and emotional support)</strong>
+				<br>
+				<br>
+				-The entirety of Arts/Dibuho Club <br><strong>(Testers)</strong>
+				<br>
+				<br>
+				Gabryll Vynn C. Asuncion <br><strong>(tester.)</strong>
+			</p>
+			<br>
+			--------------------------------------------------------------------------------
+			<br>
+			<br>
+			<p><strong>Project Created:</strong><br><br>April 3, 2025</p>
+			<br>
+			--------------------------------------------------------------------------------
+			<br>
+			<br>
+			<br>
+			<p>Roguelike! Deluxe Edition Alpha V5.0.0</p>
+			<br>
+			<br>
+			===============================================
+			<br>
+			<h2><strong>☆Thank you, everyone!☆</strong></h2>
+	  </div>
+	  <br>
+	  <button id="exitCredits">Back</button>
+  </div>
+  <h6>WARNING: Please note that this game does NOT save</h6>
+</div>
   
 <div id="doomTitleScreen" style="display:none;">
   <div id="doomTitleContent">
@@ -275,17 +228,7 @@
   </div>
 </div>
 
-<div id="difficultyMenu"
-     style="display:none;
-            position:fixed;
-            top:50%; left:50%;
-            transform:translate(-50%,-50%);
-            background: rgba(0,0,0,0.85);
-            padding: 20px;
-            border: 2px solid white;
-            border-radius: 10px;
-            z-index: 900;
-            max-width: 800px;">
+<div id="difficultyMenu">
   <h2>Select Gamemode</h2>
   Difficulties:
   <br>
@@ -316,7 +259,6 @@
   background: rgba(0,0,0,0.85); padding: 20px; border: 2px solid white; border-radius: 10px; z-index: 900; max-width:800px;">
   <h2>Decide your Innate Abilities</h2>
   <div style="display:flex; flex-wrap: wrap; gap:20px;">
-    <!-- Spin / selection section -->
     <div style="flex:1; min-width:300px;">
 	  <br><br>
 	  <p>Player Attribute: <span id="playerPassiveAbility">None</span></p>
@@ -326,7 +268,6 @@
       <br><br>
       <button id="confirmAbilitiesButton" disabled>Begin Journey!</button>
     </div>
-    <!-- Scrollable ability list section -->
     <div style="flex:1; min-width:300px; max-height:300px; overflow-y:auto; border: 1px solid white; padding: 10px; box-sizing: border-box;">
       <h3>Possible Attributes:</h3>
       <ul id="passiveAbilitiesList" style="list-style:none; padding:0; margin:0;"></ul>
@@ -456,18 +397,17 @@
   </div>
 </div>
 
-    <!-- Game Container (initially hidden until play button is pressed) -->
     <div id="gameContainer" class="content scrollable" style="display: none;">
       <div id="worldCounter"></div>
 	  <br>
 	  <div id="timerDisplay"></div>
-	  <!-- Mission Display (HUD) -->
+	  
 	  <div id="missionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
-      <!-- CULT Mission HUD (new) -->
+
 	  <div id="cultMissionDisplay" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 18px; color: white; display: none;"></div>
-	  <!-- Dynamic Map -->
+
       <div id="map"></div>
-      <!-- Stats Panel -->
+
       <div id="stats">
         <div id="player-level-status">
 			<div id="player-level"><span id="playerLevel">1</span></div>
@@ -522,9 +462,9 @@
       </div>
     </div>
 
-    <!-- Battle Tint -->
+
     <div id="battleTint"></div>
-    <!-- Battle Menu -->
+
     <div id="battleMenu">
       <div id="enemyInfo"></div>
       <div id="battleOptions">
@@ -535,11 +475,11 @@
         <button id="runBtn">Run</button>
       </div>
     </div>
-    <!-- Battle Log -->
+
     <div id="battleLog"></div>
-    <!-- Inventory Menu -->
+
     <div id="inventoryMenu"></div>
-    <!-- Level Up Menu -->
+
     <div id="levelUpMenu">
       <h3>Level Up! Choose a stat to increase:</h3>
       <button data-stat="hp">Vitality</button> HP: <span id="hpText">100/100</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -561,12 +501,11 @@
       <button data-stat="fortune">Fortune</button> Fortune: <span id="fortuneStat">1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	  </div>
     </div>
-	<!-- Equipment Button (next to other HUD controls) -->
+
   <button id="equipmentBtn">
     <img src="equipment.png" alt="Equipment" />
   </button>
 
-  <!-- Equipment Menu -->
   <div id="equipmentMenu" class="modal" style="display: none;">
     <div class="modal-content">
       <button id="closeEquipmentBtn" class="close-btn">×</button>
@@ -590,8 +529,7 @@
       </div>
     </div>
   </div>
-  
-    <!-- Shop Menu -->
+
     <div id="shopMenu">
       <h3>Shop</h3>
       <div id="shopItems"></div>
@@ -604,7 +542,7 @@
   <div id="sellItems"></div>
   <button id="closeSellBtn">Close</button>
 </div>
-    <!-- Death Menu -->
+
     <div id="deathMenu">
       <h2>You Died!</h2>
 	  <button id="resurrectBtn" style="display:none;">I can’t give up…</button>
@@ -612,8 +550,7 @@
 	  <br>
 	  <button id="retryBtn">Retry</button>
     </div>
-    <!-- Casino Menu -->
-	<!-- Casino Choice Menu -->
+
 <div id="casinoChoiceMenu" class="modal" style="display:none;">
   <div class="modal-content">
     <h3>CASINO!</h3>
@@ -625,7 +562,6 @@
   </div>
 </div>
 
-<!-- Slot Machine Menu -->
 <div id="slotMenu" class="modal" style="display:none;">
   <div class="modal-content">
     <button id="closeSlotBtn" class="close-btn">X</button>
@@ -1775,7 +1711,6 @@
 
 <div id="tooltip"></div>
 	
-    <!-- Link to external JavaScript -->
     <script src="roguelike.js"></script>
   </body>
 </html>
