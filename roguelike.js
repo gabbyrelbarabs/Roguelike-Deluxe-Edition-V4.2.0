@@ -955,7 +955,7 @@ const weaponSkillMap = {
   "Titan's Fang": "Outrage",
 };
 	  
-	  const passiveAbilities = [
+const passiveAbilities = [
   { name: "None", chance: 30 },
   { name: "Tough", chance: 10 },
   { name: "Quick", chance: 10 },
@@ -973,7 +973,6 @@ const weaponSkillMap = {
   { name: "Invincible", chance: 0.5 },
   { name: "Relentless", chance: 0.5 },
   { name: "Aura Farmer", chance: 0.5 },
-  { name: "Immortal", chance: 0.1 },
   { name: "Six Eyes", chance: 0.1 },
   { name: "Vessel", chance: 0.1 },
   { name: "Heavenly Restricted", chance: 0.1 },
