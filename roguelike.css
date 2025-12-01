@@ -537,7 +537,7 @@ body.doom-mode .equipmentSlot:hover .unequipBtn {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-image: url("background.png");
+	background-image: url("background.webp");
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: 1365px 600px;
